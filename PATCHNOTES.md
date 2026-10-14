@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.3.4 (2026-10-14)
+### Düzeltmeler
+- Overlay kilitliyken artık Ctrl+Shift+K ile kilidi açabilirsiniz; kısayol oyun açıkken de çalışır.
+  Kısayollar ayarlar panelinde listelenir.
+
 ## 0.3.3 (2026-10-14)
 ### Değişti
 - İlk açılışta arayüz dili bilgisayarınızın diline göre seçilir: Türkçe sistemde Türkçe, diğer dillerde

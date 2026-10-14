@@ -6,6 +6,7 @@ mod ayarlar;
 mod ayarlar_paneli;
 mod boyut;
 mod dil;
+mod kilit;
 mod kisayol;
 mod komut_satiri;
 mod pencere;

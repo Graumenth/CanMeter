@@ -1,6 +1,8 @@
 //! Tek süreçte motor, kullanıcı ayarları ve overlay kare döngüsü.
 use crate::skin::{Baglam, Skin, kayit};
-use crate::{ayarlar::Ayarlar, ayarlar_paneli, boyut::Boyut, dil::Dil, kisayol, pencere, yazi};
+use crate::{
+    ayarlar::Ayarlar, ayarlar_paneli, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, pencere, yazi,
+};
 use canmeter_core::{Motor, stats::SavasAnlik};
 use std::time::{Duration, Instant};
 /// Ayarlar paneli açıkken en az bu kadar yükseklik (nokta).
@@ -11,7 +13,7 @@ pub struct Uygulama {
     ayarlar: Ayarlar,
     kalici: Ayarlar,
     skin: &'static dyn Skin,
-    kilitli: bool,
+    kilit: Kilit,
     ayarlar_acik: bool,
     motor: Motor,
     son: Option<SavasAnlik>,
@@ -32,7 +34,7 @@ impl Uygulama {
             skin: kayit::bul(&ayarlar.skin),
             ayarlar,
             kalici,
-            kilitli: false,
+            kilit: Kilit::new(),
             ayarlar_acik: false,
             motor: Motor::demo(7),
             son: None,
@@ -67,7 +69,7 @@ impl eframe::App for Uygulama {
         let baglam = Baglam {
             savas: self.son.as_ref(),
             dil: self.ayarlar.dil,
-            kilitli: self.kilitli,
+            kilitli: self.kilit.kilitli,
             toplam_goster: self.ayarlar.toplam_goster,
             zemin: self.ayarlar.zemin(),
             demo: true,
@@ -84,10 +86,7 @@ impl eframe::App for Uygulama {
         if eylemler.surukle {
             ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
         }
-        if eylemler.kilit_degistir {
-            self.kilitli = !self.kilitli;
-            ctx.send_viewport_cmd(egui::ViewportCommand::MousePassthrough(self.kilitli));
-        }
+        self.kilit.kare(&ctx, eylemler.kilit_degistir);
         if eylemler.ayarlar_ac {
             self.ayarlar_acik = true;
         }

@@ -46,6 +46,7 @@ pub fn ciz(ctx: &egui::Context, ayarlar: &mut Ayarlar, acik: &mut bool) -> bool 
                     ui.strong(sozluk.kisayollar);
                     ui.label(sozluk.gorunum_kisayol);
                     ui.label(sozluk.dil_kisayol);
+                    ui.label(sozluk.kilit_kisayol);
                 });
         });
     if !acilir_tiklandi
