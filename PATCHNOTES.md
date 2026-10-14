@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.3.2 (2026-10-14)
+### Düzeltmeler
+- Kömür görünümünde hasar çubukları artık satır boyunca uzuyor ve hasara göre değişiyor.
+
 ## 0.3.1 (2026-10-14)
 ### Düzeltmeler
 - Kehribar görünümünde oyuncu çubukları artık hasara göre uzayıp kısalıyor; satırdaki renk tonu yumuşak geçişli.

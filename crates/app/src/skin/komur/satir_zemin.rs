@@ -3,12 +3,12 @@
 use canmeter_core::stats::{OyuncuAnlik, Sinif};
 use egui::{Color32, Pos2, Rect, Stroke};
 
-use super::{renk, sutun};
+use super::renk;
 
 pub fn ciz(p: &egui::Painter, rect: Rect, o: &OyuncuAnlik, en_yuksek: u64, sinif: Color32) {
     let oran = (o.hasar as f32 / en_yuksek as f32).clamp(0.0, 1.0);
-    let ad_sag = rect.right() - sutun::AD_SAG_BOSLUK;
-    let dolgu_sag = rect.left() + (ad_sag - rect.left()) * oran;
+    // Mockup `.fill`: satırın tamamı (en yüksek hasar = %100), sağ kenarda 2 px sınıf rengi.
+    let dolgu_sag = rect.left() + rect.width() * oran;
     let dolgu = Rect::from_min_max(
         Pos2::new(rect.left(), rect.top() + 3.0),
         Pos2::new(dolgu_sag, rect.bottom() - 3.0),
