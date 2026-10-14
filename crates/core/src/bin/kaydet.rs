@@ -132,9 +132,11 @@ fn cikti_yolunu_hazirla(cikti: Option<PathBuf>) -> Result<PathBuf, (u8, String)>
     if let Some(yol) = cikti {
         return Ok(yol);
     }
-    std::fs::create_dir_all("kayitlar").map_err(hata)?;
+    // Çalışma dizinine değil workspace köküne göre: crates/core içinden koşulsa da kayitlar/ tek yerde.
+    let kok = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../kayitlar");
+    std::fs::create_dir_all(&kok).map_err(hata)?;
     let damga = Local::now().format("%Y-%m-%d_%H%M");
-    Ok(PathBuf::from(format!("kayitlar/{damga}.pcap")))
+    Ok(kok.join(format!("{damga}.pcap")))
 }
 
 fn kaydet(

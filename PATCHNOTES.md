@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.0.8 (2026-10-14)
+### Düzeltmeler
+- `kaydet` aracı kayıtları her zaman proje kökündeki `kayitlar/` klasörüne yazar; nereden
+  çalıştırıldığı fark etmez.
+
 ## 0.0.7 (2026-10-14)
 ### Yeni
 - Overlay: savaş süresi, hedef HP ve kalan süre, parti DPS sıralaması, sınıf renkli barlar, kendi
@@ -32,8 +37,7 @@
   kendiliğinden seçilir; istenirse sıra numarası, ad ya da açıklama parçasıyla elle seçilir.
   Bağlı olmayan Wi-Fi/Bluetooth adaptörleri (yalnız 169.254.x.x adresi olanlar) elenir.
 - Geliştirici: `cargo run -p canmeter-core --example arayuzler` adaptörleri ve seçimi gösterir.
-  Npcap SDK `<DerlemeAraclari>
-pcap-sdk` altından derleme betiğiyle bulunur (`NPCAP_SDK` ile ezilebilir).
+  Npcap SDK `<DerlemeAraclari>\npcap-sdk` altından derleme betiğiyle bulunur (`NPCAP_SDK` ile ezilebilir).
 
 ## 0.0.1 (2026-10-14)
 ### Yeni
