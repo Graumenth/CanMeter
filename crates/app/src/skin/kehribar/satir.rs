@@ -1,25 +1,15 @@
 //! Tek oyuncunun hasar satırı.
 
-use super::{ikon, iz, renk, satir_deger, sutun};
+use super::{ikon, iz, renk, satir_deger, sizma, sutun};
 use crate::{dil::Dil, sinif_renk::sinif_renk, yazi};
 use canmeter_core::stats::OyuncuAnlik;
-use egui::{Align2, Color32, FontId, Pos2, Rect, Sense, Stroke};
+use egui::{Align2, FontId, Pos2, Rect, Sense, Stroke};
 
-pub fn ciz(ui: &mut egui::Ui, o: &OyuncuAnlik, sira: usize, dil: Dil) {
+pub fn ciz(ui: &mut egui::Ui, o: &OyuncuAnlik, sira: usize, en_yuksek: u64, dil: Dil) {
     let (r, _) = ui.allocate_exact_size(egui::vec2(ui.available_width(), 34.0), Sense::hover());
     let p = ui.painter();
     let sinif = sinif_renk(o.sinif);
-    let sizma = Rect::from_min_max(r.min, Pos2::new(r.left() + r.width() * 0.52, r.bottom()));
-    p.rect_filled(
-        sizma,
-        0.0,
-        Color32::from_rgba_unmultiplied(
-            sinif.r(),
-            sinif.g(),
-            sinif.b(),
-            if o.olu { 12 } else { 33 },
-        ),
-    );
+    sizma::ciz(p, r, sinif, o.olu);
     if o.ben {
         p.rect_filled(
             Rect::from_min_max(r.min, Pos2::new(r.left() + 2.0, r.bottom())),
@@ -81,5 +71,5 @@ pub fn ciz(ui: &mut egui::Ui, o: &OyuncuAnlik, sira: usize, dil: Dil) {
     }
     satir_deger::etiketler(&wp, Pos2::new(ad.right() + 6.0, y), o, dil);
     satir_deger::sayi(p, o, dps_x, pay_x, y, soluk, dil);
-    iz::ciz(p, r, o, sinif);
+    iz::ciz(p, r, o, en_yuksek, sinif);
 }

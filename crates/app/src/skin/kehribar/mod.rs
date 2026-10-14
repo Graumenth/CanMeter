@@ -11,6 +11,7 @@ mod metin;
 mod renk;
 mod satir;
 mod satir_deger;
+mod sizma;
 mod sutun;
 mod toplam;
 
@@ -51,8 +52,9 @@ impl Skin for Kehribar {
                     toplam::ciz(ui, savas, b.dil);
                 }
                 sutun::baslik(ui, b.dil);
+                let en_yuksek = savas.oyuncular.iter().map(|o| o.hasar).max().unwrap_or(1);
                 for (indeks, oyuncu) in savas.oyuncular.iter().enumerate() {
-                    satir::ciz(ui, oyuncu, indeks + 1, b.dil);
+                    satir::ciz(ui, oyuncu, indeks + 1, en_yuksek, b.dil);
                 }
                 alt_bilgi::ciz(ui, b);
             });

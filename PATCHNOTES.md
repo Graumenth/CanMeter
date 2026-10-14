@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.3.1 (2026-10-14)
+### Düzeltmeler
+- Kehribar görünümünde oyuncu çubukları artık hasara göre uzayıp kısalıyor; satırdaki renk tonu yumuşak geçişli.
+
 ## 0.3.0 (2026-10-14)
 ### Yeni
 - Overlay'i kenarından tutup büyütüp küçültebilirsiniz; yazılar ve çubuklar dahil tüm görünüm orantılı
