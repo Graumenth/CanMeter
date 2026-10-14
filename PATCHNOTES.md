@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.0.7 (2026-10-14)
+### Yeni
+- Overlay: savaş süresi, hedef HP ve kalan süre, parti DPS sıralaması, sınıf renkli barlar, kendi
+  satırının vurgusu, ölü oyuncu işareti, kilit düğmesi (kilitliyken tıklamalar oyuna geçer).
+
 ## 0.0.6 (2026-10-14)
 ### Yeni
 - Masaüstü uygulama kabuğu: şeffaf, çerçevesiz, hep üstte kalan overlay penceresi. Çekirdekten

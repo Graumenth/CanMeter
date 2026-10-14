@@ -1,0 +1,60 @@
+.overlay {
+  width: 360px;
+  overflow: hidden;
+  border: 1px solid var(--cizgi);
+  border-radius: var(--kose);
+  background: var(--zemin);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 22%);
+}
+.overlay.pasif { opacity: .85; }
+.overlay:focus-within { border-color: #2a3042; }
+.baslik { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 10px; min-height: 34px; padding: 0 10px; border-bottom: 1px solid var(--cizgi); }
+.baslik [data-tauri-drag-region] { cursor: grab; }
+.baslik [data-tauri-drag-region]:active { cursor: grabbing; }
+.marka { font-size: 13px; letter-spacing: .15px; }
+.savas-suresi, .dps, .pay { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.savas-suresi, .mod { color: var(--metin-soluk); }
+.mod { font-size: var(--yazi-kucuk); }
+.kilit-dugmesi { width: 22px; height: 22px; padding: 0; border: 0; border-radius: 4px; background: transparent; color: var(--metin-soluk); cursor: pointer; }
+.kilit-dugmesi:hover { color: var(--metin); background: var(--zemin-satir); }
+.kilit-dugmesi:focus-visible { outline: 1px solid var(--vurgu); outline-offset: 1px; }
+.hedef { padding: 8px 10px 10px; border-bottom: 1px solid var(--cizgi); }
+.hedef-bilgi { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.hedef-bilgi span { color: var(--metin-soluk); font-size: var(--yazi-kucuk); white-space: nowrap; }
+.hedef-bilgi strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hp-zemin { height: 6px; overflow: hidden; border-radius: 3px; background: #1a1e2b; }
+.hp-dolgu { display: block; height: 100%; border-radius: inherit; background: #d9534f; transition: width 200ms linear; }
+.sutun-baslik, .oyuncu-veri { display: grid; grid-template-columns: 24px 34px 1fr 66px 46px; align-items: center; column-gap: 6px; }
+.sutun-baslik { min-height: 25px; padding: 0 10px; color: var(--metin-soluk); font-size: var(--yazi-kucuk); border-bottom: 1px solid var(--cizgi); }
+.sutun-baslik span:nth-child(2) { grid-column: 2 / 4; }
+.sutun-baslik span:nth-child(n + 3) { text-align: right; }
+.oyuncular { padding: 3px 4px; }
+.oyuncu-satiri { position: relative; min-height: var(--satir-yuk); overflow: hidden; border-radius: 5px; }
+.oyuncu-satiri + .oyuncu-satiri { margin-top: 1px; }
+.oyuncu-veri { position: relative; z-index: 1; min-height: var(--satir-yuk); padding: 0 6px; }
+.oyuncu-satiri.ben { background: var(--zemin-satir); box-shadow: inset 2px 0 0 var(--sinif); }
+.sira, .pay { color: var(--metin-soluk); text-align: right; }
+.sinif-kisa, .oyuncu-adi { color: var(--sinif); }
+.sinif-kisa { font-size: 10px; text-align: center; }
+.sinif-kisa, .sira { font-variant-numeric: tabular-nums; }
+.oyuncu-adi { overflow: hidden; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.oyuncu-adi small { margin-left: 3px; color: var(--metin-soluk); font-size: 10px; font-weight: 400; }
+.dps { text-align: right; font-weight: 700; }
+.olu .oyuncu-adi { color: var(--metin-soluk); }
+.bar { position: absolute; z-index: 0; bottom: 0; left: 0; height: var(--bar-yuk); background: var(--sinif); opacity: .7; transition: width 200ms linear; }
+.bar::after { position: absolute; top: 0; right: 0; width: 2px; height: 100%; background: color-mix(in srgb, var(--sinif) 85%, white); box-shadow: 0 0 7px var(--sinif); content: ""; }
+.sinif-gladiator { --sinif: #e05a4e; }
+.sinif-templar { --sinif: #7fa8f5; }
+.sinif-assassin { --sinif: #a3d65a; }
+.sinif-ranger { --sinif: #5fcf78; }
+.sinif-sorcerer { --sinif: #b08cf0; }
+.sinif-spiritmaster { --sinif: #c76bd9; }
+.sinif-cleric { --sinif: #f3d660; }
+.sinif-chanter { --sinif: #e07d2c; }
+.sinif-bilinmiyor { --sinif: #8a8f98; }
+.alt-bilgi { display: flex; justify-content: space-between; padding: 7px 10px; border-top: 1px solid var(--cizgi); color: var(--metin-soluk); font-size: var(--yazi-kucuk); }
+.durum-noktasi { display: inline-block; width: 6px; height: 6px; margin-right: 5px; border-radius: 50%; background: var(--iyilestirme); opacity: .8; vertical-align: middle; }
+.bekleniyor { margin: 0; padding: 14px 10px; color: var(--metin-soluk); text-align: center; }
+@media (prefers-reduced-motion: reduce) {
+  .hp-dolgu, .bar { transition: none; }
+}
