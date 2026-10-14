@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.1.0 (2026-10-14)
+### Değişti
+- Sürüm 0.1.0: 0.0.7'den bu yana gelen görünümler, ayarlar paneli ve dil seçeneği yeni yetenekler
+  olduğu için sürüm basamağı düzeltildi. Davranış değişikliği yok.
+
 ## 0.0.12 (2026-10-14)
 ### Düzeltmeler
 - Overlay boşta çok daha az işlemci kullanır: bar animasyonları kaldırıldı (işlemci payı yaklaşık sekizde bire indi).
