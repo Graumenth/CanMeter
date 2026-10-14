@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.2.5 (2026-10-14)
+### Değişti
+- Overlay artık tarayıcı bileşeni (WebView2) kullanmıyor; tek bir küçük program olarak çalışır ve çok daha az
+  bellek tutar. Görünümler, ayarlar ve dil seçeneği aynen korundu.
+- Ayarlar artık `%APPDATA%\CanMeter\ayarlar.toml` dosyasında saklanır; eski sürümün ayarları taşınmaz.
+
 ## 0.2.4 (2026-10-14)
 ### Değişti
 - Sürüm numarası 0.2.4: görünümler ve ayarlar paketi ile ilk overlay ayrı yetenekler olarak sayıldı.

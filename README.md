@@ -15,7 +15,7 @@ Arayüzü Türkçe yaptık. İhtiyacımız olan bilgileri gösteren sade bir met
 
 ## Yapı
 - `crates/core`: Rust çekirdek (yakalama, protokol, savaş olayları, istatistik, replay).
-- `app/`: Tauri v2 + React arayüz (faz 01'de eklenir).
+- `crates/app`: overlay arayüzü, saf Rust (egui). Tek süreç, tarayıcı bileşeni yok.
 
 Kurallar ve komutlar: `CLAUDE.md`. Kullanıcı-dönük değişiklikler: `PATCHNOTES.md`.
 

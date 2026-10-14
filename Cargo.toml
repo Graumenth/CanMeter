@@ -1,9 +1,9 @@
 [workspace]
-members = ["crates/core", "app/src-tauri"]
+members = ["crates/core", "crates/app"]
 resolver = "2"
 
 [workspace.package]
-version = "0.2.4"
+version = "0.2.5"
 edition = "2024"
 publish = false
 
@@ -11,3 +11,4 @@ publish = false
 lto = "thin"
 codegen-units = 1
 strip = true
+panic = "abort"

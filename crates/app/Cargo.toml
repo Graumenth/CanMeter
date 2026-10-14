@@ -1,0 +1,21 @@
+[package]
+name = "canmeter-app"
+description = "CanMeter overlay kabuğu: saf Rust (egui), tek süreç, WebView yok"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "canmeter-app"
+path = "src/main.rs"
+
+[dependencies]
+canmeter-core = { path = "../core" }
+# Yalnız OpenGL (glow) arka ucu ve gömülü yazı tipleri; accesskit, wgpu, web yok (RAM için).
+eframe = { version = "0.36", default-features = false, features = ["glow", "default_fonts"] }
+egui = "0.36"
+# Ayarlar %APPDATA%\CanMeter\ayarlar.toml
+serde = { version = "1", features = ["derive"] }
+toml = "1"
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Dwm"] }
+raw-window-handle = "0.6"

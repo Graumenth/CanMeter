@@ -12,11 +12,5 @@ version.properties
 # Rust
 target/
 
-# Node / Tauri
-app/node_modules/
-app/dist/
-app/src-tauri/target/
-app/src-tauri/gen/schemas/
-
 # Pcap kayıtları: oyuncu adları içerir, git'e girmez
 kayitlar/

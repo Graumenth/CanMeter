@@ -1,0 +1,21 @@
+use egui::Color32;
+
+pub const MUREKKEP: Color32 = Color32::from_rgb(0xf3, 0xf6, 0xf5);
+pub const PANEL: Color32 = Color32::from_rgb(0x08, 0x0d, 0x10);
+pub const PANEL_KENAR: Color32 = Color32::from_rgba_unmultiplied_const(174, 220, 211, 43);
+pub const CIZGI: Color32 = Color32::from_rgba_unmultiplied_const(183, 211, 205, 31);
+pub const CYAN: Color32 = Color32::from_rgb(0x69, 0xf4, 0xd2);
+pub const KEHRIBAR: Color32 = Color32::from_rgb(0xff, 0xc6, 0x6d);
+pub const TEHLIKE: Color32 = Color32::from_rgb(0xff, 0x6e, 0x6e);
+pub const SOLUK: Color32 = Color32::from_rgb(0x9f, 0xad, 0xaa);
+pub const MUTED: Color32 = Color32::from_rgb(0x87, 0x94, 0x93);
+pub const ZAMAN: Color32 = Color32::from_rgb(0xd9, 0xe2, 0xe0);
+pub const META: Color32 = Color32::from_rgb(0x76, 0x84, 0x81);
+pub const BASLIK_SOLUK: Color32 = Color32::from_rgb(0x63, 0x71, 0x6f);
+pub const AD: Color32 = Color32::from_rgb(0xed, 0xf3, 0xf1);
+pub const SINIF: Color32 = Color32::from_rgb(0x70, 0x7e, 0x7b);
+pub const PAY: Color32 = Color32::from_rgb(0x96, 0xa3, 0xa0);
+pub const IYILESTIRME: Color32 = Color32::from_rgb(0x7e, 0xe9, 0xa4);
+pub const OLDU: Color32 = Color32::from_rgb(0xff, 0x99, 0x99);
+pub const ALT: Color32 = Color32::from_rgb(0x65, 0x72, 0x6f);
+pub const SURUM: Color32 = Color32::from_rgb(0x4f, 0x5b, 0x59);
