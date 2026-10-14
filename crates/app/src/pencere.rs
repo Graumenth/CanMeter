@@ -4,12 +4,13 @@ pub fn secenekler() -> eframe::NativeOptions {
     eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("CanMeter")
-            // Yükseklik içerik kadar: kabuk her karede InnerSize ile ayarlar (uygulama.rs).
+            // Genişlik kullanıcıdan (kenardan sürükleme = ölçek), yükseklik içerikten; bkz. boyut.rs.
             .with_inner_size([440.0, 440.0])
+            .with_min_inner_size([220.0, 40.0])
             .with_decorations(false)
             .with_transparent(true)
             .with_always_on_top()
-            .with_resizable(false),
+            .with_resizable(true),
         // 4 Hz çizimde vsync beklemesi yalnız CPU yakar; kare aralığını kabuk belirler.
         glow_options: eframe::egui_glow::GlowConfiguration {
             vsync: false,

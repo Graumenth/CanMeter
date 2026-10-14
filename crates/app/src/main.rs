@@ -4,6 +4,7 @@
 
 mod ayarlar;
 mod ayarlar_paneli;
+mod boyut;
 mod dil;
 mod kisayol;
 mod komut_satiri;

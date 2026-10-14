@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.3.0 (2026-10-14)
+### Yeni
+- Overlay'i kenarından tutup büyütüp küçültebilirsiniz; yazılar ve çubuklar dahil tüm görünüm orantılı
+  ölçeklenir, yükseklik içeriğe göre kendiliğinden ayarlanır. Seçtiğiniz boyut hatırlanır.
+
 ## 0.2.5 (2026-10-14)
 ### Değişti
 - Overlay artık tarayıcı bileşeni (WebView2) kullanmıyor; tek bir küçük program olarak çalışır ve çok daha az

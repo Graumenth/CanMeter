@@ -1,12 +1,12 @@
 //! Tek süreçte motor, kullanıcı ayarları ve overlay kare döngüsü.
 use crate::skin::{Baglam, Skin, kayit};
-use crate::{ayarlar::Ayarlar, ayarlar_paneli, dil::Dil, kisayol, pencere, yazi};
+use crate::{ayarlar::Ayarlar, ayarlar_paneli, boyut::Boyut, dil::Dil, kisayol, pencere, yazi};
 use canmeter_core::{Motor, stats::SavasAnlik};
 use std::time::{Duration, Instant};
-/// Overlay genişliği (nokta); mockup'lar 440 px.
-const GENISLIK: f32 = 440.0;
 /// Ayarlar paneli açıkken en az bu kadar yükseklik (nokta).
 const PANEL_YUKSEKLIK: f32 = 380.0;
+/// Ölçek değişince ayar dosyası bu kadar sessizlikten sonra yazılır (sürükleme boyunca değil).
+const OLCEK_KAYIT_GECIKMESI: Duration = Duration::from_secs(1);
 pub struct Uygulama {
     ayarlar: Ayarlar,
     kalici: Ayarlar,
@@ -16,8 +16,9 @@ pub struct Uygulama {
     motor: Motor,
     son: Option<SavasAnlik>,
     onceki: Instant,
-    /// Pencereye en son verilen yükseklik (nokta); içerik değişince güncellenir.
-    yukseklik: f32,
+    boyut: Boyut,
+    /// Son ölçek değişiminin zamanı; kayıt gecikmeli.
+    olcek_zamani: Option<Instant>,
 }
 
 impl Uygulama {
@@ -26,6 +27,7 @@ impl Uygulama {
         cc.egui_ctx.all_styles_mut(|stil| stil.animation_time = 0.0);
         yazi::yukle(&cc.egui_ctx);
         pencere::kenarlik_kaldir(cc);
+        cc.egui_ctx.set_zoom_factor(ayarlar.olcek);
         Self {
             skin: kayit::bul(&ayarlar.skin),
             ayarlar,
@@ -35,7 +37,8 @@ impl Uygulama {
             motor: Motor::demo(7),
             son: None,
             onceki: Instant::now(),
-            yukseklik: 0.0,
+            boyut: Boyut::default(),
+            olcek_zamani: None,
         }
     }
     fn kaydet(&mut self, onceki_dil: Dil) {
@@ -93,18 +96,22 @@ impl eframe::App for Uygulama {
         {
             self.kaydet(onceki_dil);
         }
-        // Pencere içerik kadar yüksek; ayarlar paneli açıkken ona da yer kalır.
+        // Pencere içerik kadar yüksek; ayarlar paneli açıkken ona da yer kalır. Genişlik kullanıcıdan.
         let hedef = if self.ayarlar_acik {
             icerik.max(PANEL_YUKSEKLIK)
         } else {
             icerik
+        };
+        if self.boyut.kare(&ctx, hedef, &mut self.ayarlar.olcek) {
+            self.olcek_zamani = Some(Instant::now());
         }
-        .ceil();
-        if (hedef - self.yukseklik).abs() >= 1.0 {
-            self.yukseklik = hedef;
-            ctx.send_viewport_cmd(egui::ViewportCommand::InnerSize(egui::vec2(
-                GENISLIK, hedef,
-            )));
+        if self
+            .olcek_zamani
+            .is_some_and(|t| t.elapsed() >= OLCEK_KAYIT_GECIKMESI)
+        {
+            self.olcek_zamani = None;
+            self.kalici.olcek = self.ayarlar.olcek;
+            self.kalici.kaydet();
         }
         ctx.request_repaint_after(Duration::from_millis(250));
     }

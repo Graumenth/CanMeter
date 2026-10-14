@@ -15,6 +15,8 @@ pub struct Ayarlar {
     pub zemin_renk: Option<[u8; 3]>,
     pub zemin_opaklik: f32,
     pub toplam_goster: bool,
+    /// Overlay ölçeği (1.0 = 440 px genişlik); kenardan sürükleyince değişir.
+    pub olcek: f32,
 }
 
 impl Default for Ayarlar {
@@ -25,6 +27,7 @@ impl Default for Ayarlar {
             zemin_renk: None,
             zemin_opaklik: 0.92,
             toplam_goster: true,
+            olcek: 1.0,
         }
     }
 }
@@ -35,7 +38,10 @@ impl Ayarlar {
             .and_then(|yol| fs::read_to_string(yol).ok())
             .and_then(|metin| toml::from_str(&metin).ok())
             .unwrap_or_default();
-        if !ayarlar.zemin_opaklik.is_finite() || !(0.3..=1.0).contains(&ayarlar.zemin_opaklik) {
+        if !ayarlar.zemin_opaklik.is_finite()
+            || !(0.3..=1.0).contains(&ayarlar.zemin_opaklik)
+            || !(0.5..=3.0).contains(&ayarlar.olcek)
+        {
             return Self::default();
         }
         ayarlar
@@ -66,6 +72,7 @@ impl Ayarlar {
         kalici.zemin_renk = self.zemin_renk;
         kalici.zemin_opaklik = self.zemin_opaklik;
         kalici.toplam_goster = self.toplam_goster;
+        kalici.olcek = self.olcek;
         kalici.kaydet();
     }
 
@@ -101,6 +108,7 @@ mod testler {
                 zemin_renk: Some([12, 34, 56]),
                 zemin_opaklik: 0.3,
                 toplam_goster: false,
+                olcek: 1.5,
             },
         ] {
             let metin = toml::to_string(&ayarlar).unwrap();
