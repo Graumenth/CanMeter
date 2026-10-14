@@ -3,13 +3,15 @@
 > AION 2 için pasif, ağ-dinleme tabanlı hasar ölçer (damage meter). Windows.
 
 ## Ne
-Oyunun sunucudan gelen paketlerini Npcap ile okur, savaş olaylarını (hasar, iyileştirme, buff)
-çözer ve canlı DPS/HPS, beceri kırılımı ve savaş geçmişi gösterir. Oyun istemcisine dokunmaz:
-enjeksiyon yok, bellek okuma yok, sunucuya paket gönderme yok.
+CanMeter, AION 2 sunucusundan gelen paketleri Windows'ta Npcap ile pasif olarak dinler.
+Bu paketlerdeki hasar ve iyileştirme olaylarını, ayrıca buff bilgilerini çözer.
+Canlı DPS/HPS değerlerini ve beceri kırılımını gösterir, savaş geçmişini tutar.
+Oyun istemcisine enjeksiyon yapmaz ve belleğini okumaz. Sunucuya paket göndermez.
 
 ## Neden
-Mevcut meter'lar ya kapalı kaynak ve imzasız (kime güvendiğin belli değil), ya da başka
-dillerde ve bizim ihtiyacımıza göre değil. CanMeter kaynağı elimizde, Türkçe arayüzlü, sade.
+Mevcut meter'lar ya kapalı kaynak ve imzasız, ya da bizim ihtiyacımıza göre değil.
+CanMeter'da kaynak kodu elimizde, gerektiğinde kendimiz değişiklik yapabiliyoruz.
+Arayüzü Türkçe yaptık. İhtiyacımız olan bilgileri gösteren sade bir meter olsun istedik.
 
 ## Yapı
 - `crates/core`: Rust çekirdek (yakalama, protokol, savaş olayları, istatistik, replay).

@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.0.4 (2026-10-14)
+### Değişti
+- README'nin tanıtım metni (Ne / Neden) daha doğal bir dille yeniden yazıldı; içerik aynı.
+
 ## 0.0.3 (2026-10-14)
 ### Yeni
 - Geliştirici aracı `kaydet`: seçilen adaptördeki TCP trafiğini `kayitlar/<tarih>.pcap` dosyasına
