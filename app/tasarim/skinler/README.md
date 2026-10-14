@@ -2,16 +2,16 @@
 
 Her dosya tek başına açılan HTML+CSS mockup'tır (JavaScript yok, görsel yok). Sahip 2026-10-14'te iki
 turluk tasarım yarışmasından bu altısını skin seçeneği olarak seçti. Skin'ler React'e
-`app/src/ozellikler/overlay/skinler/<ad>/` altına taşınır; mockup burada tasarım kaynağı olarak kalır.
+`app/src/ozellikler/overlay/skinler/<ad>/` altına taşınır. Adlar görünüme göre, modelden bağımsızdır (sahip kararı); mockup burada tasarım kaynağı olarak kalır.
 
 | Skin | Kaynak | Durum |
 |---|---|---|
-| sonnet-v2 | Claude Sonnet 5.5, 2. tur (özgün brief) | **varsayılan**, React'e taşındı |
-| sonnet-v1 | Claude Sonnet 5.5, 1. tur | React'e taşındı |
-| astra-v1 | Codex gpt-6-astra, 1. tur | React'e taşındı |
-| sol-v2 | Codex gpt-5.6-sol, 2. tur | React'e taşındı |
-| glm-v1 | GLM 5.3, 1. tur | React'e taşındı |
-| glm-v2 | GLM 5.3, 2. tur | React'e taşındı |
+| gece (Gece) | Claude Sonnet 5.5, 2. tur (özgün brief) | **varsayılan**, React'e taşındı |
+| kor (Kor) | Claude Sonnet 5.5, 1. tur | React'e taşındı |
+| sis (Sis) | Codex gpt-6-astra, 1. tur | React'e taşındı |
+| obsidyen (Obsidyen) | Codex gpt-5.6-sol, 2. tur | React'e taşındı |
+| kehribar (Kehribar) | GLM 5.3, 1. tur | React'e taşındı |
+| komur (Kömür) | GLM 5.3, 2. tur | React'e taşındı |
 
 Tur 1 brief'i: LOXIN benzeri, veri ve ölçü sabit. Tur 2 brief'i: "tamamen özgün ol, damage meter olsun",
 yalnız veri verildi. Ortak veri: savaş 1:01, Ancient Guardian %54 / 1:10 kaldı, 6 oyuncu

@@ -7,9 +7,14 @@ import { metin } from "./metin";
 export const Toplam = memo(function Toplam({ savas, dil }: { savas: SavasAnlik; dil: Dil }) {
   const m = metin[dil];
   const dpsToplam = savas.oyuncular.reduce((toplam, oyuncu) => toplam + oyuncu.dps, 0);
-  return <p className="toplam">
-    {m.toplamDps} {kisalt(dpsToplam)}
-    {" · "}
-    {m.hasar} {kisalt(savas.toplam_hasar)}
-  </p>;
+  return <section className="toplam" aria-label={m.toplamDps}>
+    <div className="toplam-deger">
+      <span className="toplam-etiket">{m.toplamDps}</span>
+      <strong>{kisalt(dpsToplam)}</strong>
+    </div>
+    <div className="toplam-deger toplam-hasar">
+      <span className="toplam-etiket">{m.hasar}</span>
+      <strong>{kisalt(savas.toplam_hasar)}</strong>
+    </div>
+  </section>;
 });

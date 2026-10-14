@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.0.11 (2026-10-14)
+### Değişti
+- Görünüm adları: Gece, Kor, Sis, Obsidyen, Kehribar, Kömür (önce model adları).
+- Her görünümün üstünde büyük rakamlarla toplam DPS (solda) ve toplam hasar (sağda); Gece'deki parti
+  payı şeridi kaldırıldı.
+
 ## 0.0.10 (2026-10-14)
 ### Yeni
 - Altı farklı overlay görünümü (skin); ayarlardan ya da Ctrl+Shift+S ile değişir. Varsayılan: Sonnet v2

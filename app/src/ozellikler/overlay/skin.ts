@@ -13,7 +13,7 @@ export interface SkinOzellikleri {
 }
 
 export interface Skin {
-  ad: string;      // "sonnet-v2" gibi, localStorage anahtarı
+  ad: string;      // "gece" gibi, localStorage anahtarı
   etiket: string;  // kullanıcıya görünen ad
   Bilesen: ComponentType<SkinOzellikleri>;
 }
