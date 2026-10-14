@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.0.9 (2026-10-14)
+### Değişti
+- Görünürde değişiklik yok; proje yönerge dosyası depo dışına alındı (iç düzen).
+
 ## 0.0.8 (2026-10-14)
 ### Düzeltmeler
 - `kaydet` aracı kayıtları her zaman proje kökündeki `kayitlar/` klasörüne yazar; nereden

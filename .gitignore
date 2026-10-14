@@ -1,5 +1,7 @@
 # Claude Code config: git'e atılmaz, makineler arası Syncthing ile paylaşılır (GENEL §10.1)
 .claude/
+# Proje yönergesi de git dışı (sahip kararı 2026-10-14), Syncthing ile paylaşılır
+CLAUDE.md
 
 # Sır: yalnız CanMeterCC\sirlar\ (GENEL §3)
 .env
