@@ -1,5 +1,12 @@
 # PATCHNOTES
 
+## 0.0.3 (2026-10-14)
+### Yeni
+- Geliştirici aracı `kaydet`: seçilen adaptördeki TCP trafiğini `kayitlar/<tarih>.pcap` dosyasına
+  kaydeder; her 10 saniyede en yoğun akışları, bitişte "oyun sunucusu adayı"nı (80/443 dışı,
+  en çok veri gelen uç) yazar. Ctrl+C ile temiz kapanır, `--sure` ile süreli kayıt.
+  Hiçbir paket göndermez. Oyuncu adı içerebileceği için `kayitlar/` git dışıdır.
+
 ## 0.0.2 (2026-10-14)
 ### Yeni
 - Ağ adaptörü seçimi: Npcap'in gördüğü adaptörler listelenir, internete çıkan adaptör
