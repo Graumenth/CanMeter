@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.2.4 (2026-10-14)
+### Değişti
+- Sürüm numarası 0.2.4: görünümler ve ayarlar paketi ile ilk overlay ayrı yetenekler olarak sayıldı.
+  Davranış değişikliği yok.
+
 ## 0.1.0 (2026-10-14)
 ### Değişti
 - Sürüm 0.1.0: 0.0.7'den bu yana gelen görünümler, ayarlar paneli ve dil seçeneği yeni yetenekler
