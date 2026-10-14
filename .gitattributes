@@ -1,0 +1,18 @@
+* text=auto
+*.md text
+*.rs text
+*.ts text
+*.tsx text
+*.js text
+*.json text
+*.toml text
+*.yaml text
+*.yml text
+*.css text
+*.html text
+*.sh text eol=lf
+*.png binary
+*.ico binary
+*.icns binary
+*.pcap binary
+*.pcapng binary

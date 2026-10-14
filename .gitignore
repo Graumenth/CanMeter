@@ -1,0 +1,20 @@
+# Claude Code config: git'e atılmaz, makineler arası Syncthing ile paylaşılır (GENEL §10.1)
+.claude/
+
+# Sır: yalnız CanMeterCC\sirlar\ (GENEL §3)
+.env
+
+# Build sayacı: git dışı, Syncthing ile taşınır (GENEL §1)
+version.properties
+
+# Rust
+target/
+
+# Node / Tauri
+app/node_modules/
+app/dist/
+app/src-tauri/target/
+app/src-tauri/gen/schemas/
+
+# Pcap kayıtları: oyuncu adları içerir, git'e girmez
+kayitlar/

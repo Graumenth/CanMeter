@@ -1,0 +1,11 @@
+[package]
+name = "canmeter-core"
+description = "CanMeter çekirdeği: yakalama, protokol, savaş olayları, istatistik, replay"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]

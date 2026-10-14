@@ -1,0 +1,7 @@
+// BELGE (GENEL §10.3): Syncthing yalnız kök .stignore'u okur; bu dosya projenin senkron-dışı
+// sınıflarını belgeler. Aynı satırlar kök \Projeler\.stignore dosyasına da yazılır.
+(?d)/CanMeter/target
+(?d)/CanMeter/app/node_modules
+(?d)/CanMeter/app/dist
+(?d)/CanMeter/app/src-tauri/target
+/CanMeter/kayitlar
