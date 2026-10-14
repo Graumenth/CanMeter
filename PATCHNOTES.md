@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.0.6 (2026-10-14)
+### Yeni
+- Masaüstü uygulama kabuğu: şeffaf, çerçevesiz, hep üstte kalan overlay penceresi. Çekirdekten
+  saniyede en çok 4 kez, yalnız değişiklik varsa veri alır (düşük işlemci kullanımı).
+
 ## 0.0.5 (2026-10-14)
 ### Yeni
 - Çekirdek, arayüze savaş durumunu (oyuncular, DPS, pay, hedef HP ve kalan süre) tek bir
