@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.0.5 (2026-10-14)
+### Yeni
+- Çekirdek, arayüze savaş durumunu (oyuncular, DPS, pay, hedef HP ve kalan süre) tek bir
+  sözleşmeyle verir. Oyuna girmeden arayüz geliştirmek için demo savaş üreteci eklendi.
+
 ## 0.0.4 (2026-10-14)
 ### Değişti
 - README'nin tanıtım metni (Ne / Neden) daha doğal bir dille yeniden yazıldı; içerik aynı.
