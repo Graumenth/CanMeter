@@ -1,5 +1,4 @@
 import "./stil/tema.css";
-import "./ozellikler/overlay/overlay.css";
 import {
   Overlay,
 } from "./ozellikler/overlay/Overlay";

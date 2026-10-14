@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { kisalt, sure, yuzde } from "./sayi";
+import { kisalt, sure, yuzde, yuzdeTam } from "./sayi";
 
 describe("sayi yardimcilari", () => {
   it("sayilari kisaltir", () => {
@@ -10,7 +10,13 @@ describe("sayi yardimcilari", () => {
   });
 
   it("orani yuzdeye cevirir", () => {
-    expect(yuzde(0.4441)).toBe("44.4%");
+    expect(yuzde(0.4441)).toBe("%44.4");
+    expect(yuzde(0.4441, "en")).toBe("44.4%");
+  });
+
+  it("yuzde degerini tam sayiya cevirir", () => {
+    expect(yuzdeTam(54.4)).toBe("%54");
+    expect(yuzdeTam(54.4, "en")).toBe("54%");
   });
 
   it("sureyi saat ve dakika olarak gosterir", () => {

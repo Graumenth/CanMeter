@@ -1,5 +1,7 @@
 /// <reference lib="esnext.disposable" />
 
+import type { Dil } from "./dil";
+
 const birimler = ["", "K", "M", "B"] as const;
 
 /** Sayiyi en fazla uc anlamli basamakla kisaltir. */
@@ -17,8 +19,15 @@ export function kisalt(n: number): string {
 }
 
 /** Oran olarak verilen yuzdeyi tek ondalikla gosterir. */
-export function yuzde(p: number): string {
-  return `${(p * 100).toFixed(1)}%`;
+export function yuzde(p: number, dil: Dil = "tr"): string {
+  const deger = (p * 100).toFixed(1);
+  return dil === "tr" ? `%${deger}` : `${deger}%`;
+}
+
+/** Yuzde degerini en yakin tam sayiya yuvarlayarak gosterir. */
+export function yuzdeTam(p: number, dil: Dil = "tr"): string {
+  const deger = Math.round(p);
+  return dil === "tr" ? `%${deger}` : `${deger}%`;
 }
 
 /** Milisaniyeyi dakika:saniye veya saat:dakika:saniye yapar. */

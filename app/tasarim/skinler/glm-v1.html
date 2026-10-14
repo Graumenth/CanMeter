@@ -1,0 +1,580 @@
+<!--
+Fikir: soğuk lacivert panelde tek sıcak vurgu (altın); sınıf rengi yalnız ikonda, isimde ve taban barında sızdırıldı, böylece renk gürültüsü olmadan "kim, ne kadar" hikâyesi net anlatılıyor.
+Tipografi iki katman: arayüzde Segoe UI Variable, sayılarda tabular Cascadia Mono; DPS ve pay kolonları sağa hizalı, hairline ayraçlar ve 4/8/12 px boşluk ritmi genişlikten bağımsız hizayı koruyor.
+Panel %94 opak, backdrop-filter ve animasyon yok (bar genişliğinde 200 ms hariç); tema :root değişkenlerinde, 300 px'e daralma container query ile çözülüyor: sınıf adı ikona düşer, hiçbir satır kırılmaz.
+-->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CanMeter</title>
+<style>
+  :root {
+    /* panel */
+    --panel-w: 440px;
+    --bg-top: rgba(22, 28, 48, 0.94);
+    --bg-bot: rgba(12, 16, 28, 0.94);
+    --line: rgba(140, 164, 220, 0.16);
+    --line-soft: rgba(140, 164, 220, 0.08);
+    --edge-light: rgba(176, 200, 255, 0.32);
+    /* metin */
+    --text: #f1f4fc;
+    --text-2: #a9b4d0;
+    --text-3: #74809d;
+    --text-4: #5a6683;
+    /* vurgular */
+    --gold: #f2c46d;
+    --gold-strong: #ffd58a;
+    --heal: #55d68b;
+    --death: #e0767e;
+    --hp: #f4565f;
+    --hp-text: #ff9c8a;
+    /* sınıf renkleri */
+    --c-gladiator: #e05a4e;
+    --c-templar: #7fa8f5;
+    --c-assassin: #a3d65a;
+    --c-ranger: #5fcf78;
+    --c-sorcerer: #b08cf0;
+    --c-spiritmaster: #c76bd9;
+    --c-cleric: #f3d660;
+    --c-chanter: #e07d2c;
+    /* tipografi ve ızgara */
+    --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+    --font-display: "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", sans-serif;
+    --font-mono: ui-monospace, "Cascadia Mono", "Consolas", monospace;
+    --cols: 26px minmax(0, 64px) minmax(0, 1fr) 50px 44px;
+    --gap: 8px;
+    --pad-x: 12px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    color-scheme: dark;
+    font-family: var(--font-ui);
+    color: var(--text);
+    background:
+      radial-gradient(1200px 800px at 50% -18%, rgba(56, 86, 148, 0.34), transparent 62%),
+      radial-gradient(900px 640px at 88% 112%, rgba(38, 58, 108, 0.30), transparent 58%),
+      radial-gradient(700px 500px at 6% 104%, rgba(22, 52, 62, 0.22), transparent 55%),
+      linear-gradient(172deg, #070a12 0%, #0a1120 52%, #05070d 100%);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- panel ---------- */
+
+  .panel {
+    position: relative;
+    width: var(--panel-w);
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--bg-top), var(--bg-bot));
+    box-shadow:
+      inset 0 1px 0 rgba(198, 216, 255, 0.10),
+      0 24px 60px rgba(1, 3, 9, 0.65),
+      0 6px 18px rgba(1, 3, 9, 0.50);
+    overflow: hidden;
+    user-select: none;
+    container: pm / inline-size;
+  }
+
+  .panel::before {
+    /* ince kenar ışığı */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 14%;
+    right: 14%;
+    height: 1px;
+    z-index: 3;
+    background: linear-gradient(90deg, transparent, var(--edge-light), transparent);
+  }
+
+  /* ---------- başlık çubuğu ---------- */
+
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    height: 34px;
+    padding: 0 8px 0 var(--pad-x);
+    border-bottom: 1px solid var(--line-soft);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0));
+  }
+
+  .brand { display: flex; align-items: center; gap: 7px; min-width: 0; }
+  .logo { display: block; }
+  .brand-name {
+    font: 600 12.5px/1 var(--font-display);
+    letter-spacing: 0.02em;
+    color: var(--text-2);
+    white-space: nowrap;
+  }
+  .brand-name b { color: var(--text); font-weight: 700; }
+
+  .tb-sep { width: 1px; height: 11px; background: rgba(148, 170, 218, 0.25); }
+  .tb-time {
+    font: 500 11.5px/1 var(--font-mono);
+    color: var(--text-2);
+    letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .tb-mode {
+    font: 700 11px/1 var(--font-ui);
+    letter-spacing: 0.09em;
+    color: var(--gold-strong);
+    background: rgba(242, 196, 109, 0.10);
+    border: 1px solid rgba(242, 196, 109, 0.30);
+    border-radius: 5px;
+    padding: 3px 7px 2px;
+  }
+  .tb-flex { flex: 1; }
+
+  .lock {
+    width: 24px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    color: #93a2c2;
+    cursor: pointer;
+  }
+  .lock:hover {
+    color: var(--text);
+    border-color: rgba(148, 170, 218, 0.35);
+    background: rgba(255, 255, 255, 0.07);
+  }
+  .lock:focus-visible { outline: 1px solid var(--gold); outline-offset: 1px; }
+  .lock svg { display: block; }
+
+  /* ---------- hedef satırı ---------- */
+
+  .target { padding: 9px var(--pad-x) 11px; border-bottom: 1px solid var(--line-soft); }
+
+  .target-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
+  .target-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    font: 600 12.5px/1.2 var(--font-display);
+    letter-spacing: 0.01em;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .target-name svg { color: var(--hp); flex: 0 0 auto; }
+
+  .target-meta { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .t-hp { font: 700 12px/1 var(--font-mono); color: var(--hp-text); letter-spacing: 0.01em; }
+  .t-sep { width: 1px; height: 10px; background: rgba(148, 170, 218, 0.22); }
+  .t-time { font: 400 11px/1 var(--font-mono); color: var(--text-3); }
+
+  .hp-track {
+    margin-top: 7px;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+  }
+  .hp-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #d8434d, #ff8d74);
+    box-shadow: 0 0 8px rgba(244, 86, 95, 0.55);
+    transition: width 0.2s ease;
+  }
+
+  /* ---------- tablo ---------- */
+
+  .head,
+  .row {
+    display: grid;
+    grid-template-columns: var(--cols);
+    column-gap: var(--gap);
+    align-items: center;
+    padding-inline: var(--pad-x);
+  }
+
+  .head {
+    height: 24px;
+    background: rgba(8, 11, 20, 0.55);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .h {
+    font: 600 11px/1 var(--font-ui);
+    letter-spacing: 0.06em;
+    color: var(--text-4);
+    white-space: nowrap;
+  }
+  .h-dps, .h-share { text-align: right; }
+  .caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 4px;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 3.5px solid currentColor;
+    opacity: 0.75;
+    vertical-align: 1px;
+  }
+
+  .rows { list-style: none; margin: 0; padding: 0; }
+
+  .row { position: relative; padding-block: 5px 8px; }
+
+  .row::before {
+    /* sınıf renginin satıra sızması */
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--c) 13%, transparent), transparent 52%);
+  }
+
+  .rank {
+    font: 500 11px/1 var(--font-mono);
+    color: var(--text-4);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cls { display: flex; align-items: center; gap: 5px; min-width: 0; color: var(--c); }
+  .cls svg { flex: 0 0 auto; display: block; }
+  .cls-name {
+    font: 500 11px/1 var(--font-ui);
+    letter-spacing: 0.01em;
+    color: var(--text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .who {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    font: 600 12px/1 var(--font-ui);
+    color: var(--c);
+    white-space: nowrap;
+  }
+  .nm { overflow: hidden; text-overflow: ellipsis; }
+
+  .me-tag {
+    flex: 0 0 auto;
+    font: 700 11px/1 var(--font-ui);
+    letter-spacing: 0.05em;
+    color: var(--gold-strong);
+    background: rgba(242, 196, 109, 0.12);
+    border: 1px solid rgba(242, 196, 109, 0.32);
+    border-radius: 999px;
+    padding: 2px 6px 1px;
+  }
+
+  .heal {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font: 500 11px/1 var(--font-ui);
+    color: var(--heal);
+  }
+  .heal svg { display: block; opacity: 0.9; }
+  .heal .hw { opacity: 0.75; }
+  .heal b { font: 600 11px/1 var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .dead-tag {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font: 700 11px/1 var(--font-ui);
+    letter-spacing: 0.07em;
+    color: var(--death);
+  }
+  .dead-tag svg { display: block; }
+
+  .dps {
+    font: 700 13px/1 var(--font-mono);
+    color: var(--text);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .share {
+    font: 500 11.5px/1 var(--font-mono);
+    color: var(--text-3);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* satır altındaki pay barı */
+  .meter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: rgba(148, 170, 218, 0.07);
+  }
+  .fill {
+    display: block;
+    height: 100%;
+    background: var(--c);
+    background: linear-gradient(90deg, color-mix(in srgb, var(--c) 45%, transparent), var(--c));
+    box-shadow: 0 0 6px color-mix(in srgb, var(--c) 55%, transparent);
+    transition: width 0.2s ease;
+  }
+
+  /* yakalayan oyuncu: belirgin ama bağırmayan */
+  .row.me {
+    background: linear-gradient(90deg, rgba(242, 196, 109, 0.075), rgba(242, 196, 109, 0.015) 62%, transparent);
+    box-shadow: inset 2px 0 0 rgba(242, 196, 109, 0.50);
+  }
+
+  /* ölü oyuncu */
+  .row.dead .who { color: color-mix(in srgb, var(--c) 40%, #7b86a1); }
+  .row.dead .cls { color: color-mix(in srgb, var(--c) 45%, #6b7690); }
+  .row.dead .cls-name { color: #4b5670; }
+  .row.dead .dps { color: #8791ab; }
+  .row.dead .rank, .row.dead .share { color: #4b5670; }
+  .row.dead::before { opacity: 0.35; }
+  .row.dead .fill { opacity: 0.35; box-shadow: none; }
+
+  /* ---------- alt bilgi ---------- */
+
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 25px;
+    padding-inline: var(--pad-x);
+    border-top: 1px solid var(--line-soft);
+    background: rgba(8, 11, 20, 0.45);
+  }
+  .demo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font: 500 11px/1 var(--font-ui);
+    color: var(--text-3);
+  }
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #3fd47f;
+    box-shadow: 0 0 6px rgba(63, 212, 127, 0.65);
+  }
+  .ver {
+    font: 500 11px/1 var(--font-mono);
+    letter-spacing: 0.02em;
+    color: var(--text-4);
+  }
+
+  /* ---------- daralma: 300 px'e kadar ---------- */
+
+  @container pm (max-width: 384px) {
+    .head, .row { grid-template-columns: 26px 16px minmax(0, 1fr) 48px 42px; }
+    .titlebar, .target, .head, .row, .foot { padding-inline: 9px; }
+    .cls-name, .heal .hw { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+
+  <header class="titlebar" title="Sürükle: paneli taşı">
+    <div class="brand">
+      <svg class="logo" width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="lg-pulse" x1="0" y1="0" x2="16" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#f6d397"/>
+            <stop offset="1" stop-color="#efa045"/>
+          </linearGradient>
+        </defs>
+        <path d="M1.6 9h2.9l2-5.4 3 8.2 2-5.2h2.9" stroke="url(#lg-pulse)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-name"><b>Can</b>Meter</span>
+    </div>
+    <span class="tb-sep"></span>
+    <span class="tb-time">1:01</span>
+    <span class="tb-sep"></span>
+    <span class="tb-mode">DPS</span>
+    <span class="tb-flex"></span>
+    <button class="lock" type="button" title="Kilitli: tıklamalar oyuna geçer" aria-label="Kilit düğmesi">
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+        <path d="M4.2 5V4a1.8 1.8 0 0 1 3.6 0v1" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <rect x="3.1" y="5" width="5.8" height="4.4" rx="1" fill="currentColor"/>
+      </svg>
+    </button>
+  </header>
+
+  <section class="target">
+    <div class="target-line">
+      <span class="target-name">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+          <path d="M1.6 3.9V2.5c0-.5.4-.9.9-.9h1.4M8.1 1.6h1.4c.5 0 .9.4.9.9v1.4M10.4 8.1v1.4c0 .5-.4.9-.9.9H8.1M3.9 10.4H2.5a.9.9 0 0 1-.9-.9V8.1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          <circle cx="6" cy="6" r="1.25" fill="currentColor"/>
+        </svg>
+        Ancient Guardian
+      </span>
+      <span class="target-meta">
+        <span class="t-hp">HP %54</span>
+        <span class="t-sep"></span>
+        <span class="t-time">1:10 kaldı</span>
+      </span>
+    </div>
+    <div class="hp-track"><div class="hp-fill" style="width:54%"></div></div>
+  </section>
+
+  <div class="head">
+    <span class="h h-rank">sıra</span>
+    <span class="h h-cls">sınıf</span>
+    <span class="h h-who">oyuncu</span>
+    <span class="h h-dps">DPS<i class="caret" aria-hidden="true"></i></span>
+    <span class="h h-share">pay</span>
+  </div>
+
+  <ol class="rows">
+
+    <li class="row" style="--c: var(--c-gladiator)">
+      <span class="rank">1</span>
+      <span class="cls" title="Gladiator">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
+          <path d="M10.4 1.6 6 6"/>
+          <path d="M4.2 4.9l2.9 2.9"/>
+          <path d="M5.2 6.9 3.7 8.4"/>
+          <path d="M3.1 9l-.7.7"/>
+        </svg>
+        <span class="cls-name">Gladiator</span>
+      </span>
+      <span class="who"><span class="nm">Ozan</span></span>
+      <span class="dps">113K</span>
+      <span class="share">%23.6</span>
+      <span class="meter"><span class="fill" style="width:23.6%"></span></span>
+    </li>
+
+    <li class="row me" style="--c: var(--c-sorcerer)">
+      <span class="rank">2</span>
+      <span class="cls" title="Sorcerer">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+          <path d="M6 1.3l1.1 3.6 3.6 1.1-3.6 1.1L6 10.7 4.9 7.1 1.3 6l3.6-1.1z"/>
+          <circle cx="10.1" cy="1.9" r="0.8"/>
+        </svg>
+        <span class="cls-name">Sorcerer</span>
+      </span>
+      <span class="who"><span class="nm">Kaelith</span><span class="me-tag">BEN</span></span>
+      <span class="dps">112K</span>
+      <span class="share">%23.5</span>
+      <span class="meter"><span class="fill" style="width:23.5%"></span></span>
+    </li>
+
+    <li class="row" style="--c: var(--c-assassin)">
+      <span class="rank">3</span>
+      <span class="cls" title="Assassin">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true">
+          <path d="M10.5 1.5c-3.1.6-5.3 2.4-6.4 4.9l1.5 1.5c2.5-1.1 4.3-3.3 4.9-6.4z"/>
+          <circle cx="3.4" cy="8.6" r="1"/>
+        </svg>
+        <span class="cls-name">Assassin</span>
+      </span>
+      <span class="who"><span class="nm">Nyra</span></span>
+      <span class="dps">102K</span>
+      <span class="share">%21.4</span>
+      <span class="meter"><span class="fill" style="width:21.4%"></span></span>
+    </li>
+
+    <li class="row" style="--c: var(--c-chanter)">
+      <span class="rank">4</span>
+      <span class="cls" title="Chanter">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true">
+          <circle cx="6" cy="2.5" r="1.2"/>
+          <path d="M6 3.7v6.8"/>
+          <path d="M6 6.3h2.3M6 8.1H3.7"/>
+        </svg>
+        <span class="cls-name">Chanter</span>
+      </span>
+      <span class="who">
+        <span class="nm">Mira</span>
+        <span class="heal">
+          <svg width="9" height="9" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><path d="M4 .8h2v3.2h3.2v2H6v3.2H4V6H.8V4h3.2z"/></svg>
+          <span class="hw">iyileştirme</span>
+          <b>20K HPS</b>
+        </span>
+      </span>
+      <span class="dps">59.1K</span>
+      <span class="share">%12.4</span>
+      <span class="meter"><span class="fill" style="width:12.4%"></span></span>
+    </li>
+
+    <li class="row dead" style="--c: var(--c-templar)">
+      <span class="rank">5</span>
+      <span class="cls" title="Templar">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 1.5l3.9 1.4v3.2c0 2.4-1.7 3.7-3.9 4.4-2.2-.7-3.9-2-3.9-4.4V2.9z"/>
+        </svg>
+        <span class="cls-name">Templar</span>
+      </span>
+      <span class="who">
+        <span class="nm">Dorn</span>
+        <span class="dead-tag">
+          <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+            <path fill="currentColor" d="M6 .9a4.2 4.2 0 0 0-4.2 4.2c0 1.5.8 2.5 1.7 3.1v1.1c0 .4.4.8.8.8h.7V9h2v1.1h.7c.4 0 .8-.4.8-.8V8.2c.9-.6 1.7-1.6 1.7-3.1A4.2 4.2 0 0 0 6 .9z"/>
+            <circle cx="4.4" cy="5.4" r="0.95" fill="#111830"/>
+            <circle cx="7.6" cy="5.4" r="0.95" fill="#111830"/>
+          </svg>
+          ÖLÜ
+        </span>
+      </span>
+      <span class="dps">46.2K</span>
+      <span class="share">%9.7</span>
+      <span class="meter"><span class="fill" style="width:9.7%"></span></span>
+    </li>
+
+    <li class="row" style="--c: var(--c-cleric)">
+      <span class="rank">6</span>
+      <span class="cls" title="Cleric">
+        <svg width="13" height="13" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" aria-hidden="true">
+          <circle cx="6" cy="6" r="4.4"/>
+          <path d="M6 3.8v4.4M3.8 6h4.4"/>
+        </svg>
+        <span class="cls-name">Cleric</span>
+      </span>
+      <span class="who">
+        <span class="nm">Elara</span>
+        <span class="heal">
+          <svg width="9" height="9" viewBox="0 0 10 10" fill="currentColor" aria-hidden="true"><path d="M4 .8h2v3.2h3.2v2H6v3.2H4V6H.8V4h3.2z"/></svg>
+          <span class="hw">iyileştirme</span>
+          <b>30K HPS</b>
+        </span>
+      </span>
+      <span class="dps">45.4K</span>
+      <span class="share">%9.5</span>
+      <span class="meter"><span class="fill" style="width:9.5%"></span></span>
+    </li>
+
+  </ol>
+
+  <footer class="foot">
+    <span class="demo"><span class="dot"></span>Demo verisi</span>
+    <span class="ver">v0.0.7</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

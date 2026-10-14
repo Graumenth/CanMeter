@@ -1,0 +1,167 @@
+<!-- Fikir: "Tek şerit" yaklaşımı. Üstte tüm partiyi tek bir bölünmüş pay şeridi olarak gösterip kim ne kadar taşıyor sorusunu bir bakışta cevaplıyorum. -->
+<!-- Satırlarda bar yok, her oyuncunun adının altında ince bir "iz" var; rakam büyük ve sağa hizalı, iyileştirme ve ölüm gibi notlar küçük etiketlerle verilir. -->
+<!-- Benim satırım sol kenarda parlak bir çentikle işaretlenir; ölen oyuncu soluk ve üstü çizili görünür. -->
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CanMeter Overlay</title>
+<style>
+:root{
+  --bg:#0b0e14;
+  --panel:rgba(12,15,22,.9);
+  --line:rgba(255,255,255,.08);
+  --txt:#e8ecf4;
+  --dim:#8c95a8;
+  --faint:#566074;
+  --me:#ffd166;
+  --heal:#5ee0a0;
+  --hp:#ff6b57;
+  --c-glad:#f0883e;
+  --c-sorc:#b08cff;
+  --c-assa:#ff5d8f;
+  --c-chan:#5ad1e6;
+  --c-temp:#7aa2ff;
+  --c-cler:#f2e6a0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  font-family:"Segoe UI",system-ui,sans-serif;color:var(--txt);
+  background:
+    radial-gradient(900px 500px at 25% 20%,rgba(70,90,140,.28),transparent 60%),
+    radial-gradient(700px 500px at 80% 85%,rgba(120,60,90,.22),transparent 60%),
+    linear-gradient(160deg,#10141d,#06080c);
+}
+.panel{
+  width:440px;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);overflow:hidden;
+  backdrop-filter:blur(6px);
+}
+.num{font-variant-numeric:tabular-nums}
+
+/* üst: süre + hedef */
+.head{padding:10px 14px 8px;display:flex;align-items:center;gap:12px}
+.timer{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1}
+.timer small{display:block;font-size:9px;font-weight:600;letter-spacing:1.4px;color:var(--faint);margin-bottom:3px}
+.target{flex:1;min-width:0}
+.target .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px}
+.target .name{font-weight:600}
+.target .eta{color:var(--dim);font-size:11px}
+.target .eta b{color:var(--txt);font-weight:600}
+.hp{margin-top:5px;height:6px;border-radius:3px;background:rgba(255,255,255,.07);position:relative;overflow:hidden}
+.hp i{position:absolute;inset:0 auto 0 0;width:54%;background:linear-gradient(90deg,#c9382b,var(--hp));border-radius:3px}
+.hp u{position:absolute;top:0;bottom:0;width:1px;background:rgba(0,0,0,.55)}
+.hpv{font-size:15px;font-weight:700;color:var(--hp);width:44px;text-align:right}
+
+/* pay şeridi */
+.share{padding:0 14px 10px}
+.strip{display:flex;height:8px;gap:2px}
+.strip i{display:block;height:100%;border-radius:2px}
+.strip-lbl{display:flex;justify-content:space-between;margin-top:4px;font-size:9px;letter-spacing:1.2px;color:var(--faint);font-weight:600}
+
+/* liste */
+.list{border-top:1px solid var(--line)}
+.p{
+  position:relative;display:grid;grid-template-columns:22px 1fr auto;gap:0 10px;align-items:center;
+  padding:7px 14px 7px 16px;border-bottom:1px solid var(--line);
+}
+.p:last-child{border-bottom:0}
+.p .ic{width:22px;height:22px}
+.p .who{min-width:0}
+.p .nm{display:flex;align-items:baseline;gap:6px;font-size:13px;font-weight:600;line-height:1.1}
+.p .cl{font-size:10px;font-weight:500;color:var(--dim)}
+.tag{font-size:9px;font-weight:700;letter-spacing:.6px;padding:1px 5px;border-radius:3px;line-height:1.35}
+.tag.heal{color:var(--heal);background:rgba(94,224,160,.12)}
+.tag.dead{color:#ff8a8a;background:rgba(255,90,90,.14)}
+.tag.me{color:#1a1300;background:var(--me)}
+.trail{margin-top:5px;height:3px;border-radius:2px;background:rgba(255,255,255,.06);position:relative}
+.trail i{position:absolute;left:0;top:0;bottom:0;border-radius:2px;background:var(--c);box-shadow:0 0 8px var(--c)}
+.val{text-align:right;line-height:1}
+.val b{font-size:19px;font-weight:700;letter-spacing:-.3px}
+.val span{display:block;margin-top:3px;font-size:10.5px;color:var(--dim)}
+.p.me{background:linear-gradient(90deg,rgba(255,209,102,.1),transparent 70%)}
+.p.me::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:3px;border-radius:0 3px 3px 0;background:var(--me);box-shadow:0 0 10px var(--me)}
+.p.dead .nm span:first-child{text-decoration:line-through;text-decoration-color:rgba(255,138,138,.7)}
+.p.dead .ic,.p.dead .who,.p.dead .val{opacity:.45}
+.p.dead .trail i{box-shadow:none;background:repeating-linear-gradient(90deg,var(--c) 0 3px,transparent 3px 6px)}
+
+/* alt */
+.foot{display:flex;justify-content:space-between;align-items:center;padding:7px 14px;border-top:1px solid var(--line);font-size:10px;color:var(--faint);background:rgba(0,0,0,.25)}
+.demo{display:flex;align-items:center;gap:6px;color:#ffb86b;font-weight:600;letter-spacing:.4px}
+.demo i{width:6px;height:6px;border-radius:50%;background:#ffb86b}
+</style>
+</head>
+<body>
+<div class="panel">
+
+  <div class="head">
+    <div class="timer num"><small>SÜRE</small>1:01</div>
+    <div class="target">
+      <div class="row"><span class="name">Ancient Guardian</span><span class="eta">kalan <b class="num">~1:10</b></span></div>
+      <div class="hp"><i></i><u style="left:25%"></u><u style="left:50%"></u><u style="left:75%"></u></div>
+    </div>
+    <div class="hpv num">%54</div>
+  </div>
+
+  <div class="share">
+    <div class="strip">
+      <i style="flex:23.6;background:var(--c-glad)"></i>
+      <i style="flex:23.5;background:var(--c-sorc)"></i>
+      <i style="flex:21.4;background:var(--c-assa)"></i>
+      <i style="flex:12.4;background:var(--c-chan)"></i>
+      <i style="flex:9.7;background:var(--c-temp);opacity:.5"></i>
+      <i style="flex:9.5;background:var(--c-cler)"></i>
+    </div>
+    <div class="strip-lbl"><span>PARTİ PAYI</span><span>6 OYUNCU</span></div>
+  </div>
+
+  <div class="list">
+
+    <div class="p" style="--c:var(--c-glad)">
+      <svg class="ic" viewBox="0 0 22 22"><path d="M11 2l8 5v8l-8 5-8-5V7z" fill="none" stroke="var(--c-glad)" stroke-width="1.8"/><path d="M11 7v8M7.5 11h7" stroke="var(--c-glad)" stroke-width="1.6"/></svg>
+      <div class="who"><div class="nm"><span>Ozan</span><span class="cl">Gladiator</span></div><div class="trail"><i style="width:100%"></i></div></div>
+      <div class="val"><b class="num">113K</b><span class="num">%23.6</span></div>
+    </div>
+
+    <div class="p me" style="--c:var(--c-sorc)">
+      <svg class="ic" viewBox="0 0 22 22"><circle cx="11" cy="11" r="7.5" fill="none" stroke="var(--c-sorc)" stroke-width="1.8"/><path d="M11 5l2 4.5 4.5.5-3.4 3 1 4.5L11 15l-4.1 2.5 1-4.5-3.4-3 4.5-.5z" fill="var(--c-sorc)"/></svg>
+      <div class="who"><div class="nm"><span>Kaelith</span><span class="tag me">SEN</span><span class="cl">Sorcerer</span></div><div class="trail"><i style="width:99.1%"></i></div></div>
+      <div class="val"><b class="num">112K</b><span class="num">%23.5</span></div>
+    </div>
+
+    <div class="p" style="--c:var(--c-assa)">
+      <svg class="ic" viewBox="0 0 22 22"><path d="M4 18L18 4M18 4h-6M18 4v6" fill="none" stroke="var(--c-assa)" stroke-width="2" stroke-linecap="round"/><path d="M4 12l6 6" stroke="var(--c-assa)" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <div class="who"><div class="nm"><span>Nyra</span><span class="cl">Assassin</span></div><div class="trail"><i style="width:90.3%"></i></div></div>
+      <div class="val"><b class="num">102K</b><span class="num">%21.4</span></div>
+    </div>
+
+    <div class="p" style="--c:var(--c-chan)">
+      <svg class="ic" viewBox="0 0 22 22"><path d="M4 11c2-5 4-5 7 0s5 5 7 0" fill="none" stroke="var(--c-chan)" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="17" r="1.6" fill="var(--c-chan)"/></svg>
+      <div class="who"><div class="nm"><span>Mira</span><span class="cl">Chanter</span><span class="tag heal num">+20K HPS</span></div><div class="trail"><i style="width:52.3%"></i></div></div>
+      <div class="val"><b class="num">59.1K</b><span class="num">%12.4</span></div>
+    </div>
+
+    <div class="p dead" style="--c:var(--c-temp)">
+      <svg class="ic" viewBox="0 0 22 22"><path d="M11 2l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V5z" fill="none" stroke="var(--c-temp)" stroke-width="1.8"/></svg>
+      <div class="who"><div class="nm"><span>Dorn</span><span class="cl">Templar</span><span class="tag dead">ÖLDÜ</span></div><div class="trail"><i style="width:40.9%"></i></div></div>
+      <div class="val"><b class="num">46.2K</b><span class="num">%9.7</span></div>
+    </div>
+
+    <div class="p" style="--c:var(--c-cler)">
+      <svg class="ic" viewBox="0 0 22 22"><path d="M9 3h4v6h6v4h-6v6H9v-6H3V9h6z" fill="none" stroke="var(--c-cler)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <div class="who"><div class="nm"><span>Elara</span><span class="cl">Cleric</span><span class="tag heal num">+30K HPS</span></div><div class="trail"><i style="width:40.2%"></i></div></div>
+      <div class="val"><b class="num">45.4K</b><span class="num">%9.5</span></div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <span class="demo"><i></i>Demo verisi</span>
+    <span>CanMeter v0.0.7</span>
+  </div>
+
+</div>
+</body>
+</html>

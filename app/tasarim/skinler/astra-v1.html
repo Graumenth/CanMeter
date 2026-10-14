@@ -1,0 +1,196 @@
+<!--
+Obsidyen bir yüzey, ince metalik kenarlar ve sınıf renginde ışık izleri; kompakt bir savaş enstrümanı. Güçlü mono sayılar okumayı hızlandırırken lavanta vurgu kendi oyuncunu sessizce ayırır.
+-->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CanMeter</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --surface: rgba(12, 17, 24, .93);
+      --text: #edf1f7;
+      --muted: #a0aab9;
+      --line: rgba(183, 200, 221, .1);
+      --mint: #8bd8bf;
+      --healing: #86cfa6;
+      --gladiator: #e98176;
+      --sorcerer: #bca0f1;
+      --assassin: #b0d77c;
+      --chanter: #e9a361;
+      --templar: #8baef0;
+      --cleric: #ecd780;
+      --sans: "Segoe UI Variable", "Segoe UI", sans-serif;
+      --mono: "Cascadia Mono", Consolas, monospace;
+      --columns: 22px 28px minmax(0, 1fr) 66px 46px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      color: var(--text);
+      font: 12px/1.3 var(--sans);
+      background:
+        radial-gradient(ellipse at 20% 15%, #24343b80, transparent 52%),
+        radial-gradient(ellipse at 82% 70%, #26323d70, transparent 48%),
+        linear-gradient(145deg, #151e24, #0b1118 48%, #192027);
+    }
+    button, input { font: inherit; }
+    svg { display: block; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .meter {
+      width: 440px;
+      min-width: 300px;
+      max-width: calc(100vw - 40px);
+      resize: horizontal;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid rgba(180, 201, 221, .21);
+      border-radius: 10px;
+      box-shadow: 0 22px 65px #0007, 0 4px 14px #0004, inset 0 1px 0 #e1f3ff0d;
+    }
+    .meter-header {
+      height: 39px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 11px 0 13px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(100deg, #8bd8bf09, transparent 65%);
+      cursor: grab;
+      user-select: none;
+    }
+    .brand { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 14px; font-weight: 650; letter-spacing: -.4px; }
+    .brand-mark { width: 19px; height: 19px; color: var(--mint); }
+    .header-spacer { flex: 1; }
+    .combat-time { display: flex; align-items: center; gap: 5px; font: 12px var(--mono); color: #c1cbd7; }
+    .combat-time svg { width: 12px; height: 12px; color: #8793a2; }
+    .mode { border: 1px solid #8bd8bf26; border-radius: 4px; padding: 2px 5px; color: var(--mint); background: #8bd8bf09; font-size: 11px; font-weight: 650; letter-spacing: .6px; }
+    .lock-control { position: relative; display: grid; place-items: center; width: 25px; height: 26px; border-left: 1px solid var(--line); padding-left: 7px; cursor: pointer; color: #9ca8b8; }
+    .lock-control input { position: absolute; inset: 0; margin: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    .lock-control svg { width: 14px; height: 14px; pointer-events: none; }
+    .lock-control .locked { display: none; }
+    .lock-control:has(input:checked) { color: var(--mint); }
+    .lock-control input:checked ~ .unlocked { display: none; }
+    .lock-control input:checked ~ .locked { display: block; }
+    .lock-control:has(input:focus-visible) { outline: 2px solid var(--mint); outline-offset: 2px; border-radius: 3px; }
+    .target { height: 48px; padding: 10px 13px 8px; }
+    .target-info { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+    .target-icon { width: 13px; height: 13px; color: #bd9b76; }
+    .target-name { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .05px; }
+    .target-hp { margin-left: auto; font: 11px var(--mono); color: #d0b391; }
+    .target-time { margin-left: 5px; color: var(--muted); font-size: 11px; }
+    .hp-track { height: 3px; margin-top: 8px; background: #ffffff0b; border-radius: 2px; overflow: hidden; }
+    .hp-fill { width: 54%; height: 100%; background: linear-gradient(90deg, #7e6857, #cfb18a); border-radius: inherit; }
+    .roster { padding: 0 7px; }
+    .table-row { display: grid; grid-template-columns: var(--columns); column-gap: 5px; align-items: center; padding: 0 6px; white-space: nowrap; }
+    .table-heading { height: 22px; color: #98a5b6; font-size: 11px; border-bottom: 1px solid var(--line); }
+    .table-heading .rank, .table-heading .class-heading { text-align: center; }
+    .table-heading .numeric { text-align: right; }
+    .player-row {
+      position: relative;
+      height: 30px;
+      background: linear-gradient(90deg, color-mix(in srgb, var(--class-color) 7%, transparent), transparent 70%);
+      border-bottom: 1px solid #ffffff05;
+      isolation: isolate;
+    }
+    .player-row::after { content: ""; position: absolute; bottom: 0; left: 0; width: var(--share); height: 2px; background: var(--class-color); opacity: .65; }
+    .player-row.is-self { background: linear-gradient(90deg, #b08cf01c, #b08cf008); box-shadow: inset 0 0 0 1px #b08cf027; border-radius: 3px; }
+    .player-row.is-self::after { opacity: .95; }
+    .rank { color: #919dab; font: 11px var(--mono); text-align: center; }
+    .class-icon { display: grid; place-items: center; color: var(--class-color); }
+    .class-icon svg { width: 17px; height: 17px; }
+    .player-details { min-width: 0; }
+    .player-line { display: flex; align-items: center; gap: 5px; min-width: 0; }
+    .player-name { color: var(--class-color); font-size: 12px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; }
+    .self-badge { color: #d0bbed; font-size: 11px; font-weight: 600; line-height: 14px; padding: 0 3px; background: #b08cf015; border: 1px solid #b08cf025; border-radius: 3px; }
+    .healing { display: block; color: var(--healing); font: 11px/12px var(--mono); }
+    .dps { color: #f3f5fa; font: 650 16px/1 var(--mono); text-align: right; letter-spacing: -.55px; }
+    .share { color: #b6bfce; font: 11px var(--mono); text-align: right; }
+    .is-dead { --class-color: var(--templar); background: linear-gradient(90deg, #8baef005, transparent); }
+    .is-dead .player-name, .is-dead .class-icon { color: #8c9aad; }
+    .is-dead .dps, .is-dead .share { color: #8893a2; }
+    .is-dead::after { opacity: .3; }
+    .death-status { display: flex; align-items: center; gap: 3px; color: #96a0ae; font-size: 11px; }
+    .death-status svg { width: 11px; height: 11px; }
+    .meter-footer { height: 27px; display: flex; align-items: center; justify-content: space-between; padding: 0 13px; color: #909cab; font-size: 11px; }
+    .demo-status { display: flex; align-items: center; gap: 5px; }
+    .demo-dot { color: var(--healing); font-size: 11px; }
+    .version { font: 11px var(--mono); color: #8793a3; }
+    @media (max-width: 340px) { body { padding: 10px; } .meter { max-width: calc(100vw - 20px); } }
+  </style>
+</head>
+<body>
+  <main class="meter" aria-label="CanMeter hasar ölçer">
+    <header class="meter-header" data-tauri-drag-region>
+      <h1 class="brand" data-tauri-drag-region>
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.5 4.5 12 2 4 6.5v10l8 5.5 5.5-3.5"/><path d="m8 14 3-5 3 7 3-5h4" stroke-width="2"/></svg>
+        CanMeter
+      </h1>
+      <span class="header-spacer" data-tauri-drag-region></span>
+      <span class="combat-time" aria-label="Savaş süresi 1:01"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="9" r="5"/><path d="M6 1h4M8 4V2m0 7 2-2"/></svg>1:01</span>
+      <span class="mode">DPS</span>
+      <label class="lock-control" title="Overlay kilidini değiştir">
+        <input type="checkbox" role="switch" aria-label="Overlay kilidi">
+        <svg class="unlocked" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2"/><path d="M7 9V5a3 3 0 0 1 6 0M10 13v2"/></svg>
+        <svg class="locked" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="9" width="12" height="9" rx="2"/><path d="M7 9V5a3 3 0 0 1 6 0v4M10 13v2"/></svg>
+      </label>
+    </header>
+    <section class="target" aria-label="Hedef">
+      <div class="target-info">
+        <svg class="target-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m10 2 7 8-7 8-7-8Z"/><path d="m10 6 3 4-3 4-3-4Z"/></svg>
+        <h2 class="target-name">Ancient Guardian</h2>
+        <span class="target-hp">HP %54</span>
+        <span class="target-time">1:10 kaldı</span>
+      </div>
+      <div class="hp-track" role="meter" aria-label="Hedef sağlığı" aria-valuemin="0" aria-valuemax="100" aria-valuenow="54"><div class="hp-fill"></div></div>
+    </section>
+    <div class="roster" role="table" aria-label="Oyuncu hasar sıralaması">
+      <div class="table-row table-heading" role="row">
+        <span class="rank" role="columnheader" aria-label="Sıra">#</span><span class="class-heading" role="columnheader">Sınıf</span><span role="columnheader">Oyuncu</span><span class="numeric" role="columnheader">DPS</span><span class="numeric" role="columnheader">Pay</span>
+      </div>
+      <div class="table-row player-row" role="row" style="--class-color: var(--gladiator); --share: 23.6%">
+        <span class="rank" role="cell">1</span>
+        <span class="class-icon" role="cell" aria-label="Gladiator" title="Gladiator"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 3 4 2 10 14m0-16-4 2L5 19M3 16l5 4m8 0 5-4M4 21l2-3m12 0 2 3"/></svg></span>
+        <div class="player-details" role="cell"><div class="player-line"><span class="player-name">Ozan</span></div></div>
+        <span class="dps" role="cell">113K</span><span class="share" role="cell">%23.6</span>
+      </div>
+      <div class="table-row player-row is-self" role="row" style="--class-color: var(--sorcerer); --share: 23.5%">
+        <span class="rank" role="cell">2</span>
+        <span class="class-icon" role="cell" aria-label="Sorcerer" title="Sorcerer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 2.5 6.5L21 11l-6.5 2.5L12 20l-2.5-6.5L3 11l6.5-2.5ZM19 3v3m-1.5-1.5h3M5 18v3m-1.5-1.5h3"/></svg></span>
+        <div class="player-details" role="cell"><div class="player-line"><span class="player-name">Kaelith</span><span class="self-badge">BEN</span></div></div>
+        <span class="dps" role="cell">112K</span><span class="share" role="cell">%23.5</span>
+      </div>
+      <div class="table-row player-row" role="row" style="--class-color: var(--assassin); --share: 21.4%">
+        <span class="rank" role="cell">3</span>
+        <span class="class-icon" role="cell" aria-label="Assassin" title="Assassin"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 3-8 9 4 3 4-12Zm-9 8 7 6m-4-3-5 6m14-8-4 5 3 2 1-7Zm-4 5 5 3m-3-2-2 4"/></svg></span>
+        <div class="player-details" role="cell"><div class="player-line"><span class="player-name">Nyra</span></div></div>
+        <span class="dps" role="cell">102K</span><span class="share" role="cell">%21.4</span>
+      </div>
+      <div class="table-row player-row" role="row" style="--class-color: var(--chanter); --share: 12.4%">
+        <span class="rank" role="cell">4</span>
+        <span class="class-icon" role="cell" aria-label="Chanter" title="Chanter"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 10v12M8 3l4-2 4 2v5l-4 3-4-3ZM5 9c0 4 3 6 7 6s7-2 7-6M9 19h6"/><circle cx="12" cy="6" r="1"/></svg></span>
+        <div class="player-details" role="cell"><div class="player-line"><span class="player-name">Mira</span></div><span class="healing" aria-label="İyileştirme 20K HPS">20K HPS</span></div>
+        <span class="dps" role="cell">59.1K</span><span class="share" role="cell">%12.4</span>
+      </div>
+      <div class="table-row player-row is-dead" role="row" style="--share: 9.7%">
+        <span class="rank" role="cell">5</span>
+        <span class="class-icon" role="cell" aria-label="Templar" title="Templar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 3v6c0 5-8 10-8 10S4 16 4 11V5l8-3Zm0 4v11M8 10h8"/></svg></span>
+        <div class="player-details" role="cell"><div class="player-line"><span class="player-name">Dorn</span><span class="death-status"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 7a5 5 0 0 1 10 0v4l-2 1v2H5v-2l-2-1Z"/><path d="M5.5 7.5h1m3 0h1M8 10v1"/></svg>ÖLÜ</span></div></div>
+        <span class="dps" role="cell">46.2K</span><span class="share" role="cell">%9.7</span>
+      </div>
+      <div class="table-row player-row" role="row" style="--class-color: var(--cleric); --share: 9.5%">
+        <span class="rank" role="cell">6</span>
+        <span class="class-icon" role="cell" aria-label="Cleric" title="Cleric"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v6h6v4h-6v8h-4v-8H4V9h6ZM3 3l2 2m14 0 2-2"/></svg></span>
+        <div class="player-details" role="cell"><div class="player-line"><span class="player-name">Elara</span></div><span class="healing" aria-label="İyileştirme 30K HPS">30K HPS</span></div>
+        <span class="dps" role="cell">45.4K</span><span class="share" role="cell">%9.5</span>
+      </div>
+    </div>
+    <footer class="meter-footer"><span class="demo-status"><span class="demo-dot" aria-hidden="true">●</span> Demo verisi</span><span class="version">v0.0.7</span></footer>
+  </main>
+</body>
+</html>

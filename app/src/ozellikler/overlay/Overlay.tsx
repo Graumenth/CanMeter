@@ -1,30 +1,36 @@
 import { memo, useCallback, useState } from "react";
+import type { CSSProperties } from "react";
+import { useAyar } from "../../ortak/ayarlar";
+import { useDil } from "../../ortak/dil";
 import { useSavas } from "../../kancalar/useSavas";
-import { sure } from "../../ortak/sayi";
 import { overlayKilit } from "../../servis/motor";
-import { AltBilgi } from "./AltBilgi";
-import { Baslik } from "./Baslik";
-import { HedefCubugu } from "./HedefCubugu";
-import { OyuncuSatiri } from "./OyuncuSatiri";
+import { Ayarlar } from "./ayarlar/Ayarlar";
+import { useSkin } from "./skinler/useSkin";
 
 export const Overlay = memo(function Overlay() {
   const savas = useSavas();
+  const dil = useDil();
+  const [skin] = useSkin();
   const [kilitli, kilitAyarla] = useState(false);
+  const [ayarlarAcik, ayarlarAcikAyarla] = useState(false);
+  const [opaklik] = useAyar("zeminOpaklik", 0.92);
+  const [renk] = useAyar<string | null>("zeminRenk", null);
+  const [toplamGoster] = useAyar("toplamGoster", true);
   const kilitDegistir = useCallback(() => {
-    const yeniKilit = !kilitli;
-    kilitAyarla(yeniKilit);
-    void overlayKilit(yeniKilit);
-  }, [kilitli]);
+    kilitAyarla(eski => {
+      const yeni = !eski;
+      void overlayKilit(yeni);
+      return yeni;
+    });
+  }, []);
+  const ayarlarAc = useCallback(() => ayarlarAcikAyarla(true), []);
+  const ayarlarKapat = useCallback(() => ayarlarAcikAyarla(false), []);
+  const stil = { "--zemin-opaklik": opaklik,
+    ...(renk ? { "--zemin-renk": renk } : {}) } as CSSProperties;
 
-  if (!savas) return <main className="overlay"><Baslik kilitli={kilitli} sure="0:00" kilitDegistir={kilitDegistir} /><p className="bekleniyor">Savaş bekleniyor</p></main>;
-
-  return (
-    <main className={`overlay${savas.aktif ? "" : " pasif"}`}>
-      <Baslik kilitli={kilitli} sure={sure(savas.sure_ms)} kilitDegistir={kilitDegistir} />
-      {savas.hedef && <HedefCubugu hedef={savas.hedef} />}
-      <div className="sutun-baslik"><span>#</span><span>Oyuncu</span><span>DPS</span><span>Pay</span></div>
-      <section className="oyuncular">{savas.oyuncular.map((oyuncu, indeks) => <OyuncuSatiri key={oyuncu.id} oyuncu={oyuncu} sira={indeks + 1} />)}</section>
-      <AltBilgi />
-    </main>
-  );
+  return <div className="overlay-kok" style={stil}>
+    <skin.Bilesen savas={savas} dil={dil} kilitli={kilitli} kilitDegistir={kilitDegistir}
+      ayarlarAc={ayarlarAc} toplamGoster={toplamGoster} />
+    <Ayarlar acik={ayarlarAcik} kapat={ayarlarKapat} />
+  </div>;
 });

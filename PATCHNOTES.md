@@ -1,5 +1,13 @@
 # PATCHNOTES
 
+## 0.0.10 (2026-10-14)
+### Yeni
+- Altı farklı overlay görünümü (skin); ayarlardan ya da Ctrl+Shift+S ile değişir. Varsayılan: Sonnet v2
+  (parti pay şeridi, büyük DPS rakamları, sınıf ikonları).
+- Ayarlar paneli: dil (Türkçe / English), görünüm, panel şeffaflığı, panel zemin rengi, toplam göstergesi.
+- Her görünümde yazı olarak "Toplam DPS · Hasar" göstergesi.
+- İngilizce arayüz seçeneği (ayarlardan ya da Ctrl+Shift+L); varsayılan Türkçe.
+
 ## 0.0.9 (2026-10-14)
 ### Değişti
 - Görünürde değişiklik yok; proje yönerge dosyası depo dışına alındı (iç düzen).

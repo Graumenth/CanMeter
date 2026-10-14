@@ -1,0 +1,456 @@
+<!doctype html>
+<!-- Fikir: kömür-lacivert tek ton zemin, üstte ince bir kenar ışığı; her satırda sınıf rengi soldan sola doğru zemine sızar, altında ince bar yanar.
+     Sayılar tabular mono ve sağa hizalı, ad ve sınıf etiketi sol tarafta ikincil tonda; vurgu yalnız BEN satırında ince sol şerit ve hafif parlama.
+     Tüm renk ve ölçüler :root değişkenlerinde, sınıf adları React bileşenlerine bire bir karşılık gelir (.meter, .row, .row__bar). -->
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CanMeter Overlay</title>
+<style>
+:root {
+  --bg-panel: rgba(12, 16, 27, 0.92);
+  --bg-head: rgba(20, 26, 42, 0.96);
+  --bg-row-alt: rgba(255, 255, 255, 0.022);
+  --line: rgba(140, 165, 220, 0.16);
+  --line-strong: rgba(160, 185, 240, 0.30);
+  --glow: rgba(120, 160, 255, 0.35);
+  --text: #f2f5fc;
+  --text-2: #a9b4cc;
+  --text-3: #7b87a1;
+  --accent: #6f9bff;
+  --heal: #5fe3a0;
+  --warn: #ff9f43;
+  --danger: #ff6b6b;
+  --ok: #3ddc84;
+  --c-gladiator: #e05a4e;
+  --c-templar: #7fa8f5;
+  --c-assassin: #a3d65a;
+  --c-ranger: #5fcf78;
+  --c-sorcerer: #b08cf0;
+  --c-spiritmaster: #c76bd9;
+  --c-cleric: #f3d660;
+  --c-chanter: #e07d2c;
+  --font-ui: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Mono", "JetBrains Mono", Consolas, ui-monospace, monospace;
+  --radius: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-ui);
+  color: var(--text);
+  background:
+    radial-gradient(120% 90% at 20% 10%, #2a3a2c 0%, transparent 55%),
+    radial-gradient(100% 80% at 85% 90%, #3a2a36 0%, transparent 60%),
+    linear-gradient(160deg, #1a2230 0%, #11161f 55%, #0b0e14 100%);
+}
+
+/* Panel */
+.meter {
+  container-type: inline-size;
+  width: 440px;
+  min-width: 300px;
+  max-width: 100%;
+  resize: horizontal;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(18, 24, 39, 0.94) 0%, var(--bg-panel) 40%);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 14px 38px rgba(0, 0, 0, 0.55),
+    0 0 26px -8px var(--glow);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+/* Başlık */
+.meter__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 8px 0 12px;
+  cursor: grab;
+  user-select: none;
+  background: linear-gradient(180deg, var(--bg-head), rgba(15, 20, 33, 0.96));
+  border-bottom: 1px solid var(--line);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+.brand__mark {
+  width: 8px; height: 8px;
+  transform: rotate(45deg);
+  border-radius: 2px;
+  background: linear-gradient(135deg, #9dbbff, #5c7fe0);
+  box-shadow: 0 0 8px var(--glow);
+}
+.timer {
+  margin-left: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+  font-variant-numeric: tabular-nums;
+}
+.mode {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(111, 155, 255, 0.12);
+  border: 1px solid rgba(111, 155, 255, 0.35);
+}
+.spacer { flex: 1; }
+.lock {
+  display: grid;
+  place-items: center;
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+}
+.lock:hover { color: var(--text); background: rgba(255, 255, 255, 0.07); border-color: var(--line); }
+.lock svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Hedef */
+.target {
+  padding: 8px 12px 9px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 107, 107, 0.05), transparent);
+}
+.target__line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.target__name {
+  font-weight: 650;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.target__hp {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--danger);
+  font-variant-numeric: tabular-nums;
+}
+.target__eta {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.hpbar {
+  margin-top: 6px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+.hpbar__fill {
+  height: 100%;
+  width: 54%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #c94545, #ff7a6b);
+  box-shadow: 0 0 8px rgba(255, 107, 107, 0.55);
+  transition: width 200ms linear;
+}
+
+/* Sütun başlıkları */
+.cols, .row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 62px 54px;
+  align-items: center;
+  column-gap: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.cols {
+  height: 22px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.cols .num, .row .num { text-align: right; }
+
+/* Satırlar */
+.rows { padding-bottom: 4px; }
+.row {
+  position: relative;
+  height: 34px;
+  --c: var(--text-2);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--c) 17%, transparent) 0%, transparent var(--w, 40%)),
+    transparent;
+}
+.row:nth-child(even) { background-color: var(--bg-row-alt); }
+.row__rank {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.row:nth-child(1) .row__rank { color: #f3d660; }
+.row__who {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+  padding-bottom: 3px;
+}
+.row__name {
+  font-weight: 650;
+  font-size: 13.5px;
+  color: color-mix(in srgb, var(--c) 78%, #fff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.row__class {
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0 5px;
+  border-radius: 4px;
+  line-height: 15px;
+}
+.tag--me {
+  color: #dfe8ff;
+  background: rgba(111, 155, 255, 0.2);
+  border: 1px solid rgba(111, 155, 255, 0.45);
+  font-family: var(--font-ui);
+  letter-spacing: 0.06em;
+}
+.tag--heal {
+  color: var(--heal);
+  background: rgba(95, 227, 160, 0.1);
+  border: 1px solid rgba(95, 227, 160, 0.28);
+}
+.row__dps {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding-bottom: 3px;
+}
+.row__pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  padding-bottom: 3px;
+}
+.row__bar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 4px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.row__bar::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--w, 40%);
+  border-radius: 2px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--c) 70%, #000), var(--c));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--c) 60%, transparent);
+  transition: width 200ms linear;
+}
+
+/* Ben */
+.row--me {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--c) 24%, transparent) 0%, rgba(111, 155, 255, 0.06) 70%, transparent),
+    transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+}
+.row--me::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 4px; bottom: 4px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--glow);
+}
+
+/* Ölü */
+.row--dead .row__name,
+.row--dead .row__dps,
+.row--dead .row__pct,
+.row--dead .row__rank,
+.row--dead .row__class { opacity: 0.45; }
+.row--dead .row__name { text-decoration: line-through; text-decoration-thickness: 1px; }
+.row--dead .row__bar { opacity: 0.4; }
+.row--dead { --c: #8a93a8 !important; }
+.skull {
+  font-size: 12px;
+  color: var(--danger);
+  opacity: 0.9;
+  flex: none;
+}
+
+/* Alt bilgi */
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  font-size: 11px;
+  color: var(--text-3);
+  border-top: 1px solid var(--line);
+  background: rgba(8, 11, 19, 0.5);
+}
+.foot__live { display: flex; align-items: center; gap: 6px; }
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 6px var(--ok);
+}
+.foot__ver { font-family: var(--font-mono); }
+
+/* Dar panel: sınıf etiketini ve pay sütununu sıkıştır, satır kırılmasın */
+@container (max-width: 400px) {
+  .row__class { display: none; }
+}
+@container (max-width: 340px) {
+  .cols, .row { grid-template-columns: 16px minmax(0, 1fr) 54px 46px; column-gap: 6px; padding-left: 10px; padding-right: 10px; }
+  .row__bar { left: 10px; right: 10px; }
+  .row__dps { font-size: 13px; }
+  .timer { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<main class="meter">
+
+  <header class="meter__head">
+    <div class="brand"><span class="brand__mark"></span>CanMeter</div>
+    <span class="timer">1:01</span>
+    <span class="mode">DPS</span>
+    <span class="spacer"></span>
+    <button class="lock" type="button" title="Kilitle">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.8"/><path d="M5.2 7V5a2.8 2.8 0 0 1 5.6 0v2"/></svg>
+    </button>
+  </header>
+
+  <section class="target">
+    <div class="target__line">
+      <span class="target__name">Ancient Guardian</span>
+      <span class="target__hp">%54</span>
+      <span class="target__eta">1:10 kaldı</span>
+    </div>
+    <div class="hpbar"><div class="hpbar__fill"></div></div>
+  </section>
+
+  <div class="cols">
+    <span>#</span>
+    <span>Oyuncu</span>
+    <span class="num">DPS</span>
+    <span class="num">Pay</span>
+  </div>
+
+  <div class="rows">
+    <div class="row" style="--c: var(--c-gladiator); --w: 100%;">
+      <span class="row__rank">1</span>
+      <span class="row__who"><span class="row__name">Ozan</span><span class="row__class">Gladiator</span></span>
+      <span class="row__dps">113K</span>
+      <span class="row__pct">%23.6</span>
+      <span class="row__bar"></span>
+    </div>
+
+    <div class="row row--me" style="--c: var(--c-sorcerer); --w: 99.6%;">
+      <span class="row__rank">2</span>
+      <span class="row__who"><span class="row__name">Kaelith</span><span class="tag tag--me">BEN</span><span class="row__class">Sorcerer</span></span>
+      <span class="row__dps">112K</span>
+      <span class="row__pct">%23.5</span>
+      <span class="row__bar"></span>
+    </div>
+
+    <div class="row" style="--c: var(--c-assassin); --w: 90.7%;">
+      <span class="row__rank">3</span>
+      <span class="row__who"><span class="row__name">Nyra</span><span class="row__class">Assassin</span></span>
+      <span class="row__dps">102K</span>
+      <span class="row__pct">%21.4</span>
+      <span class="row__bar"></span>
+    </div>
+
+    <div class="row" style="--c: var(--c-chanter); --w: 52.5%;">
+      <span class="row__rank">4</span>
+      <span class="row__who"><span class="row__name">Mira</span><span class="tag tag--heal">+20K HPS</span><span class="row__class">Chanter</span></span>
+      <span class="row__dps">59.1K</span>
+      <span class="row__pct">%12.4</span>
+      <span class="row__bar"></span>
+    </div>
+
+    <div class="row row--dead" style="--c: var(--c-templar); --w: 41.1%;">
+      <span class="row__rank">5</span>
+      <span class="row__who"><span class="skull" title="Ölü">&#9760;</span><span class="row__name">Dorn</span><span class="row__class">Templar</span></span>
+      <span class="row__dps">46.2K</span>
+      <span class="row__pct">%9.7</span>
+      <span class="row__bar"></span>
+    </div>
+
+    <div class="row" style="--c: var(--c-cleric); --w: 40.3%;">
+      <span class="row__rank">6</span>
+      <span class="row__who"><span class="row__name">Elara</span><span class="tag tag--heal">+30K HPS</span><span class="row__class">Cleric</span></span>
+      <span class="row__dps">45.4K</span>
+      <span class="row__pct">%9.5</span>
+      <span class="row__bar"></span>
+    </div>
+  </div>
+
+  <footer class="foot">
+    <span class="foot__live"><span class="dot"></span>Demo verisi</span>
+    <span class="foot__ver">v0.0.7</span>
+  </footer>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!--
+Fikir: sahne değil gösterge paneli; koyu cam yüzey, tek sıcak (amber) vurgu rengi, gerisi sessiz gri ve mono rakamlar.
+Sert kenarlı barlar 10'arılık çentiklerle ölçüm hissi verir; dolu satırı hafif renk yıkaması, ölü oyuncu taralı desenle ayrışır.
+Bakışta okunabilirlik: hedef HP'si ve süre hep üstte, kendi satırım ince kontur + SEN etiketiyle, paylar sağda dar mono kolonda.
+-->
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CanMeter - Demo</title>
+<style>
+  :root{
+    --ink:#e9eef7;
+    --ink-2:#9aa4b6;
+    --ink-3:#5e6779;
+    --line:rgba(255,255,255,.07);
+    --amber:#f0b13e;
+    --mono:"Cascadia Mono","Consolas",ui-monospace,Menlo,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    font-family:"Segoe UI",Inter,system-ui,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 700px at 18% 10%, rgba(40,72,128,.26), transparent 60%),
+      radial-gradient(900px 620px at 84% 90%, rgba(18,92,80,.15), transparent 62%),
+      radial-gradient(1500px 950px at 50% 45%, #0a101a 0%, #05070c 75%);
+    cursor:default;
+  }
+  /* oyuncu hissi: altta soluk bir yetenek çubuğu */
+  .hud{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+  .hud i{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.055)}
+
+  .panel{
+    position:relative;
+    width:440px;
+    border-radius:12px;
+    background:rgba(11,14,20,.88);
+    border:1px solid rgba(255,255,255,.09);
+    box-shadow:0 26px 64px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
+    overflow:hidden;
+  }
+  .panel::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg, var(--amber) 0 88px, rgba(240,177,62,.28) 210px, transparent 320px);
+  }
+
+  /* üst bilgi */
+  .head{display:flex;align-items:center;gap:10px;padding:12px 14px 10px;border-bottom:1px solid var(--line)}
+  .logo{flex:none;display:flex}
+  .wordmark{font-size:12px;font-weight:700;letter-spacing:.18em}
+  .wordmark b{color:var(--amber);font-weight:700}
+  .spacer{flex:1}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:9px;letter-spacing:.12em;color:#f2c069;
+    border:1px solid rgba(240,177,62,.35);background:rgba(240,177,62,.07);
+    padding:3px 9px;border-radius:999px;text-transform:uppercase;white-space:nowrap;
+  }
+  .badge .pip{width:5px;height:5px;border-radius:50%;background:var(--amber);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+  .timer{display:flex;align-items:baseline;gap:6px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .timer .lbl{font-family:"Segoe UI",Inter,system-ui,sans-serif;font-size:9px;letter-spacing:.14em;color:var(--ink-3)}
+  .timer .val{font-size:16px;font-weight:700;color:var(--ink)}
+
+  /* hedef bloğu */
+  .target{padding:10px 14px 11px;border-bottom:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.025), transparent)}
+  .t-top{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
+  .t-top .lbl{font-size:9px;letter-spacing:.14em;color:var(--ink-3)}
+  .t-name{font-size:13px;font-weight:600;letter-spacing:.02em}
+  .t-hp{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:700}
+  .t-hp small{font-size:9px;font-weight:400;color:var(--ink-3);letter-spacing:.1em;margin-right:3px}
+  .hpbar{position:relative;height:12px;border-radius:3px;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 3px rgba(0,0,0,.5);overflow:hidden}
+  .hpfill{position:absolute;inset:0 auto 0 0;width:54%;background:#dd4a37;border-right:2px solid #ff8868}
+  .hpticks{position:absolute;inset:0;background:repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), rgba(5,7,12,.65) calc(10% - 1px) 10%)}
+  .t-bot{display:flex;align-items:baseline;margin-top:7px}
+  .t-bot .left{font-size:9px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase}
+  .t-bot .est{margin-left:auto;display:flex;align-items:baseline;gap:6px}
+  .t-bot .est .lbl{font-size:9px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase}
+  .t-bot .est .val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px;font-weight:700;color:var(--ink)}
+
+  /* sıralama */
+  .cols,.row{display:grid;grid-template-columns:18px 10px 1fr 46px 54px;gap:8px;align-items:center}
+  .cols{padding:7px 12px 4px 10px;font-size:9px;letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase}
+  .cols .r{text-align:right}
+  .roster{list-style:none}
+  .row{position:relative;padding:5px 12px 5px 10px}
+  .row + .row{border-top:1px solid rgba(255,255,255,.045)}
+  .row > *{position:relative;z-index:1}
+  .fill{position:absolute;z-index:0;top:3px;bottom:3px;left:0;border-right:2px solid var(--c);border-radius:0 3px 3px 0}
+  .rank{font-family:var(--mono);font-size:10px;color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums}
+  .dot{width:8px;height:8px;border-radius:2px;background:var(--c);box-shadow:0 0 6px color-mix(in srgb, var(--c) 60%, transparent)}
+  .who{display:flex;align-items:center;gap:6px;min-width:0;white-space:nowrap}
+  .who b{font-size:12px;font-weight:600;color:var(--ink)}
+  .who i{font-style:normal;font-size:10.5px;color:var(--ink-2);opacity:.75}
+  .dps{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:700;color:var(--ink);text-align:right}
+  .share{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:11px;color:var(--ink-2);text-align:right}
+
+  /* sınıf renkleri */
+  .glad{--c:#e2604b;--wash:rgba(226,96,75,.13)}
+  .sorc{--c:#a98bff;--wash:rgba(169,139,255,.13)}
+  .assa{--c:#43d9a8;--wash:rgba(67,217,168,.12)}
+  .chan{--c:#e6b84c;--wash:rgba(230,184,76,.12)}
+  .temp{--c:#5b9dd6;--wash:rgba(91,157,214,.13)}
+  .cler{--c:#7ed764;--wash:rgba(126,215,100,.11)}
+  .fill{background:var(--wash)}
+
+  /* benim satırım */
+  .me{box-shadow:inset 0 0 0 1px rgba(240,177,62,.5);background:rgba(240,177,62,.03);border-radius:4px}
+  .me .rank{color:var(--amber)}
+
+  /* ölü */
+  .dead .fill{
+    background:repeating-linear-gradient(135deg, rgba(139,150,170,.20) 0 5px, transparent 5px 9px);
+    border-right-color:rgba(139,150,170,.45);
+  }
+  .dead .who b, .dead .dps{color:#7d8698}
+  .dead .who i, .dead .rank, .dead .share{color:#565e6d}
+
+  .chip{
+    display:inline-flex;align-items:center;gap:3px;
+    font-size:9px;font-weight:600;letter-spacing:.07em;
+    padding:1px 5px;border-radius:3px;text-transform:uppercase;
+  }
+  .chip.me-c{color:#f2c069;border:1px solid rgba(240,177,62,.45);background:rgba(240,177,62,.12)}
+  .chip.heal{color:#8fe07a;border:1px solid rgba(126,215,100,.32);background:rgba(126,215,100,.10)}
+  .chip.dead-c{color:#ff8d7a;border:1px solid rgba(224,80,64,.4);background:rgba(224,80,64,.12)}
+  .chip svg{width:9px;height:9px;fill:currentColor;flex:none}
+  .chip svg .hole{fill:#0d1017}
+
+  /* alt bilgi */
+  .foot{
+    display:flex;align-items:center;gap:8px;
+    padding:8px 14px 9px;border-top:1px solid var(--line);
+    font-size:10px;color:var(--ink-3);
+  }
+  .foot .ver{margin-left:auto;font-family:var(--mono);font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+  <div class="hud" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+  <main class="panel">
+
+    <header class="head">
+      <span class="logo" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 20 20">
+          <path d="M10 1.6 17.7 6v8L10 18.4 2.3 14V6z" fill="none" stroke="#f0b13e" stroke-width="1.6"/>
+          <path d="M10 10l4.1-3.9" stroke="#f0b13e" stroke-width="1.6" stroke-linecap="round"/>
+          <circle cx="10" cy="10" r="1.7" fill="#f0b13e"/>
+        </svg>
+      </span>
+      <span class="wordmark"><b>CAN</b>METER</span>
+      <span class="spacer"></span>
+      <span class="badge"><span class="pip"></span>Demo verisi</span>
+      <span class="timer"><span class="lbl">SÜRE</span><span class="val">1:01</span></span>
+    </header>
+
+    <section class="target">
+      <div class="t-top">
+        <span class="lbl">HEDEF</span>
+        <span class="t-name">Ancient Guardian</span>
+        <span class="t-hp"><small>HP</small>%54</span>
+      </div>
+      <div class="hpbar"><span class="hpfill"></span><span class="hpticks"></span></div>
+      <div class="t-bot">
+        <span class="left">6 oyuncu</span>
+        <span class="est"><span class="lbl">Tahmini kalan</span><span class="val">1:10</span></span>
+      </div>
+    </section>
+
+    <div class="cols">
+      <span></span><span></span><span>Oyuncu</span><span class="r">DPS</span><span class="r">Pay</span>
+    </div>
+
+    <ol class="roster">
+      <li class="row glad">
+        <span class="fill" style="width:100%"></span>
+        <span class="rank">1</span><span class="dot"></span>
+        <span class="who"><b>Ozan</b><i>Gladiator</i></span>
+        <span class="dps">113K</span><span class="share">%23.6</span>
+      </li>
+      <li class="row me sorc">
+        <span class="fill" style="width:99.1%"></span>
+        <span class="rank">2</span><span class="dot"></span>
+        <span class="who"><b>Kaelith</b><i>Sorcerer</i><span class="chip me-c">SEN</span></span>
+        <span class="dps">112K</span><span class="share">%23.5</span>
+      </li>
+      <li class="row assa">
+        <span class="fill" style="width:90.3%"></span>
+        <span class="rank">3</span><span class="dot"></span>
+        <span class="who"><b>Nyra</b><i>Assassin</i></span>
+        <span class="dps">102K</span><span class="share">%21.4</span>
+      </li>
+      <li class="row chan">
+        <span class="fill" style="width:52.3%"></span>
+        <span class="rank">4</span><span class="dot"></span>
+        <span class="who"><b>Mira</b><i>Chanter</i><span class="chip heal">+20K HPS</span></span>
+        <span class="dps">59.1K</span><span class="share">%12.4</span>
+      </li>
+      <li class="row temp dead">
+        <span class="fill" style="width:40.9%"></span>
+        <span class="rank">5</span><span class="dot"></span>
+        <span class="who"><b>Dorn</b><i>Templar</i><span class="chip dead-c"><svg viewBox="0 0 10 10"><path d="M5 .8C2.8.8 1.2 2.3 1.2 4.3c0 1.3.6 2.2 1.5 2.8v1.9h4.6V7.1c.9-.6 1.5-1.5 1.5-2.8C8.8 2.3 7.2.8 5 .8z"/><circle class="hole" cx="3.7" cy="4.3" r=".85"/><circle class="hole" cx="6.3" cy="4.3" r=".85"/><rect class="hole" x="4" y="6.9" width=".8" height="1.5"/><rect class="hole" x="5.2" y="6.9" width=".8" height="1.5"/></svg>ÖLDÜ</span></span>
+        <span class="dps">46.2K</span><span class="share">%9.7</span>
+      </li>
+      <li class="row cler">
+        <span class="fill" style="width:40.2%"></span>
+        <span class="rank">6</span><span class="dot"></span>
+        <span class="who"><b>Elara</b><i>Cleric</i><span class="chip heal">+30K HPS</span></span>
+        <span class="dps">45.4K</span><span class="share">%9.5</span>
+      </li>
+    </ol>
+
+    <footer class="foot">
+      <span>Pasif dinleme: oyuna müdahale yok</span>
+      <span class="ver">v0.0.7</span>
+    </footer>
+
+  </main>
+
+</body>
+</html>
