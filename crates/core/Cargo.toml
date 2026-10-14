@@ -9,3 +9,10 @@ publish.workspace = true
 path = "src/lib.rs"
 
 [dependencies]
+# Npcap/libpcap sarıcısı. Windows'ta derleme anında link YAPMAZ: wpcap.dll çalışma anında
+# yüklenir (ilk çağrıda), bu yüzden Npcap SDK gerekmez; Npcap kurulu olmayan makinede yalnız
+# canlı yakalama çağrısı hata verir, derleme ve replay etkilenmez.
+pcap = "2.5"
+# Kayıt aracı (src/bin/kaydet.rs): temiz kapanış ve dosya adı zaman damgası.
+ctrlc = "3"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
