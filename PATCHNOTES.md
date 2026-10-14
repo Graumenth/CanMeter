@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.3.6 (2026-10-14)
+### Değişti
+- CanMeter açık kaynak: GPL-3.0 lisansı eklendi (`LICENSE`).
+
 ## 0.3.5 (2026-10-14)
 ### Düzeltmeler
 - Overlay'i taşıdığınız yer hatırlanır; program bir sonraki açılışta aynı konumda açılır.

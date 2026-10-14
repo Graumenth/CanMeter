@@ -4,6 +4,7 @@ description = "CanMeter overlay kabuğu: saf Rust (egui), tek süreç, WebView y
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+license.workspace = true
 
 [[bin]]
 name = "canmeter-app"
