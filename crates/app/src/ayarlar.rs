@@ -17,6 +17,8 @@ pub struct Ayarlar {
     pub toplam_goster: bool,
     /// Overlay ölçeği (1.0 = 440 px genişlik); kenardan sürükleyince değişir.
     pub olcek: f32,
+    /// Pencere dış köşesi (doğal nokta); taşıyınca güncellenir, açılışta kullanılır.
+    pub konum: Option<[i32; 2]>,
 }
 
 impl Default for Ayarlar {
@@ -28,6 +30,7 @@ impl Default for Ayarlar {
             zemin_opaklik: 0.92,
             toplam_goster: true,
             olcek: 1.0,
+            konum: None,
         }
     }
 }
@@ -58,22 +61,6 @@ impl Ayarlar {
         if let Err(hata) = sonuc {
             eprintln!("Ayarlar kaydedilemedi: {hata}");
         }
-    }
-
-    /// Oturumdaki değişiklikleri kalıcı kopyaya işler ve yazar. Komut satırıyla gelen geçici dil/skin
-    /// seçimi, kullanıcı o ayarı değiştirmediyse kayda sızmaz.
-    pub fn kaliciye_yaz(&self, kalici: &mut Ayarlar, onceki_dil: Dil, skin_ad: &str) {
-        if self.dil != onceki_dil {
-            kalici.dil = self.dil;
-        }
-        if self.skin != skin_ad {
-            kalici.skin.clone_from(&self.skin);
-        }
-        kalici.zemin_renk = self.zemin_renk;
-        kalici.zemin_opaklik = self.zemin_opaklik;
-        kalici.toplam_goster = self.toplam_goster;
-        kalici.olcek = self.olcek;
-        kalici.kaydet();
     }
 
     pub fn zemin(&self) -> Zemin {
@@ -109,6 +96,7 @@ mod testler {
                 zemin_opaklik: 0.3,
                 toplam_goster: false,
                 olcek: 1.5,
+                konum: Some([120, -40]),
             },
         ] {
             let metin = toml::to_string(&ayarlar).unwrap();

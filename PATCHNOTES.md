@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.3.5 (2026-10-14)
+### Düzeltmeler
+- Overlay'i taşıdığınız yer hatırlanır; program bir sonraki açılışta aynı konumda açılır.
+
 ## 0.3.4 (2026-10-14)
 ### Düzeltmeler
 - Overlay kilitliyken artık Ctrl+Shift+K ile kilidi açabilirsiniz; kısayol oyun açıkken de çalışır.

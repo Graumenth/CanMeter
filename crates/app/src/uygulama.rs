@@ -1,14 +1,15 @@
 //! Tek süreçte motor, kullanıcı ayarları ve overlay kare döngüsü.
 use crate::skin::{Baglam, Skin, kayit};
 use crate::{
-    ayarlar::Ayarlar, ayarlar_paneli, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, pencere, yazi,
+    ayarlar::Ayarlar, ayarlar_paneli, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, konum::Konum,
+    pencere, yazi,
 };
 use canmeter_core::{Motor, stats::SavasAnlik};
 use std::time::{Duration, Instant};
 /// Ayarlar paneli açıkken en az bu kadar yükseklik (nokta).
 const PANEL_YUKSEKLIK: f32 = 380.0;
-/// Ölçek değişince ayar dosyası bu kadar sessizlikten sonra yazılır (sürükleme boyunca değil).
-const OLCEK_KAYIT_GECIKMESI: Duration = Duration::from_secs(1);
+/// Ölçek ya da konum değişince ayar dosyası bu kadar sessizlikten sonra yazılır (sürükleme boyunca değil).
+const KAYIT_GECIKMESI: Duration = Duration::from_secs(1);
 pub struct Uygulama {
     ayarlar: Ayarlar,
     kalici: Ayarlar,
@@ -19,8 +20,9 @@ pub struct Uygulama {
     son: Option<SavasAnlik>,
     onceki: Instant,
     boyut: Boyut,
-    /// Son ölçek değişiminin zamanı; kayıt gecikmeli.
-    olcek_zamani: Option<Instant>,
+    konum: Konum,
+    /// Son ölçek/konum değişiminin zamanı; kayıt gecikmeli.
+    kayit_zamani: Option<Instant>,
 }
 
 impl Uygulama {
@@ -40,7 +42,8 @@ impl Uygulama {
             son: None,
             onceki: Instant::now(),
             boyut: Boyut::default(),
-            olcek_zamani: None,
+            konum: Konum,
+            kayit_zamani: None,
         }
     }
     fn kaydet(&mut self, onceki_dil: Dil) {
@@ -101,16 +104,16 @@ impl eframe::App for Uygulama {
         } else {
             icerik
         };
-        if self.boyut.kare(&ctx, hedef, &mut self.ayarlar.olcek) {
-            self.olcek_zamani = Some(Instant::now());
+        let boyut_degisti = self.boyut.kare(&ctx, hedef, &mut self.ayarlar.olcek);
+        if boyut_degisti | self.konum.kare(&ctx, &mut self.ayarlar.konum) {
+            self.kayit_zamani = Some(Instant::now());
         }
         if self
-            .olcek_zamani
-            .is_some_and(|t| t.elapsed() >= OLCEK_KAYIT_GECIKMESI)
+            .kayit_zamani
+            .is_some_and(|t| t.elapsed() >= KAYIT_GECIKMESI)
         {
-            self.olcek_zamani = None;
-            self.kalici.olcek = self.ayarlar.olcek;
-            self.kalici.kaydet();
+            self.kayit_zamani = None;
+            self.kaydet(self.ayarlar.dil);
         }
         ctx.request_repaint_after(Duration::from_millis(250));
     }

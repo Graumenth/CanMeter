@@ -1,9 +1,12 @@
 //! Yerel overlay penceresi ve Windows DWM kenarlık ayarı.
 
-pub fn secenekler() -> eframe::NativeOptions {
+pub fn secenekler(konum: Option<[i32; 2]>) -> eframe::NativeOptions {
+    let mut gorunum = egui::ViewportBuilder::default().with_title("CanMeter");
+    if let Some([x, y]) = konum {
+        gorunum = gorunum.with_position([x as f32, y as f32]);
+    }
     eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_title("CanMeter")
+        viewport: gorunum
             // Genişlik kullanıcıdan (kenardan sürükleme = ölçek), yükseklik içerikten; bkz. boyut.rs.
             .with_inner_size([440.0, 440.0])
             .with_min_inner_size([220.0, 40.0])

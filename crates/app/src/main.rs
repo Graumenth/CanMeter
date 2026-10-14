@@ -3,12 +3,14 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod ayarlar;
+mod ayarlar_birlestir;
 mod ayarlar_paneli;
 mod boyut;
 mod dil;
 mod kilit;
 mod kisayol;
 mod komut_satiri;
+mod konum;
 mod pencere;
 mod sayi;
 mod sinif_renk;
@@ -22,7 +24,7 @@ fn main() -> eframe::Result {
     komut_satiri::uygula(&mut ayarlar);
     eframe::run_native(
         "CanMeter",
-        pencere::secenekler(),
+        pencere::secenekler(ayarlar.konum),
         Box::new(move |cc| Ok(Box::new(uygulama::Uygulama::new(cc, ayarlar, kalici)))),
     )
 }
