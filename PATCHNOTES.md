@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.3.3 (2026-10-14)
+### Değişti
+- İlk açılışta arayüz dili bilgisayarınızın diline göre seçilir: Türkçe sistemde Türkçe, diğer dillerde
+  İngilizce. Ayarlardan ya da Ctrl+Shift+L ile değiştirebilirsiniz.
+
 ## 0.3.2 (2026-10-14)
 ### Düzeltmeler
 - Kömür görünümünde hasar çubukları artık satır boyunca uzuyor ve hasara göre değişiyor.

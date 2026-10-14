@@ -22,7 +22,7 @@ pub struct Ayarlar {
 impl Default for Ayarlar {
     fn default() -> Self {
         Self {
-            dil: Dil::Tr,
+            dil: Dil::sistem(),
             skin: kayit::VARSAYILAN.into(),
             zemin_renk: None,
             zemin_opaklik: 0.92,

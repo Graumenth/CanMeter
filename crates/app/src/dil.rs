@@ -32,6 +32,39 @@ impl Dil {
             Dil::En => Dil::Tr,
         }
     }
+
+    /// İlk açılış varsayılanı: bilgisayarın arayüz dili Türkçe ise Tr, başka her dilde En (sahip kararı).
+    pub fn sistem() -> Dil {
+        const LANG_TURKISH: u16 = 0x1f;
+        match sistem_langid() {
+            Some(id) => {
+                if id & 0x3ff == LANG_TURKISH {
+                    Dil::Tr
+                } else {
+                    Dil::En
+                }
+            }
+            None => {
+                if std::env::var("LANG").is_ok_and(|l| l.starts_with("tr")) {
+                    Dil::Tr
+                } else {
+                    Dil::En
+                }
+            }
+        }
+    }
+}
+
+/// Windows kullanıcı arayüzü dili (LANGID); başka platformda yok.
+#[cfg(windows)]
+fn sistem_langid() -> Option<u16> {
+    // SAFETY: parametresiz Win32 çağrısı, yalnız bir u16 döndürür.
+    Some(unsafe { windows_sys::Win32::Globalization::GetUserDefaultUILanguage() })
+}
+
+#[cfg(not(windows))]
+fn sistem_langid() -> Option<u16> {
+    None
 }
 
 /// `{0}`, `{1}` yer tutucularını sırayla doldurur (sözlük şablonları için).
@@ -61,6 +94,11 @@ pub fn bicimle(sablon: &str, degerler: &[&dyn Display]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn sistem_dili_gecerli() {
+        assert!(Dil::HEPSI.contains(&Dil::sistem()));
+    }
 
     #[test]
     fn kod_gidis_donus() {

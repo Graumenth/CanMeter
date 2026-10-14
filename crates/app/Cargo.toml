@@ -17,5 +17,5 @@ egui = "0.36"
 # Ayarlar %APPDATA%\CanMeter\ayarlar.toml
 serde = { version = "1", features = ["derive"] }
 toml = "1"
-windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Dwm"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Dwm", "Win32_Globalization"] }
 raw-window-handle = "0.6"
