@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.0.12 (2026-10-14)
+### Düzeltmeler
+- Overlay boşta çok daha az işlemci kullanır: bar animasyonları kaldırıldı (işlemci payı yaklaşık sekizde bire indi).
+
 ## 0.0.11 (2026-10-14)
 ### Değişti
 - Görünüm adları: Gece, Kor, Sis, Obsidyen, Kehribar, Kömür (önce model adları).
