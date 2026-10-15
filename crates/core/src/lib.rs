@@ -5,6 +5,7 @@
 
 pub mod capture;
 pub mod kaynak;
+pub mod protocol;
 pub mod stats;
 
 use std::time::Duration;

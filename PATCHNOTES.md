@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.3.7 (2026-10-15)
+### Değişti
+- Görünürde değişiklik yok: oyun paketlerini çözen iç katmanın ilk parçası (çerçeveleme ve akış birleştirme)
+  eklendi, kayıt üzerinde doğrulandı. Canlı ölçüm bir sonraki adımda.
+
 ## 0.3.6 (2026-10-14)
 ### Değişti
 - CanMeter açık kaynak: GPL-3.0 lisansı eklendi (`LICENSE`).
