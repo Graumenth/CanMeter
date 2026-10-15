@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.4.4 (2026-10-15)
+### Geliştirme
+- Masaüstü deneme ve ölçüm betikleri `araclar/` altında; kullanıcıya görünen davranış değişmedi.
+
 ## 0.4.3 (2026-10-15)
 ### Düzeltmeler
 - Overlay fareyle boyutlandırılır: sağ kenardaki ince tutamacı tutup sürükleyin; bütün görünüm orantılı
