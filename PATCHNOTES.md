@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.4.6 (2026-10-15)
+### Düzeltmeler
+- Bölge ya da kanal değiştirdikten sonra kendi satırınız kayboluyordu; artık hedefe vuran "tanınmayan" karakter (siz)
+  listelenir. O durumda ad yerine `#kimlik` ve rozetsiz görünebilir; yeniden giriş tam adı getirir.
+- Satırlar yalnız hasara göre sıralanır. Hedef artık sizin en son vurduğunuz düşman.
+
 ## 0.4.5 (2026-10-15)
 ### Düzeltmeler
 - CanMeter oyuna girdikten sonra açıldıysa karakteriniz tanınmıyor ve 0.4.1'den beri satırlar boş kalıyordu. Artık o

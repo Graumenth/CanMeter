@@ -70,3 +70,20 @@ fn karakter_bilinmiyorsa_hedefe_vuranlar_gorunur() {
         (1, 1, 300)
     );
 }
+#[test]
+fn tanimsiz_aktor_hedefe_vurursa_gorunur_spawnli_yabanci_gorunmez() {
+    let mut t = Toplayici::new();
+    let mut b = yalniz();
+    b.isle(&Mesaj::OyuncuSpawn(OyuncuSpawn {
+        id: 2,
+        ad: "Yabanci".into(),
+        sinif_kodu: 30,
+    }));
+    t.hasar(0, &h(1, 90, 100, 2));
+    t.hasar(1, &h(7, 90, 200, 2));
+    t.hasar(2, &h(2, 90, 300, 2));
+    t.hasar(3, &h(90, 7, 50, 2));
+    let a = t.anlik(3, &b).unwrap();
+    let idler: Vec<_> = a.oyuncular.iter().map(|o| o.id).collect();
+    assert_eq!((idler, a.toplam_hasar), (vec![7, 1], 300));
+}

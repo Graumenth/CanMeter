@@ -15,29 +15,29 @@ impl Toplayici {
             return None;
         }
         self.kirli = false;
-        self.hedef = self
-            .hedefler
-            .iter()
-            .filter(|(id, _)| {
-                Some(**id) != tablo.yerel() && !tablo.varlik(**id).is_some_and(|v| v.oyuncu)
-            })
-            .max_by_key(|(id, (hasar, sira))| {
-                (
-                    if tablo.yerel().is_some() {
-                        *sira
-                    } else {
-                        *hasar
-                    },
-                    std::cmp::Reverse(**id),
-                )
-            })
-            .map(|(&id, _)| id);
+        // Hedef: yerel oyuncunun en son vurduğu varlık. Yerel yoksa ya da bu savaşta vurmadıysa (bölge
+        // değişiminden sonra eski kimlik) en çok hasar alan; oyuncular ve yerel hedef olamaz.
+        let aday =
+            |id: u32| Some(id) != tablo.yerel() && !tablo.varlik(id).is_some_and(|v| v.oyuncu);
+        let yerel_hedef = tablo
+            .yerel()
+            .and_then(|y| self.oyuncular.get(&y))
+            .map(|s| s.son_hedef)
+            .filter(|h| self.hedefler.contains_key(h) && aday(*h));
+        self.hedef = yerel_hedef.or_else(|| {
+            self.hedefler
+                .iter()
+                .filter(|(id, _)| aday(**id))
+                .max_by_key(|(id, hasar)| (**hasar, std::cmp::Reverse(**id)))
+                .map(|(&id, _)| id)
+        });
         let sure_ms = self
             .baslangic_ms
             .map_or(0, |b| self.son_hasar_ms.saturating_sub(b));
         let sure = (sure_ms as f64 / 1000.0).max(1.0);
-        // Karakter tanınmadıysa (33 36 görülmedi) geçici kural: seçili hedefe vuranlar; teksen bu sensin.
-        let yerel_yok = tablo.yerel().is_none();
+        // Parti kuralına ek: spawn'ı görülmemiş (oyuncu sayılmayan) bir aktör seçili hedefe vuruyorsa o sensin
+        // ya da senin summon'un: kendi spawn'ın sana gelmez, bölge değişince kimliğin yenilenir (33 36 eski kalır),
+        // oyun içindeyken açınca 33 36 hiç gelmez. Moblar hedefe değil oyunculara vurur, bu yüzden elenir.
         let hedef = self.hedef;
         let mut oyuncular: Vec<_> = self
             .oyuncular
@@ -45,7 +45,8 @@ impl Toplayici {
             .filter(|(id, s)| {
                 (s.vurus > 0 || s.iyilestirme > 0)
                     && (tablo.partide(**id)
-                        || (yerel_yok && hedef.is_some_and(|h| s.hedefi_vurdu(h))))
+                        || (hedef.is_some_and(|h| s.hedefi_vurdu(h))
+                            && !tablo.varlik(**id).is_some_and(|v| v.oyuncu)))
             })
             .map(|(&id, s)| {
                 let v = tablo.varlik(id);
@@ -66,13 +67,7 @@ impl Toplayici {
                 }
             })
             .collect();
-        oyuncular.sort_unstable_by_key(|o| {
-            (
-                !tablo.varlik(o.id as u32).is_some_and(|v| v.oyuncu),
-                std::cmp::Reverse(o.hasar),
-                o.id,
-            )
-        });
+        oyuncular.sort_unstable_by_key(|o| (std::cmp::Reverse(o.hasar), o.id));
         let toplam_hasar = oyuncular
             .iter()
             .fold(0_u64, |t, o| t.saturating_add(o.hasar));

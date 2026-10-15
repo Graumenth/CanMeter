@@ -17,9 +17,8 @@ pub struct Toplayici {
     hedef: Option<u32>,
     hp: HashMap<u32, (u32, u32)>,
     oyuncular: HashMap<u32, OyuncuSayac>,
-    hedefler: HashMap<u32, (u64, u64)>,
+    hedefler: HashMap<u32, u64>,
     son_hasarlari: VecDeque<(u64, u64)>,
-    olay_no: u64,
     aktif: bool,
     kirli: bool,
 }
@@ -30,7 +29,7 @@ impl Default for Toplayici {
         Self {
             savas_id: 0, baslangic_ms: None, son_hasar_ms: 0, hedef: None,
             hp: HashMap::new(), oyuncular: HashMap::new(), hedefler: HashMap::new(),
-            son_hasarlari: VecDeque::with_capacity(64), olay_no: 0, aktif: false, kirli: false,
+            son_hasarlari: VecDeque::with_capacity(64), aktif: false, kirli: false,
         }
     }
 }
@@ -78,7 +77,6 @@ impl Toplayici {
             self.aktif = true;
         }
         self.son_hasar_ms = self.son_hasar_ms.max(zaman);
-        self.olay_no = self.olay_no.saturating_add(1);
         let s = self.oyuncular.entry(actor).or_default();
         s.hasar = s.hasar.saturating_add(miktar);
         s.vurus = s.vurus.saturating_add(1);
@@ -86,7 +84,7 @@ impl Toplayici {
         s.son_hasar_ms = self.son_hasar_ms;
         s.hedef_ekle(hedef);
         let h = self.hedefler.entry(hedef).or_default();
-        *h = (h.0.saturating_add(miktar), self.olay_no);
+        *h = h.saturating_add(miktar);
         // 160 ms kovalar: en çok 64 giriş; pencere kenarı en çok 159 ms erken düşer.
         let kova = self.son_hasar_ms / 160 * 160;
         if let Some(son) = self.son_hasarlari.back_mut().filter(|s| s.0 == kova) {
