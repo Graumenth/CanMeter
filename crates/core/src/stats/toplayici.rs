@@ -114,3 +114,6 @@ mod anlik;
 #[cfg(test)]
 #[path = "toplayici_testler.rs"]
 mod testler;
+#[cfg(test)]
+#[path = "toplayici_testler_parti.rs"]
+mod testler_parti;

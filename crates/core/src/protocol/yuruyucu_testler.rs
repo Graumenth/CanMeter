@@ -66,7 +66,7 @@ fn bozuk_bundle_atlanir() {
 #[test]
 fn parcalarda_eksik_son_kalir() {
     let mut kaynak = mesaj([1, 1], b"");
-    kaynak.extend(mesaj([2, 2], &vec![8; 200]));
+    kaynak.extend(mesaj([2, 2], &[8; 200]));
     kaynak.extend(mesaj([3, 3], &vec![9; 2000]));
     let beklenen = vec![
         ([1, 1], vec![]),

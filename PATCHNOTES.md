@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.4.1 (2026-10-15)
+### Düzeltmeler
+- Overlay'de yalnız parti üyeleri görünür; tek başınaysanız yalnız siz. Size vuran yaratıklar artık listeye girmez.
+- Parti üyelerinin sınıfları ve sınıf ikonları doğru gelir.
+
 ## 0.4.0 (2026-10-15)
 ### Yeni
 - CanMeter artık oyundan canlı ölçüyor: program açıldığında ağ adaptörünü kendisi seçer, oyun sunucusunu

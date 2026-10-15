@@ -45,3 +45,51 @@ pub fn hex_yaz(b: &[u8]) -> String {
         .collect::<Vec<_>>()
         .join(" ")
 }
+
+/// Hex basar; ad olabilecek harf dizilerini `NN` ile maskeler: ASCII harf ya da geçerli UTF-8 çok baytlı harf
+/// birimlerinden oluşan 2+ birimlik diziler. Tek başına >= 0x80 baytlar (varint) maskelenmez.
+pub fn hex_maskeli(b: &[u8]) -> String {
+    let mut maske = vec![false; b.len()];
+    let mut i = 0;
+    while i < b.len() {
+        let bas = i;
+        let mut birim = 0;
+        while let Some(n) = harf_birimi(&b[i..]) {
+            i += n;
+            birim += 1;
+        }
+        if birim >= 2 {
+            maske[bas..i].iter_mut().for_each(|m| *m = true);
+        }
+        if birim == 0 {
+            i += 1;
+        }
+    }
+    b.iter()
+        .zip(maske)
+        .map(|(x, m)| {
+            if m {
+                "NN".to_string()
+            } else {
+                format!("{x:02X}")
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+/// `b` bir harfle başlıyorsa o harfin bayt uzunluğu.
+fn harf_birimi(b: &[u8]) -> Option<usize> {
+    let ilk = *b.first()?;
+    if ilk.is_ascii_alphabetic() {
+        return Some(1);
+    }
+    let n = match ilk {
+        0xC2..=0xDF => 2,
+        0xE0..=0xEF => 3,
+        0xF0..=0xF4 => 4,
+        _ => return None,
+    };
+    let c = std::str::from_utf8(b.get(..n)?).ok()?.chars().next()?;
+    c.is_alphabetic().then_some(n)
+}

@@ -34,7 +34,7 @@ pub fn oyuncu_spawn(govde: &[u8]) -> Option<OyuncuSpawn> {
     let maske = *govde.get(konum)?;
     konum += 1;
     let ad = ad_al(govde, &mut konum, maske)?;
-    konum = konum.checked_add(2)?;
+    // Kayıt (2026-10-14): sınıf u32 adın hemen ardından gelir; 33 36'daki sunucu u16 burada yok.
     let sinif_kodu = u32_al(govde, &mut konum)?;
     Some(OyuncuSpawn { id, ad, sinif_kodu })
 }

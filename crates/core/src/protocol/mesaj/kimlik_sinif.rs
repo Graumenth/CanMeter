@@ -71,7 +71,7 @@ pub(super) fn uye_al(b: &[u8], konum: &mut usize) -> Option<(RosterUye, u8)> {
     let ad = std::str::from_utf8(&b[baslangic + 1..*konum])
         .ok()?
         .to_owned();
-    *konum = konum.checked_add(4)?;
+    // Kayıt (2026-10-14): adın hemen ardından sınıf u32, seviye u32, sonra gear u32 (atlanır).
     let sinif_kodu = u32_al(b, konum)?;
     let seviye = u32_al(b, konum)?;
     *konum = konum.checked_add(4)?;

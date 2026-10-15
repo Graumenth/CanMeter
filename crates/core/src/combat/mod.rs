@@ -90,6 +90,14 @@ impl Tablo {
         self.yerel
     }
 
+    /// Overlay satırı olacaklar: yerel oyuncu ve roster'da adı geçenler (sahip kuralı: parti dışı gösterilmez).
+    pub fn partide(&self, id: u32) -> bool {
+        self.yerel == Some(id)
+            || self
+                .varlik(id)
+                .is_some_and(|v| v.oyuncu && self.parti.contains_key(&v.ad))
+    }
+
     /// Çağıranın tamponunu doldurur; kapasite yeterliyse ayırma yapmaz.
     pub fn ad(&self, id: u32, cikti: &mut String) {
         cikti.clear();

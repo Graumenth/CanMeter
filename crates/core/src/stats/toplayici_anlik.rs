@@ -39,10 +39,7 @@ impl Toplayici {
         let mut oyuncular: Vec<_> = self
             .oyuncular
             .iter()
-            .filter(|(id, s)| {
-                (s.vurus > 0 || s.iyilestirme > 0)
-                    && (Some(**id) != self.hedef || tablo.varlik(**id).is_some_and(|v| v.oyuncu))
-            })
+            .filter(|(id, s)| (s.vurus > 0 || s.iyilestirme > 0) && tablo.partide(**id))
             .map(|(&id, s)| {
                 let v = tablo.varlik(id);
                 let mut ad = String::new();
@@ -103,14 +100,4 @@ impl Toplayici {
                 .map(|&(m, _)| (m as f64 / (son_hasar as f64 / 10.0)) as f32),
         })
     }
-}
-
-#[cfg(test)]
-#[test]
-fn anlik_olmadan_bosluk_yeni_savas_acar() {
-    let mut t = Toplayici::default();
-    t.vurus(0, 1, 90, 100, false);
-    t.vurus(30_001, 2, 91, 10, false);
-    let a = t.anlik(30_001, &Tablo::new()).unwrap();
-    assert_eq!((a.savas_id, a.oyuncular.len(), a.toplam_hasar), (2, 1, 10));
 }

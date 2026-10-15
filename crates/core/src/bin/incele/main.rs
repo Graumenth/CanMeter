@@ -14,8 +14,11 @@ use canmeter_core::protocol::yuruyucu::Yuruyucu;
 
 mod args;
 mod ozet;
+mod sinif;
 
 const HEX_IZINLI: [[u8; 2]; 3] = [[0x04, 0x38], [0x05, 0x38], [0x1B, 0x92]];
+/// Ad taşıyan türler: yalnız harf dizileri maskelenmiş hex basılır.
+const HEX_MASKELI: [[u8; 2]; 3] = [[0x33, 0x36], [0x45, 0x36], [0x02, 0x97]];
 
 fn main() {
     let args::Secenekler {
@@ -38,6 +41,7 @@ fn main() {
     let (mut akis, mut yuruyucu) = (Akis::new(), Yuruyucu::new());
     let mut turler: ozet::Sayaclar = HashMap::new();
     let (mut segment, mut bayt, mut imza, mut basilan) = (0u64, 0u64, 0u64, 0usize);
+    let mut siniflar = sinif::SinifSayaci::default();
     while let Some(p) = kaynak.sonraki() {
         let Some(s) = paket::ayristir(p.veri).filter(|s| s.kaynak == sunucu && !s.yuk.is_empty())
         else {
@@ -55,9 +59,15 @@ fn main() {
             let e = turler.entry(tur).or_insert((0, 0, 0));
             e.0 += 1;
             e.1 += govde.len() as u64;
-            let cozuldu = mesaj::coz(tur, govde).is_some();
+            let cozum = mesaj::coz(tur, govde);
+            let cozuldu = cozum.is_some();
             e.2 += u64::from(cozuldu);
-            let istenen = hex == Some(tur) && HEX_IZINLI.contains(&tur) && (!hatali || !cozuldu);
+            if let Some(mesaj) = &cozum {
+                siniflar.say(mesaj);
+            }
+            let maskeli = HEX_MASKELI.contains(&tur);
+            let istenen =
+                hex == Some(tur) && (HEX_IZINLI.contains(&tur) || maskeli) && (!hatali || !cozuldu);
             if istenen && basilan < adet {
                 basilan += 1;
                 println!(
@@ -65,13 +75,18 @@ fn main() {
                     tur[0],
                     tur[1],
                     govde.len(),
-                    ozet::hex_yaz(govde)
+                    if maskeli {
+                        ozet::hex_maskeli(govde)
+                    } else {
+                        ozet::hex_yaz(govde)
+                    }
                 );
             }
         });
         akis.tuket(n);
     }
     ozet::yaz(segment, bayt, imza, akis.veri().len(), &turler);
+    siniflar.yaz();
 }
 
 /// İlk geçiş: gönderen uç başına bayt; 443/80 dışı en çok veri gönderen uç oyun sunucusudur.

@@ -14,7 +14,6 @@ fn uye_yaz(slot: u8, ad: &str, sinif: u32, seviye: u32, cikti: &mut Vec<u8>) {
     cikti.extend_from_slice(&[1, slot]);
     cikti.extend_from_slice(&0x1234_u64.to_le_bytes());
     ad_yaz(ad, cikti);
-    cikti.extend_from_slice(&0_u32.to_le_bytes());
     cikti.extend_from_slice(&sinif.to_le_bytes());
     cikti.extend_from_slice(&seviye.to_le_bytes());
     cikti.extend_from_slice(&0_u32.to_le_bytes());
@@ -51,7 +50,6 @@ fn spawn_ve_gecersiz_utf8() {
     b.extend_from_slice(&[0; 4]);
     b.push(1);
     ad_yaz("Deneme", &mut b);
-    b.extend_from_slice(&1304_u16.to_le_bytes());
     b.extend_from_slice(&17_u32.to_le_bytes());
     assert_eq!(
         oyuncu_spawn(&b),
