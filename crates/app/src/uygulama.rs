@@ -38,7 +38,7 @@ impl Uygulama {
             kalici,
             kilit: Kilit::new(),
             ayarlar_acik: false,
-            motor: Motor::demo(7),
+            motor: crate::komut_satiri::motor(),
             son: None,
             onceki: Instant::now(),
             boyut: Boyut::default(),
@@ -75,7 +75,7 @@ impl eframe::App for Uygulama {
             kilitli: self.kilit.kilitli,
             toplam_goster: self.ayarlar.toplam_goster,
             zemin: self.ayarlar.zemin(),
-            demo: true,
+            demo: self.motor.demo_mu(),
             surum: canmeter_core::surum(),
         };
         // CentralPanel iç alanını pencereye genişletir; içerik yüksekliği skin'in kendi alanından ölçülür.

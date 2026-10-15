@@ -8,7 +8,10 @@ use std::time::Duration;
 
 use crate::stats::SavasAnlik;
 
+pub mod boru;
+pub mod canli;
 pub mod demo;
+pub mod kayit;
 
 pub trait AnlikKaynagi: Send {
     /// Zamanı ilerletir. Durum değiştiyse yeni anlık döner; değişmediyse `None` (UI boşuna çizmez).

@@ -6,5 +6,6 @@
 
 pub mod cerceve;
 pub mod lz4;
+pub mod mesaj;
 pub mod varint;
 pub mod yuruyucu;

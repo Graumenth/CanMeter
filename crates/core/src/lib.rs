@@ -4,6 +4,7 @@
 //! Katmanlar ve desenler `CanMeterCC/mimari.md`'de. Uygulama yalnız [`Motor`] ve [`stats`] türlerini görür.
 
 pub mod capture;
+pub mod combat;
 pub mod kaynak;
 pub mod protocol;
 pub mod stats;
@@ -16,6 +17,7 @@ use stats::SavasAnlik;
 /// Çekirdek giriş noktası (Facade): kaynak seçimi ve ilerletme tek yerden.
 pub struct Motor {
     kaynak: Box<dyn AnlikKaynagi>,
+    demo: bool,
 }
 
 impl Motor {
@@ -23,7 +25,29 @@ impl Motor {
     pub fn demo(tohum: u64) -> Self {
         Self {
             kaynak: Box::new(kaynak::demo::DemoSavas::new(tohum)),
+            demo: true,
         }
+    }
+
+    /// Canlı yakalama (Npcap). `arayuz` None ise varsayılan rota adaptörü. Hiçbir paket gönderilmez.
+    pub fn canli(arayuz: Option<&str>) -> Result<Self, String> {
+        Ok(Self {
+            kaynak: Box::new(kaynak::canli::CanliKaynak::new(arayuz)?),
+            demo: false,
+        })
+    }
+
+    /// Pcap kaydını yakalama zamanına göre oynatır (geliştirme); `hizli` ise beklemeden.
+    pub fn kayit(yol: &std::path::Path, hizli: bool) -> Result<Self, pcap::Error> {
+        Ok(Self {
+            kaynak: Box::new(kaynak::kayit::KayitKaynak::ac(yol, hizli)?),
+            demo: false,
+        })
+    }
+
+    /// Veri üretilmiş mi (overlay alt bilgisi "Demo verisi").
+    pub fn demo_mu(&self) -> bool {
+        self.demo
     }
 
     /// Zamanı ilerletir; yalnız değişim varsa anlık döner.

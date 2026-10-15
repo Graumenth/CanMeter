@@ -1,5 +1,12 @@
 # PATCHNOTES
 
+## 0.4.0 (2026-10-15)
+### Yeni
+- CanMeter artık oyundan canlı ölçüyor: program açıldığında ağ adaptörünü kendisi seçer, oyun sunucusunu
+  bulur ve savaş başlayınca parti üyelerinin hasarını, DPS'ini, kritik oranını, iyileştirmesini ve hedefin
+  kalan canını gösterir. Veri alınamazsa demo verisiyle devam eder (alt bilgide "Demo verisi").
+- Geliştiriciler için: `--kayit <dosya.pcap>` ile kayıt oynatma, `--arayuz <ad>` ile adaptör seçimi, `--demo`.
+
 ## 0.3.7 (2026-10-15)
 ### Değişti
 - Görünürde değişiklik yok: oyun paketlerini çözen iç katmanın ilk parçası (çerçeveleme ve akış birleştirme)
