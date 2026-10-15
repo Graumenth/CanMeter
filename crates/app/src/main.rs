@@ -17,6 +17,7 @@ mod pencere;
 mod sayi;
 mod sinif_renk;
 mod skin;
+mod tutamac;
 mod uygulama;
 mod yazi;
 

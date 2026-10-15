@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.4.3 (2026-10-15)
+### Düzeltmeler
+- Overlay fareyle boyutlandırılır: sağ kenardaki ince tutamacı tutup sürükleyin; bütün görünüm orantılı
+  büyür ya da küçülür, yükseklik içeriğe göre kendiliğinden ayarlanır. Kilitliyken tutamaç gizlidir.
+
 ## 0.4.2 (2026-10-15)
 ### Düzeltmeler
 - Kilitliyken kilit düğmesi tıklanabilir kalır: fare düğmenin üstüne gelince overlay o noktada tıklamayı alır,

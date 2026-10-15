@@ -1,11 +1,13 @@
 //! Tek süreçte motor, kullanıcı ayarları ve overlay kare döngüsü.
 use crate::skin::{Baglam, Skin, kayit};
 use crate::{
-    ayarlar::Ayarlar, ayarlar_paneli, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, konum::Konum,
-    pencere, yazi,
+    ayarlar::Ayarlar, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, konum::Konum, pencere,
+    tutamac, yazi,
 };
 use canmeter_core::{Motor, stats::SavasAnlik};
 use std::time::{Duration, Instant};
+#[path = "uygulama_kare.rs"]
+mod kare;
 /// Ayarlar paneli açıkken en az bu kadar yükseklik (nokta).
 const PANEL_YUKSEKLIK: f32 = 380.0;
 /// Ölçek ya da konum değişince ayar dosyası bu kadar sessizlikten sonra yazılır (sürükleme boyunca değil).
@@ -79,42 +81,16 @@ impl eframe::App for Uygulama {
             surum: canmeter_core::surum(),
         };
         // CentralPanel iç alanını pencereye genişletir; içerik yüksekliği skin'in kendi alanından ölçülür.
+        let kilitli = self.kilit.kilitli;
         let (eylemler, icerik) = egui::CentralPanel::default()
             .frame(egui::Frame::NONE)
             .show(ui, |ui| {
                 let skin = ui.scope(|ui| self.skin.ciz(ui, &baglam));
+                tutamac::ciz(ui, skin.response.rect, kilitli);
                 (skin.inner, skin.response.rect.height())
             })
             .inner;
-        if eylemler.surukle && !self.kilit.kilitli {
-            ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
-        }
-        self.kilit.kare(&ctx, eylemler.kilit_degistir);
-        if eylemler.ayarlar_ac {
-            self.ayarlar_acik = true;
-        }
-        let onceki_dil = self.ayarlar.dil;
-        if self.ayarlar_acik && ayarlar_paneli::ciz(&ctx, &mut self.ayarlar, &mut self.ayarlar_acik)
-        {
-            self.kaydet(onceki_dil);
-        }
-        // Pencere içerik kadar yüksek; ayarlar paneli açıkken ona da yer kalır. Genişlik kullanıcıdan.
-        let hedef = if self.ayarlar_acik {
-            icerik.max(PANEL_YUKSEKLIK)
-        } else {
-            icerik
-        };
-        let boyut_degisti = self.boyut.kare(&ctx, hedef, &mut self.ayarlar.olcek);
-        if boyut_degisti | self.konum.kare(&ctx, &mut self.ayarlar.konum) {
-            self.kayit_zamani = Some(Instant::now());
-        }
-        if self
-            .kayit_zamani
-            .is_some_and(|t| t.elapsed() >= KAYIT_GECIKMESI)
-        {
-            self.kayit_zamani = None;
-            self.kaydet(self.ayarlar.dil);
-        }
+        self.kare_sonu(&ctx, eylemler, icerik);
         ctx.request_repaint_after(Duration::from_millis(250));
     }
 }
