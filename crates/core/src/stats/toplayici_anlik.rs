@@ -36,10 +36,17 @@ impl Toplayici {
             .baslangic_ms
             .map_or(0, |b| self.son_hasar_ms.saturating_sub(b));
         let sure = (sure_ms as f64 / 1000.0).max(1.0);
+        // Karakter tanınmadıysa (33 36 görülmedi) geçici kural: seçili hedefe vuranlar; teksen bu sensin.
+        let yerel_yok = tablo.yerel().is_none();
+        let hedef = self.hedef;
         let mut oyuncular: Vec<_> = self
             .oyuncular
             .iter()
-            .filter(|(id, s)| (s.vurus > 0 || s.iyilestirme > 0) && tablo.partide(**id))
+            .filter(|(id, s)| {
+                (s.vurus > 0 || s.iyilestirme > 0)
+                    && (tablo.partide(**id)
+                        || (yerel_yok && hedef.is_some_and(|h| s.hedefi_vurdu(h))))
+            })
             .map(|(&id, s)| {
                 let v = tablo.varlik(id);
                 let mut ad = String::new();

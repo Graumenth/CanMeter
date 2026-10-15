@@ -86,6 +86,9 @@ impl CanliKaynak {
 }
 
 impl AnlikKaynagi for CanliKaynak {
+    fn durum(&self) -> super::Durum {
+        self.boru.durum()
+    }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         let mut geldi = false;
         while let Ok(ham) = self.alici.try_recv() {

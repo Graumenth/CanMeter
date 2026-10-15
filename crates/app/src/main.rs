@@ -18,6 +18,7 @@ mod sayi;
 mod sinif_renk;
 mod skin;
 mod tutamac;
+mod uyari;
 mod uygulama;
 mod yazi;
 

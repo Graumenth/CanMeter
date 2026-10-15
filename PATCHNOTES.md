@@ -1,5 +1,12 @@
 # PATCHNOTES
 
+## 0.4.5 (2026-10-15)
+### Düzeltmeler
+- CanMeter oyuna girdikten sonra açıldıysa karakteriniz tanınmıyor ve 0.4.1'den beri satırlar boş kalıyordu. Artık o
+  durumda hedefe vuranlar gösterilir (tek başınaysanız siz) ve overlay'de "bölge ya da kanal değiştir, ya da yeniden
+  gir" ipucu çıkar; karakter tanınınca parti kuralı devreye girer.
+- Oyun trafiği yokken overlay "Oyun trafiği bekleniyor" yazar.
+
 ## 0.4.4 (2026-10-15)
 ### Geliştirme
 - Masaüstü deneme ve ölçüm betikleri `araclar/` altında; kullanıcıya görünen davranış değişmedi.

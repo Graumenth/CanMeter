@@ -2,7 +2,7 @@
 use crate::skin::{Baglam, Skin, kayit};
 use crate::{
     ayarlar::Ayarlar, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, konum::Konum, pencere,
-    tutamac, yazi,
+    tutamac, uyari, yazi,
 };
 use canmeter_core::{Motor, stats::SavasAnlik};
 use std::time::{Duration, Instant};
@@ -82,12 +82,15 @@ impl eframe::App for Uygulama {
         };
         // CentralPanel iç alanını pencereye genişletir; içerik yüksekliği skin'in kendi alanından ölçülür.
         let kilitli = self.kilit.kilitli;
+        let durum = self.motor.durum();
+        let zemin = baglam.zemin.dolgu(self.skin.zemin_rengi());
         let (eylemler, icerik) = egui::CentralPanel::default()
             .frame(egui::Frame::NONE)
             .show(ui, |ui| {
                 let skin = ui.scope(|ui| self.skin.ciz(ui, &baglam));
+                let ipucu = uyari::ciz(ui, baglam.dil, durum, zemin);
                 tutamac::ciz(ui, skin.response.rect, kilitli);
-                (skin.inner, skin.response.rect.height())
+                (skin.inner, skin.response.rect.height() + ipucu)
             })
             .inner;
         self.kare_sonu(&ctx, eylemler, icerik);

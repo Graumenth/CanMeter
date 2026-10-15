@@ -5,14 +5,9 @@ use std::collections::{HashMap, VecDeque};
 pub const BOSLUK_MS: u64 = 30_000;
 pub const TAHMIN_PENCERESI_MS: u64 = 10_000;
 
-#[derive(Debug, Default, Clone)]
-pub struct OyuncuSayac {
-    pub hasar: u64,
-    pub vurus: u32,
-    pub kritik: u32,
-    pub iyilestirme: u64,
-    pub son_hasar_ms: u64,
-}
+#[path = "toplayici_sayac.rs"]
+mod sayac;
+pub use sayac::OyuncuSayac;
 
 #[derive(Debug)]
 pub struct Toplayici {
@@ -89,6 +84,7 @@ impl Toplayici {
         s.vurus = s.vurus.saturating_add(1);
         s.kritik = s.kritik.saturating_add(u32::from(kritik));
         s.son_hasar_ms = self.son_hasar_ms;
+        s.hedef_ekle(hedef);
         let h = self.hedefler.entry(hedef).or_default();
         *h = (h.0.saturating_add(miktar), self.olay_no);
         // 160 ms kovalar: en çok 64 giriş; pencere kenarı en çok 159 ms erken düşer.

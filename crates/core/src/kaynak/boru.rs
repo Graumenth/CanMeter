@@ -45,6 +45,13 @@ impl Boru {
     pub fn sunucu(&self) -> Option<SocketAddrV4> {
         self.sunucu
     }
+    pub fn durum(&self) -> super::Durum {
+        match (self.sunucu, self.tablo.yerel()) {
+            (None, _) => super::Durum::SunucuYok,
+            (Some(_), None) => super::Durum::KarakterYok,
+            _ => super::Durum::Hazir,
+        }
+    }
     pub fn segment(&mut self, zaman_ms: u64, s: &Segment<'_>) {
         self.zaman_asimi(zaman_ms);
         if s.yuk.is_empty() {

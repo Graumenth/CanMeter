@@ -46,6 +46,9 @@ impl KayitKaynak {
 }
 
 impl AnlikKaynagi for KayitKaynak {
+    fn durum(&self) -> super::Durum {
+        self.boru.durum()
+    }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         if self.bitti {
             return None;

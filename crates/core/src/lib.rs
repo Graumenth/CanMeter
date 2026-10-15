@@ -12,6 +12,7 @@ pub mod stats;
 use std::time::Duration;
 
 use kaynak::AnlikKaynagi;
+pub use kaynak::Durum;
 use stats::SavasAnlik;
 
 /// Çekirdek giriş noktası (Facade): kaynak seçimi ve ilerletme tek yerden.
@@ -48,6 +49,11 @@ impl Motor {
     /// Veri üretilmiş mi (overlay alt bilgisi "Demo verisi").
     pub fn demo_mu(&self) -> bool {
         self.demo
+    }
+
+    /// Kaynağın hazırlık durumu (overlay ipucu: akış yok / karakter tanınmadı).
+    pub fn durum(&self) -> Durum {
+        self.kaynak.durum()
     }
 
     /// Zamanı ilerletir; yalnız değişim varsa anlık döner.

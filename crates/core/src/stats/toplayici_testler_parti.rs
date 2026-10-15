@@ -57,3 +57,16 @@ fn teksen_yalniz_sen_gorunursun() {
     let a = t.anlik(0, &yalniz()).unwrap();
     assert_eq!((a.oyuncular.len(), a.oyuncular[0].id), (1, 1));
 }
+#[test]
+fn karakter_bilinmiyorsa_hedefe_vuranlar_gorunur() {
+    let mut t = Toplayici::new();
+    t.hasar(0, &h(1, 90, 300, 2));
+    t.hasar(1, &h(90, 1, 50, 2));
+    t.hasar(2, &h(91, 1, 20, 2));
+    let a = t.anlik(2, &Tablo::new()).unwrap();
+    assert_eq!(a.hedef.as_ref().map(|h| h.ad.as_str()), Some("#90"));
+    assert_eq!(
+        (a.oyuncular.len(), a.oyuncular[0].id, a.toplam_hasar),
+        (1, 1, 300)
+    );
+}
