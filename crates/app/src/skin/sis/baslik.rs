@@ -21,6 +21,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         Pos2::new(rect.max.x - 32.0, rect.min.y + 7.0),
         Vec2::new(25.0, 25.0),
     );
+    crate::kilit_alani::bildir(ui, kilit_rect);
     let ayar_rect = Rect::from_min_size(
         Pos2::new(rect.max.x - 57.0, rect.min.y + 7.0),
         Vec2::new(24.0, 25.0),

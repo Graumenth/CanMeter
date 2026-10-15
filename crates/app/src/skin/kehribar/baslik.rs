@@ -75,6 +75,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         Pos2::new(rect.right() - 20.0, rect.center().y),
         Vec2::new(24.0, 20.0),
     );
+    crate::kilit_alani::bildir(ui, kilit);
     let ayarlar = kilit.translate(egui::vec2(-28.0, 0.0));
     let m = metin::metin(b.dil);
     if baslik_dugme::dugme(ui, ayarlar, "⚙", "ayarlar", m.ayarlar) {

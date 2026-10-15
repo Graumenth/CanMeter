@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.4.2 (2026-10-15)
+### Düzeltmeler
+- Kilitliyken kilit düğmesi tıklanabilir kalır: fare düğmenin üstüne gelince overlay o noktada tıklamayı alır,
+  gerisi oyuna geçmeye devam eder. Ctrl+Shift+K yine çalışır.
+
 ## 0.4.1 (2026-10-15)
 ### Düzeltmeler
 - Overlay'de yalnız parti üyeleri görünür; tek başınaysanız yalnız siz. Size vuran yaratıklar artık listeye girmez.

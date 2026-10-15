@@ -72,6 +72,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam, sure_ms: Option<u64>) -> Eylemler {
 
     let ayar = Rect::from_center_size(rect.right_center() - vec2(40.0, 0.0), vec2(24.0, 24.0));
     let kilit = Rect::from_center_size(rect.right_center() - vec2(12.0, 0.0), vec2(24.0, 24.0));
+    crate::kilit_alani::bildir(ui, kilit);
     let m = metin::metin(b.dil);
     let ayar_yanit = ui
         .interact(ayar, ui.id().with("ayarlar"), Sense::click())

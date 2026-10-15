@@ -10,6 +10,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         .interact(rect, ui.id().with("surukle"), Sense::drag())
         .drag_started();
     let kilit_rect = arac_alani(rect, 21.0);
+    crate::kilit_alani::bildir(ui, kilit_rect);
     let ayar_rect = arac_alani(rect, 47.0);
     let kilit_ipucu = if b.kilitli {
         metin::metin(b.dil).kilidi_ac

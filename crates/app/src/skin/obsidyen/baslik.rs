@@ -54,6 +54,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         egui::pos2(rect.right() - 35.0, rect.top() + 15.0),
         vec2(19.0, 19.0),
     );
+    crate::kilit_alani::bildir(ui, kilit_rect);
     let ayar_rect = kilit_rect.translate(vec2(-22.0, 0.0));
     if dugme(ui, ayar_rect, "⚙", m.ayarlar).clicked() {
         e.ayarlar_ac = true;

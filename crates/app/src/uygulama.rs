@@ -36,7 +36,7 @@ impl Uygulama {
             skin: kayit::bul(&ayarlar.skin),
             ayarlar,
             kalici,
-            kilit: Kilit::new(),
+            kilit: Kilit::new(&cc.egui_ctx),
             ayarlar_acik: false,
             motor: crate::komut_satiri::motor(),
             son: None,
@@ -86,7 +86,7 @@ impl eframe::App for Uygulama {
                 (skin.inner, skin.response.rect.height())
             })
             .inner;
-        if eylemler.surukle {
+        if eylemler.surukle && !self.kilit.kilitli {
             ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
         }
         self.kilit.kare(&ctx, eylemler.kilit_degistir);

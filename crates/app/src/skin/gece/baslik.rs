@@ -51,6 +51,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         Rect::from_min_size(alan.right_top() + Vec2::new(-46.0, 18.0), Vec2::splat(18.0));
     let kilit_alani =
         Rect::from_min_size(alan.right_top() + Vec2::new(-23.0, 18.0), Vec2::splat(18.0));
+    crate::kilit_alani::bildir(ui, kilit_alani);
     let ayar = ui
         .interact(ayar_alani, ui.id().with("ayarlar"), Sense::click())
         .on_hover_text(m.ayarlar);

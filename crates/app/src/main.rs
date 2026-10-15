@@ -8,6 +8,8 @@ mod ayarlar_paneli;
 mod boyut;
 mod dil;
 mod kilit;
+mod kilit_alani;
+mod kilit_fare;
 mod kisayol;
 mod komut_satiri;
 mod konum;
