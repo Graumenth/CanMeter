@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.4.10 (2026-10-16)
+### Düzeltmeler
+- Demo verisinde savaşın ilk saniyesinde DPS değerleri hasardan büyük görünüyordu; düzeltildi.
+
 ## 0.4.9 (2026-10-16)
 ### Düzeltmeler
 - Kuşak görünümünde yazıların altındaki gölge kaldırıldı; yazılar net.

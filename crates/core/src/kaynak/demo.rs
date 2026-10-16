@@ -70,7 +70,7 @@ impl DemoSavas {
     fn oyuncu(&self, i: usize, sure: f64, toplam: u64) -> OyuncuAnlik {
         let hasar = self.hasar[i];
         let iyilestirme = self.iyilestirme[i];
-        let oran = if sure > 0.0 { 1.0 / sure } else { 0.0 };
+        let oran = 1.0 / sure;
         OyuncuAnlik {
             id: i as u64 + 1,
             ad: String::from(ADLAR[i]),
@@ -88,7 +88,8 @@ impl DemoSavas {
 
     fn anlik(&self) -> SavasAnlik {
         let toplam: u64 = self.hasar.iter().sum();
-        let sure = self.sure_ms as f64 / 1000.0;
+        // Gerçek toplayıcı gibi süre en az 1 sn: ilk saniyede DPS hasardan büyük görünmesin.
+        let sure = (self.sure_ms as f64 / 1000.0).max(1.0);
         let kalan = self.ortalama_dps().map(|dps| (self.hp / dps) as f32);
         let mut siralama = [0, 1, 2, 3, 4, 5];
         siralama
