@@ -13,6 +13,7 @@ pub mod gece;
 pub mod kehribar;
 pub mod komur;
 pub mod kor;
+pub mod kusak;
 pub mod obsidyen;
 pub mod sis;
 

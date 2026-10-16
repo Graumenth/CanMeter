@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.4.8 (2026-10-16)
+### Düzeltmeler
+- Yeni görünüm "Kuşak": kalın, sınıf renginde satır şeritleri; solda daire içinde sınıf ikonu; sağda iyileştirme, toplam
+  hasar, DPS ve pay; hedef satırında HP yüzdesi, kalan süre ve kırmızı HP çubuğu. Ayarlar > Görünüm'den ya da
+  Ctrl+Shift+S ile seçilir. Diğer görünümler değişmedi.
+
 ## 0.4.7 (2026-10-16)
 ### Düzeltmeler
 - Sınıf ikonları artık oyundaki gerçek ikonlar: bütün skin'lerde satırlarda sınıfın kendi ikonu görünür.

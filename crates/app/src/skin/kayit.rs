@@ -1,12 +1,13 @@
 //! Skin kayıt listesi: ad -> görünüm. Sıra, ayarlardaki ve Ctrl+Shift+S döngüsündeki sıradır.
 
-use super::{Skin, gece, kehribar, komur, kor, obsidyen, sis};
+use super::{Skin, gece, kehribar, komur, kor, kusak, obsidyen, sis};
 
-pub static HEPSI: [&dyn Skin; 6] = [
+pub static HEPSI: [&dyn Skin; 7] = [
     &gece::Gece,
     &kor::Kor,
     &sis::Sis,
     &obsidyen::Obsidyen,
+    &kusak::Kusak,
     &kehribar::Kehribar,
     &komur::Komur,
 ];
