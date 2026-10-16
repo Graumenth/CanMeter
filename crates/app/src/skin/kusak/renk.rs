@@ -14,5 +14,3 @@ pub const HP: Color32 = Color32::from_rgb(0xe5, 0x48, 0x4d);
 pub const YESIL: Color32 = Color32::from_rgb(0x3f, 0xb9, 0x50);
 pub const SARI: Color32 = Color32::from_rgb(0xe5, 0xb9, 0x37);
 pub const BEN_DOLGU: Color32 = Color32::from_rgba_unmultiplied_const(255, 255, 255, 40);
-pub const GOLGE: Color32 = Color32::from_rgba_unmultiplied_const(0, 0, 0, 150);
-pub const DEGER_GOLGE: Color32 = Color32::from_rgba_unmultiplied_const(0, 0, 0, 170);

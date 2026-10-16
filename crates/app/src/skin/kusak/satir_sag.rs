@@ -73,7 +73,6 @@ fn iyilestirme(
     };
     let konum = egui::pos2(x, y - g.size().y / 2.0);
     let ton = if icte { renk::YAZI } else { renk::YESIL };
-    p.galley(konum + egui::vec2(1.0, 1.0), g.clone(), renk::DEGER_GOLGE);
     p.galley(konum, g, ton.gamma_multiply(a));
     x - 4.0
 }
@@ -89,7 +88,6 @@ fn deger(
 ) -> f32 {
     let g = p.layout_no_wrap(metin, font, ton);
     let konum = egui::pos2(sag - g.size().x, y - g.size().y / 2.0);
-    p.galley(konum + egui::vec2(1.0, 1.0), g.clone(), renk::DEGER_GOLGE);
     p.galley(konum, g, ton.gamma_multiply(a));
     konum.x
 }

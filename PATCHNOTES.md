@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.4.9 (2026-10-16)
+### Düzeltmeler
+- Kuşak görünümünde yazıların altındaki gölge kaldırıldı; yazılar net.
+
 ## 0.4.8 (2026-10-16)
 ### Düzeltmeler
 - Yeni görünüm "Kuşak": kalın, sınıf renginde satır şeritleri; solda daire içinde sınıf ikonu; sağda iyileştirme, toplam

@@ -65,7 +65,7 @@ fn kimlik(p: &egui::Painter, rect: Rect, sag: f32, o: &OyuncuAnlik, dil: Dil, a:
         egui::pos2(sag - 4.0, rect.bottom()),
     );
     let kp = p.with_clip_rect(alan);
-    let ad = golgeli_ad(&kp, alan.left(), rect.center().y, &o.ad, a);
+    let ad = ad_yaz(&kp, alan.left(), rect.center().y, &o.ad, a);
     if o.olu {
         kp.line_segment(
             [ad.left_center(), ad.right_center()],
@@ -82,15 +82,8 @@ fn kimlik(p: &egui::Painter, rect: Rect, sag: f32, o: &OyuncuAnlik, dil: Dil, a:
         );
     }
 }
-fn golgeli_ad(p: &egui::Painter, x: f32, y: f32, ad: &str, a: f32) -> Rect {
+fn ad_yaz(p: &egui::Painter, x: f32, y: f32, ad: &str, a: f32) -> Rect {
     let font = FontId::new(13.0, yazi::aile(yazi::KALIN));
-    p.text(
-        egui::pos2(x + 1.0, y + 1.0),
-        Align2::LEFT_CENTER,
-        ad,
-        font.clone(),
-        renk::GOLGE.gamma_multiply(a),
-    );
     p.text(
         egui::pos2(x, y),
         Align2::LEFT_CENTER,
@@ -111,10 +104,5 @@ fn ben(p: &egui::Painter, x: f32, y: f32, metin: &str, a: f32) {
         g.size() + vec2(10.0, 4.0),
     );
     p.rect_filled(r, 4.0, renk::BEN_DOLGU.gamma_multiply(a));
-    p.galley(
-        r.center() - g.size() / 2.0 + vec2(1.0, 1.0),
-        g.clone(),
-        renk::GOLGE.gamma_multiply(a),
-    );
     p.galley(r.center() - g.size() / 2.0, g, renk::YAZI.gamma_multiply(a));
 }
