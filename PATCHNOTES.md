@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.6.2 (2026-10-16)
+### Düzeltmeler
+- Kuşak görünümünde çubuğun üstüne düşen ad, hasar, DPS ve iyileştirme yazıları artık koyu renkte; sarı ve açık yeşil
+  sınıf çubuklarında okunmayan beyaz yazı sorunu giderildi. Yazı çubuğun ucunda bölünse bile iki yarısı da okunur.
+
 ## 0.6.1 (2026-10-16)
 ### Düzeltmeler
 - Boyutlandırma tutamacı sağ alt köşede (üç çapraz çizgi); köşeden sürükleyince görünüm ölçeklenir.

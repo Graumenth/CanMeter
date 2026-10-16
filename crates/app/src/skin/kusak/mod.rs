@@ -7,8 +7,10 @@ mod baslik;
 mod hedef;
 mod ikon;
 mod metin;
+mod murekkep;
 mod renk;
 mod satir;
+mod satir_kimlik;
 mod satir_sag;
 mod toplam;
 
