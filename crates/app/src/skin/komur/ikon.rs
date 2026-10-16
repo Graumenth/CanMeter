@@ -24,6 +24,10 @@ pub fn logo(p: &egui::Painter, merkez: Pos2, renk: Color32) {
 }
 
 pub fn sinif(p: &egui::Painter, rect: Rect, sinif: Sinif, renk: Color32) {
+    // Gerçek sınıf ikonu varsa o çizilir; yoksa (Bilinmiyor) aşağıdaki şekil.
+    if crate::sinif_ikon::ciz(p, rect, sinif, egui::Color32::WHITE) {
+        return;
+    }
     let c = rect.center();
     match sinif {
         Sinif::Gladiator | Sinif::Templar => {

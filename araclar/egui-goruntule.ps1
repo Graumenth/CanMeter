@@ -1,5 +1,5 @@
 ﻿# egui overlay'i verilen skin/dil ile açar, pencere dikdörtgenini PNG'ye kaydeder, kapatır.
-param([string]$Skin = "gece", [string]$Dil = "tr", [string]$Exe = (Join-Path $PSScriptRoot "..\target\release\canmeter-app.exe"), [string]$Cikti = "")
+param([string]$Skin = "gece", [string]$Dil = "tr", [string]$Exe = (Join-Path $PSScriptRoot "..\target\release\canmeter-app.exe"), [string]$Cikti = "", [switch]$Demo)
 if (-not $Cikti) { $Cikti = Join-Path $env:TEMP ("egui-" + $Skin + "-" + $Dil + ".png") }
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
@@ -11,7 +11,8 @@ public static class W {
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
 }
 "@
-$p = Start-Process -FilePath $Exe -ArgumentList @("--skin", $Skin, "--dil", $Dil) -PassThru
+$liste = @("--skin", $Skin, "--dil", $Dil); if ($Demo) { $liste += "--demo" }
+$p = Start-Process -FilePath $Exe -ArgumentList $liste -PassThru
 Start-Sleep -Seconds 4
 $h = [W]::FindWindow([NullString]::Value, "CanMeter")
 if ($h -eq [IntPtr]::Zero) { Stop-Process -Id $p.Id -Force; Write-Output "pencere bulunamadi"; exit 1 }

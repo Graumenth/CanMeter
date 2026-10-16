@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.4.7 (2026-10-16)
+### Düzeltmeler
+- Sınıf ikonları artık oyundaki gerçek ikonlar: bütün skin'lerde satırlarda sınıfın kendi ikonu görünür.
+
 ## 0.4.6 (2026-10-15)
 ### Düzeltmeler
 - Bölge ya da kanal değiştirdikten sonra kendi satırınız kayboluyordu; artık hedefe vuran "tanınmayan" karakter (siz)

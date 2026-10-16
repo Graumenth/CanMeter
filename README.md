@@ -20,7 +20,8 @@ Arayüzü Türkçe yaptık. İhtiyacımız olan bilgileri gösteren sade bir met
 Kurallar ve komutlar: `CLAUDE.md`. Kullanıcı-dönük değişiklikler: `PATCHNOTES.md`.
 
 ## Lisans
-GPL-3.0, metni `LICENSE` dosyasında.
+GPL-3.0, metni `LICENSE` dosyasında. Sınıf ikonları AION 2 oyun varlığıdır (telif NC Corporation) ve GPL
+kapsamı dışındadır; bkz. `crates/app/ikonlar/KAYNAK.md`.
 
 ## Yasal
 "AION" NCSOFT'un tescilli markasıdır; CanMeter NCSOFT ile ilişkili değildir. Üçüncü parti

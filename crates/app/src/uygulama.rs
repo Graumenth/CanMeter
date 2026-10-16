@@ -32,6 +32,7 @@ impl Uygulama {
         cc.egui_ctx.set_visuals(egui::Visuals::dark());
         cc.egui_ctx.all_styles_mut(|stil| stil.animation_time = 0.0);
         yazi::yukle(&cc.egui_ctx);
+        crate::sinif_ikon::yukle(&cc.egui_ctx);
         pencere::kenarlik_kaldir(cc);
         cc.egui_ctx.set_zoom_factor(ayarlar.olcek);
         Self {

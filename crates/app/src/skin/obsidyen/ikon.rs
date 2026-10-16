@@ -2,6 +2,15 @@ use canmeter_core::stats::Sinif;
 use egui::{Color32, Painter, Pos2, Stroke, vec2};
 
 pub fn ciz(p: &Painter, merkez: Pos2, sinif: Sinif, renk: Color32) {
+    // Gerçek sınıf ikonu varsa o çizilir; yoksa (Bilinmiyor) aşağıdaki şekil.
+    if crate::sinif_ikon::ciz(
+        p,
+        egui::Rect::from_center_size(merkez, vec2(12.0, 13.0)),
+        sinif,
+        egui::Color32::WHITE,
+    ) {
+        return;
+    }
     let cizgi = Stroke::new(1.2, renk);
     match sinif {
         Sinif::Gladiator => {

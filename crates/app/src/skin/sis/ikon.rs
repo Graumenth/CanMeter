@@ -6,6 +6,15 @@ use egui::{Color32, FontId, Painter, Pos2, Stroke};
 use crate::yazi;
 
 pub fn ciz(p: &Painter, merkez: Pos2, sinif: Sinif, renk: Color32) {
+    // Gerçek sınıf ikonu varsa o çizilir; yoksa (Bilinmiyor) aşağıdaki şekil.
+    if crate::sinif_ikon::ciz(
+        p,
+        egui::Rect::from_center_size(merkez, egui::vec2(14.0, 15.0)),
+        sinif,
+        egui::Color32::WHITE,
+    ) {
+        return;
+    }
     let c = merkez;
     let cizgi = Stroke::new(1.5, renk);
     match sinif {

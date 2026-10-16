@@ -15,6 +15,7 @@ mod komut_satiri;
 mod konum;
 mod pencere;
 mod sayi;
+mod sinif_ikon;
 mod sinif_renk;
 mod skin;
 mod tutamac;
