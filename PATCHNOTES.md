@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.6.1 (2026-10-16)
+### Düzeltmeler
+- Boyutlandırma tutamacı sağ alt köşede (üç çapraz çizgi); köşeden sürükleyince görünüm ölçeklenir.
+
 ## 0.6.0 (2026-10-16)
 ### Yenilikler
 - Summon, pet, yer büyüsü ve skill efektlerinin hasarı ve iyileştirmesi artık sahibi olan oyuncunun satırına yazılır;
