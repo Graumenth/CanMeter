@@ -97,3 +97,14 @@ fn olum_sayaci_yalniz_acik_savasta() {
     let a = t.anlik(0, &yalniz()).unwrap();
     assert_eq!((a.oyuncular.len(), a.oyuncular[0].olum), (1, 2));
 }
+#[test]
+fn tanimsiz_satirlar_en_cok_uc() {
+    let mut t = Toplayici::new();
+    t.hasar(0, &h(1, 90, 50, 2));
+    for (aktor, deger) in [(11, 500), (12, 400), (13, 300), (14, 200), (15, 100)] {
+        t.hasar(1, &h(aktor, 90, deger, 2));
+    }
+    let a = t.anlik(1, &yalniz()).unwrap();
+    let idler: Vec<_> = a.oyuncular.iter().map(|o| o.id).collect();
+    assert_eq!(idler, vec![11, 12, 13, 1]);
+}

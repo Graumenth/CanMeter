@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.5.3 (2026-10-16)
+### Düzeltmeler
+- Alan savaşında (raid) tanınmayan oyuncular listeyi dolduruyordu; artık parti dışından en çok 3 satır görünür.
+
 ## 0.5.2 (2026-10-16)
 ### Düzeltmeler
 - Overlay'in üst kenarındaki ince açık çizgi kaldırıldı.

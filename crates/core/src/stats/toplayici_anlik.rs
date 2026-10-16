@@ -1,5 +1,8 @@
 //! Anlık üretimi olay yolundan ayrıdır; sahipli çıktı burada oluşturulur.
 use super::{BOSLUK_MS, TAHMIN_PENCERESI_MS, Toplayici};
+
+/// Parti dışı (tanımsız, hedefe vuran) satır sınırı: alan savaşında başka partiler gürültü yapmasın.
+const TANIMSIZ_SINIRI: usize = 3;
 use crate::{
     combat::Tablo,
     stats::{HedefAnlik, OyuncuAnlik, SavasAnlik, Sinif},
@@ -68,6 +71,19 @@ impl Toplayici {
                 }
             })
             .collect();
+        // Tanımsız satırlar en çok TANIMSIZ_SINIRI: hasar + iyileştirme en yüksek olanlar kalır (teksen bu sensin).
+        let mut tanimsiz: Vec<(u64, u64)> = oyuncular
+            .iter()
+            .filter(|o| !tablo.partide(o.id as u32))
+            .map(|o| (o.hasar.saturating_add(o.iyilestirme), o.id))
+            .collect();
+        if tanimsiz.len() > TANIMSIZ_SINIRI {
+            tanimsiz.sort_unstable_by(|a, b| b.cmp(a));
+            let esik = tanimsiz[TANIMSIZ_SINIRI - 1];
+            oyuncular.retain(|o| {
+                tablo.partide(o.id as u32) || (o.hasar.saturating_add(o.iyilestirme), o.id) >= esik
+            });
+        }
         oyuncular.sort_unstable_by_key(|o| (std::cmp::Reverse(o.hasar), o.id));
         let toplam_hasar = oyuncular
             .iter()
