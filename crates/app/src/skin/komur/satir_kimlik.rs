@@ -51,12 +51,25 @@ pub fn ciz(p: &egui::Painter, rect: Rect, o: &OyuncuAnlik, dil: Dil, ana: Color3
         );
     }
     if o.olu {
-        etiket(
+        x = etiket(
             &kimlik,
             x,
             rect.center().y,
             metin::metin(dil).oldu,
             Color32::from_rgb(0xff, 0x8d, 0x7a),
+        );
+    }
+    if o.olum > 0 {
+        etiket(
+            &kimlik,
+            x,
+            rect.center().y,
+            &format!("†{}", o.olum),
+            if o.olu {
+                renk::OLU
+            } else {
+                renk::OLU.gamma_multiply(0.8)
+            },
         );
     }
 }

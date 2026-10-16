@@ -7,6 +7,8 @@ pub struct OyuncuSayac {
     pub kritik: u32,
     pub iyilestirme: u64,
     pub son_hasar_ms: u64,
+    /// Bu savaştaki ölüm sayısı.
+    pub olum: u32,
     /// En son vurduğu hedef (yerel oyuncunun seçili hedefi); 0: yok.
     pub son_hedef: u32,
     /// Vurduğu son 8 ayrı hedef (halka; ayırma yok). Alan savaşında seçili hedef bunların içinde kalsın.

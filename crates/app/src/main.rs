@@ -10,6 +10,7 @@ mod dil;
 mod kilit;
 mod kilit_alani;
 mod kilit_fare;
+mod kilit_simge;
 mod kisayol;
 mod komut_satiri;
 mod konum;

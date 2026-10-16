@@ -43,7 +43,7 @@ impl Toplayici {
             .oyuncular
             .iter()
             .filter(|(id, s)| {
-                (s.vurus > 0 || s.iyilestirme > 0)
+                (s.vurus > 0 || s.iyilestirme > 0 || s.olum > 0)
                     && (tablo.partide(**id)
                         || (hedef.is_some_and(|h| s.hedefi_vurdu(h))
                             && !tablo.varlik(**id).is_some_and(|v| v.oyuncu)))
@@ -58,6 +58,7 @@ impl Toplayici {
                     sinif: v.map_or(Sinif::Bilinmiyor, |v| v.sinif),
                     ben: tablo.yerel() == Some(id),
                     olu: v.is_some_and(|v| v.olu),
+                    olum: s.olum,
                     hasar: s.hasar,
                     dps: s.hasar as f64 / sure,
                     pay: 0.0,

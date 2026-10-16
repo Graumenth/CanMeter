@@ -2,12 +2,14 @@
 
 mod alt_bilgi;
 mod baslik;
+mod baslik_dugme;
 mod hedef;
 mod ikon;
 mod metin;
 mod renk;
 mod satir;
 mod satir_kimlik;
+mod satir_olum;
 mod sutun;
 mod toplam;
 

@@ -72,8 +72,8 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         );
     }
     let kilit = Rect::from_center_size(
-        Pos2::new(rect.right() - 20.0, rect.center().y),
-        Vec2::new(24.0, 20.0),
+        Pos2::new(rect.right() - 22.0, rect.center().y),
+        Vec2::new(24.0, 22.0),
     );
     crate::kilit_alani::bildir(ui, kilit);
     let ayarlar = kilit.translate(egui::vec2(-28.0, 0.0));
@@ -82,7 +82,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         e.ayarlar_ac = true;
     }
     let ipucu = if b.kilitli { m.kilidi_ac } else { m.kilitle };
-    if baslik_dugme::dugme(ui, kilit, if b.kilitli { "▣" } else { "▢" }, "kilit", ipucu) {
+    if baslik_dugme::kilit_dugme(ui, kilit, b.kilitli, ipucu) {
         e.kilit_degistir = true;
     }
     e

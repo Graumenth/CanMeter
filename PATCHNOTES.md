@@ -1,5 +1,13 @@
 # PATCHNOTES
 
+## 0.5.0 (2026-10-16)
+### Yenilikler
+- Ölüm sayacı: savaşta ölen oyuncunun satırında "†2" gibi kaç kez öldüğü görünür; "ÖLDÜ" rozeti yalnız o an ölüyken.
+- Kilit düğmesi daha belirgin: asma kilit simgesi, kilitliyken renkli zemin.
+### Düzeltmeler
+- Yaratık spawn mesajı ölüm sanılıp moblar "ÖLDÜ" olarak işaretlenebiliyordu; artık yalnız gerçek ölüm mesajı sayılır.
+- Bölgeden ayrılan (despawn) parti üyesi ölü sayılmaz; canı yeniden görülen oyuncu dirilmiş sayılır.
+
 ## 0.4.10 (2026-10-16)
 ### Düzeltmeler
 - Demo verisinde savaşın ilk saniyesinde DPS değerleri hasardan büyük görünüyordu; düzeltildi.

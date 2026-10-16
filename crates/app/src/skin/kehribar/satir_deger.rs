@@ -40,12 +40,26 @@ pub(super) fn etiketler(p: &egui::Painter, mut pos: Pos2, o: &OyuncuAnlik, dil: 
         pos.x = r.right() + 5.0;
     }
     if o.olu {
-        p.text(
+        let oldu = p.text(
             pos,
             Align2::LEFT_CENTER,
             format!("☠ {}", m.oldu),
             FontId::new(11.0, yazi::aile(yazi::KALIN)),
             renk::OLUM,
+        );
+        pos.x = oldu.right() + 4.0;
+    }
+    if o.olum > 0 {
+        p.text(
+            pos,
+            Align2::LEFT_CENTER,
+            format!("†{}", o.olum),
+            FontId::new(9.0, yazi::aile(yazi::KALIN)),
+            if o.olu {
+                renk::OLUM
+            } else {
+                renk::OLUM.gamma_multiply(0.8)
+            },
         );
     }
 }

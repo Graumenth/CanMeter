@@ -9,32 +9,9 @@ pub const IMZA_ESIGI: u32 = 12;
 pub const IMZA_PENCERESI_MS: u64 = 3_000;
 const SUNUCU_ZAMAN_ASIMI_MS: u64 = 120_000;
 const ADAY_SAYISI: usize = 16;
-#[derive(Debug, Clone, Copy, Default)]
-#[rustfmt::skip]
-struct Aday { uc: Option<SocketAddrV4>, zamanlar: [u64; IMZA_ESIGI as usize], bas: usize, uzunluk: usize }
-impl Aday {
-    fn ekle(&mut self, uc: SocketAddrV4, zaman: u64) -> bool {
-        if self.uc != Some(uc) {
-            *self = Self {
-                uc: Some(uc),
-                ..Self::default()
-            };
-        }
-        while self.uzunluk > 0 && zaman.saturating_sub(self.zamanlar[self.bas]) > IMZA_PENCERESI_MS
-        {
-            self.bas = (self.bas + 1) % self.zamanlar.len();
-            self.uzunluk -= 1;
-        }
-        let konum = (self.bas + self.uzunluk) % self.zamanlar.len();
-        self.zamanlar[konum] = zaman;
-        if self.uzunluk < self.zamanlar.len() {
-            self.uzunluk += 1;
-        } else {
-            self.bas = (self.bas + 1) % self.zamanlar.len();
-        }
-        self.uzunluk >= IMZA_ESIGI as usize
-    }
-}
+#[path = "boru_aday.rs"]
+mod aday;
+use aday::Aday;
 #[derive(Debug, Default)]
 #[rustfmt::skip]
 pub struct Boru { sunucu: Option<SocketAddrV4>, son_sunucu_ms: Option<u64>, adaylar: [Aday; ADAY_SAYISI], akis: Akis, yuruyucu: Yuruyucu, tablo: Tablo, toplayici: Toplayici }
@@ -78,7 +55,11 @@ impl Boru {
                 match &mesaj {
                     crate::protocol::mesaj::Mesaj::Hasar(h) => toplayici.hasar(zaman_ms, h),
                     crate::protocol::mesaj::Mesaj::Periyodik(p) => toplayici.periyodik(zaman_ms, p),
-                    crate::protocol::mesaj::Mesaj::Hp(h) => toplayici.hp(h),
+                    crate::protocol::mesaj::Mesaj::Hp(h) => {
+                        tablo.dirilt(h.actor, h.mevcut);
+                        toplayici.hp(h);
+                    }
+                    crate::protocol::mesaj::Mesaj::Olum(o) if o.bayrak == 3 => toplayici.olum(o.id),
                     _ => {}
                 }
             }

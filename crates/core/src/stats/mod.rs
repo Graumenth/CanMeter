@@ -72,6 +72,8 @@ pub struct OyuncuAnlik {
     /// Yakalayan oyuncunun kendisi.
     pub ben: bool,
     pub olu: bool,
+    /// Bu savaştaki ölüm sayısı.
+    pub olum: u32,
     pub hasar: u64,
     pub dps: f64,
     /// 0..=1, toplam hasardaki payı.

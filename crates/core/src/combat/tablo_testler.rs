@@ -61,11 +61,19 @@ fn roster_sonra_sinif_ve_seviyeyi_gunceller() {
 #[test]
 fn olum_bayraklari_ve_npc_despawn() {
     let mut t = Tablo::new();
-    for bayrak in [1, 3, 7] {
+    for bayrak in [1, 3] {
         t.isle(&kimlik(1));
         t.isle(&olum(1, bayrak));
         assert!(t.varlik(1).unwrap().olu);
     }
+    t.isle(&kimlik(1));
+    t.isle(&olum(1, 7));
+    assert!(!t.varlik(1).unwrap().olu);
+    t.isle(&olum(1, 3));
+    t.dirilt(1, 0);
+    assert!(t.varlik(1).unwrap().olu);
+    t.dirilt(1, 1);
+    assert!(!t.varlik(1).unwrap().olu);
     t.isle(&olum(2, 3));
     assert!(t.varlik(2).unwrap().olu);
     t.isle(&olum(2, 7));

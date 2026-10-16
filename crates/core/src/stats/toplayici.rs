@@ -98,6 +98,13 @@ impl Toplayici {
         self.kirli = true;
     }
 
+    /// Savaş ölümü (42 36 bayrak 3); yalnız savaş açıkken sayılır.
+    pub fn olum(&mut self, id: u32) {
+        if self.aktif {
+            self.oyuncular.entry(id).or_default().olum += 1;
+            self.kirli = true;
+        }
+    }
     pub fn hp(&mut self, h: &Hp) {
         self.kirli |= self.hp.insert(h.actor, (h.mevcut, h.azami)) != Some((h.mevcut, h.azami));
     }

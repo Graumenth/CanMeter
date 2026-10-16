@@ -72,13 +72,21 @@ fn kimlik(p: &egui::Painter, rect: Rect, sag: f32, o: &OyuncuAnlik, dil: Dil, a:
             Stroke::new(1.0, renk::YAZI.gamma_multiply(a)),
         );
     }
+    let mut durum_x = ad.right() + 6.0;
     if o.ben {
-        ben(
-            &kp,
-            ad.right() + 6.0,
-            rect.center().y,
-            metin::metin(dil).ben,
-            a,
+        durum_x = ben(&kp, durum_x, rect.center().y, metin::metin(dil).ben, a);
+    }
+    if o.olum > 0 {
+        kp.text(
+            egui::pos2(durum_x, rect.center().y),
+            Align2::LEFT_CENTER,
+            format!("†{}", o.olum),
+            FontId::new(9.0, yazi::aile(yazi::KALIN)),
+            if o.olu {
+                renk::HP.gamma_multiply(a)
+            } else {
+                renk::HP.gamma_multiply(0.8)
+            },
         );
     }
 }
@@ -93,7 +101,7 @@ fn ad_yaz(p: &egui::Painter, x: f32, y: f32, ad: &str, a: f32) -> Rect {
     )
 }
 
-fn ben(p: &egui::Painter, x: f32, y: f32, metin: &str, a: f32) {
+fn ben(p: &egui::Painter, x: f32, y: f32, metin: &str, a: f32) -> f32 {
     let g = p.layout_no_wrap(
         metin.to_owned(),
         FontId::new(8.0, yazi::aile(yazi::KALIN)),
@@ -105,4 +113,5 @@ fn ben(p: &egui::Painter, x: f32, y: f32, metin: &str, a: f32) {
     );
     p.rect_filled(r, 4.0, renk::BEN_DOLGU.gamma_multiply(a));
     p.galley(r.center() - g.size() / 2.0, g, renk::YAZI.gamma_multiply(a));
+    r.right() + 6.0
 }

@@ -57,12 +57,7 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         kalin(12.0),
         renk::YAZI,
     );
-    arac(
-        p,
-        kilit_rect,
-        if b.kilitli { "▣" } else { "▢" },
-        kilit.hovered(),
-    );
+    kilit_ciz(p, kilit_rect, b.kilitli, kilit.hovered());
     arac(p, ayar_rect, "⚙", ayarlar.hovered());
     baslik_bilgi::ciz(p, rect, ayar_rect, b);
     Eylemler {
@@ -75,8 +70,35 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
 fn arac_alani(rect: Rect, sagdan: f32) -> Rect {
     Rect::from_center_size(
         Pos2::new(rect.right() - sagdan, rect.center().y),
-        egui::vec2(16.0, 22.0),
+        egui::vec2(24.0, 22.0),
     )
+}
+
+fn kilit_ciz(p: &egui::Painter, rect: Rect, kilitli: bool, uzerinde: bool) {
+    let zemin = if kilitli {
+        renk::AMBER
+    } else {
+        renk::saydam(renk::AMBER, 38)
+    };
+    let zemin = if uzerinde {
+        zemin.gamma_multiply(1.15)
+    } else {
+        zemin
+    };
+    p.rect_filled(rect, 5.0, zemin);
+    p.rect_stroke(
+        rect,
+        5.0,
+        Stroke::new(1.0, renk::AMBER),
+        egui::StrokeKind::Inside,
+    );
+    crate::kilit_simge::ciz(
+        p,
+        rect.shrink(4.0),
+        kilitli,
+        if kilitli { renk::ZEMIN } else { renk::YAZI },
+        zemin,
+    );
 }
 
 fn arac(p: &egui::Painter, rect: Rect, simge: &str, uzerinde: bool) {

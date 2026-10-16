@@ -51,20 +51,50 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         );
     }
     let kilit_rect = Rect::from_min_size(
-        egui::pos2(rect.right() - 35.0, rect.top() + 15.0),
-        vec2(19.0, 19.0),
+        egui::pos2(rect.right() - 34.0, rect.top() + 13.0),
+        vec2(24.0, 22.0),
     );
     crate::kilit_alani::bildir(ui, kilit_rect);
-    let ayar_rect = kilit_rect.translate(vec2(-22.0, 0.0));
+    let ayar_rect = kilit_rect.translate(vec2(-28.0, 0.0));
     if dugme(ui, ayar_rect, "⚙", m.ayarlar).clicked() {
         e.ayarlar_ac = true;
     }
-    let kilit = if b.kilitli { "▣" } else { "▢" };
     let ipucu = if b.kilitli { m.kilidi_ac } else { m.kilitle };
-    if dugme(ui, kilit_rect, kilit, ipucu).clicked() {
+    let kilit = ui
+        .interact(kilit_rect, ui.id().with("kilit"), Sense::click())
+        .on_hover_text(ipucu);
+    kilit_dugme(ui.painter(), kilit_rect, b.kilitli, kilit.hovered());
+    if kilit.clicked() {
         e.kilit_degistir = true;
     }
     e
+}
+
+fn kilit_dugme(p: &egui::Painter, rect: Rect, kilitli: bool, uzerinde: bool) {
+    let zemin = if kilitli {
+        renk::KEHRIBAR
+    } else {
+        renk::KEHRIBAR.gamma_multiply(0.22)
+    };
+    let zemin = if uzerinde {
+        zemin.gamma_multiply(1.15)
+    } else {
+        zemin
+    };
+    p.rect_filled(rect, 5.0, zemin);
+    p.rect_stroke(
+        rect,
+        5.0,
+        Stroke::new(1.0, renk::KEHRIBAR),
+        egui::StrokeKind::Inside,
+    );
+    crate::kilit_simge::ciz(
+        p,
+        rect.shrink(4.0),
+        kilitli,
+        if kilitli { renk::PANEL } else { renk::MUREKKEP },
+        zemin,
+    );
 }
 
 fn dugme(ui: &mut egui::Ui, rect: Rect, metin: &str, ipucu: &str) -> egui::Response {

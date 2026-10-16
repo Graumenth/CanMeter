@@ -1,9 +1,7 @@
-//! Oyuncu satirinin ikon, ad, durum etiketi ve sinif bolumu.
-
 use canmeter_core::stats::OyuncuAnlik;
 use egui::{Align2, Color32, FontId, Painter, Rect, Stroke, pos2, vec2};
 
-use super::{ikon, metin, renk};
+use super::{ikon, metin, renk, satir_olum};
 use crate::dil::Dil;
 use crate::sayi::kisalt;
 use crate::yazi::{self, KALIN, MONO, UI};
@@ -21,6 +19,9 @@ pub fn ciz(p: &Painter, rect: Rect, y: f32, o: &OyuncuAnlik, dil: Dil, sinif: Co
             renk::TEHLIKE,
         );
         x += 15.0;
+    }
+    if o.olum > 0 {
+        x = satir_olum::ciz(p, x, y, o);
     }
     let m = metin::metin(dil);
     let hps = (o.iyilestirme > 0).then(|| format!("+{} {}", kisalt(o.hps), m.hps));

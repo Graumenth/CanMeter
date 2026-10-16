@@ -18,16 +18,18 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
     let m = metin::metin(b.dil);
     let orta = rect.center().y;
     let kilit_rect = Rect::from_min_size(
-        Pos2::new(rect.max.x - 32.0, rect.min.y + 7.0),
-        Vec2::new(25.0, 25.0),
+        Pos2::new(rect.max.x - 31.0, rect.min.y + 8.0),
+        Vec2::new(24.0, 22.0),
     );
     crate::kilit_alani::bildir(ui, kilit_rect);
     let ayar_rect = Rect::from_min_size(
-        Pos2::new(rect.max.x - 57.0, rect.min.y + 7.0),
-        Vec2::new(24.0, 25.0),
+        Pos2::new(rect.max.x - 59.0, rect.min.y + 8.0),
+        Vec2::new(24.0, 22.0),
     );
     let ayar = ui.interact(ayar_rect, ui.id().with("ayar"), Sense::click());
-    let kilit = ui.interact(kilit_rect, ui.id().with("kilit"), Sense::click());
+    let kilit = ui
+        .interact(kilit_rect, ui.id().with("kilit"), Sense::click())
+        .on_hover_text(if b.kilitli { m.kilidi_ac } else { m.kilitle });
     let p = ui.painter();
     p.hline(rect.x_range(), rect.max.y, Stroke::new(1.0, renk::CIZGI));
     marka::ciz(p, Pos2::new(rect.min.x + 19.0, orta));
@@ -74,16 +76,29 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
             renk::SOLUK
         },
     );
-    p.text(
-        kilit_rect.center(),
-        Align2::CENTER_CENTER,
-        if b.kilitli { "▣" } else { "▢" },
-        FontId::new(14.0, yazi::aile(yazi::UI)),
-        if kilit.hovered() {
-            renk::NANE
-        } else {
-            renk::SOLUK
-        },
+    let kilit_zemin = if b.kilitli {
+        renk::NANE
+    } else {
+        renk::NANE.gamma_multiply(0.22)
+    };
+    let kilit_zemin = if kilit.hovered() {
+        kilit_zemin.gamma_multiply(1.15)
+    } else {
+        kilit_zemin
+    };
+    p.rect_filled(kilit_rect, 5.0, kilit_zemin);
+    p.rect_stroke(
+        kilit_rect,
+        5.0,
+        Stroke::new(1.0, renk::NANE),
+        egui::StrokeKind::Inside,
+    );
+    crate::kilit_simge::ciz(
+        p,
+        kilit_rect.shrink(4.0),
+        b.kilitli,
+        if b.kilitli { renk::ZEMIN } else { renk::METIN },
+        kilit_zemin,
     );
     Eylemler {
         surukle,

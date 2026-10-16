@@ -87,3 +87,13 @@ fn tanimsiz_aktor_hedefe_vurursa_gorunur_spawnli_yabanci_gorunmez() {
     let idler: Vec<_> = a.oyuncular.iter().map(|o| o.id).collect();
     assert_eq!((idler, a.toplam_hasar), (vec![7, 1], 300));
 }
+#[test]
+fn olum_sayaci_yalniz_acik_savasta() {
+    let mut t = Toplayici::new();
+    t.olum(1);
+    t.hasar(0, &h(1, 90, 100, 2));
+    t.olum(1);
+    t.olum(1);
+    let a = t.anlik(0, &yalniz()).unwrap();
+    assert_eq!((a.oyuncular.len(), a.oyuncular[0].olum), (1, 2));
+}

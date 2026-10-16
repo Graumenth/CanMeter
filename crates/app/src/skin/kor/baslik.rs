@@ -82,32 +82,11 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam, sure_ms: Option<u64>) -> Eylemler {
         .on_hover_text(if b.kilitli { m.kilidi_ac } else { m.kilitle });
     e.ayarlar_ac = ayar_yanit.clicked();
     e.kilit_degistir = kilit_yanit.clicked();
-    dugme(p, ayar, "⚙", ayar_yanit.hovered());
-    dugme(
-        p,
-        kilit,
-        if b.kilitli { "▣" } else { "▢" },
-        kilit_yanit.hovered(),
-    );
+    dugme(p, ayar, "⚙", ayar_yanit.hovered(), None);
+    dugme(p, kilit, "", kilit_yanit.hovered(), Some(b.kilitli));
     e
 }
 
-fn dugme(p: &egui::Painter, rect: Rect, simge: &str, ustunde: bool) {
-    if ustunde {
-        p.rect_filled(rect, 6, renk::alfa(renk::METIN, 0.07));
-        p.rect_stroke(
-            rect,
-            6,
-            Stroke::new(1.0, renk::CIZGI),
-            egui::StrokeKind::Inside,
-        );
-    }
-    let renk = if ustunde { renk::METIN } else { renk::METIN_3 };
-    p.text(
-        rect.center(),
-        Align2::CENTER_CENTER,
-        simge,
-        FontId::new(14.0, yazi::aile(UI)),
-        renk,
-    );
+fn dugme(p: &egui::Painter, rect: Rect, simge: &str, uzerinde: bool, kilitli: Option<bool>) {
+    super::baslik_dugme::ciz(p, rect, simge, uzerinde, kilitli);
 }

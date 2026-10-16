@@ -61,12 +61,28 @@ fn alt_satir(p: &egui::Painter, o: &OyuncuAnlik, x: f32, y: f32, rol: Color32, d
         sonraki_x = hps.right() + 5.0;
     }
     if o.olu {
+        sonraki_x = p
+            .text(
+                egui::pos2(sonraki_x, y),
+                Align2::LEFT_CENTER,
+                m.oldu,
+                FontId::new(9.0, yazi::aile(yazi::KALIN)),
+                renk::OLDU.gamma_multiply(a),
+            )
+            .right()
+            + 4.0;
+    }
+    if o.olum > 0 {
         p.text(
             egui::pos2(sonraki_x, y),
             Align2::LEFT_CENTER,
-            m.oldu,
+            format!("†{}", o.olum),
             FontId::new(9.0, yazi::aile(yazi::KALIN)),
-            renk::OLDU.gamma_multiply(a),
+            if o.olu {
+                renk::OLDU.gamma_multiply(a)
+            } else {
+                renk::OLDU.gamma_multiply(0.8)
+            },
         );
     }
 }

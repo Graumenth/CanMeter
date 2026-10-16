@@ -77,6 +77,7 @@ impl DemoSavas {
             sinif: SINIFLAR[i],
             ben: i == 0,
             olu: i == 4 && self.dorn_olu,
+            olum: u32::from(i == 4 && self.dorn_olu),
             hasar,
             dps: hasar as f64 * oran,
             pay: hasar as f32 / toplam.max(1) as f32,

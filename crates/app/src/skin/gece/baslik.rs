@@ -1,6 +1,6 @@
 //! Baslik, hedef bilgisi ve pencere eylemleri.
 
-use egui::{Align2, FontId, Rect, Sense, Vec2};
+use egui::{Align2, FontId, Rect, Sense, Stroke, StrokeKind, Vec2};
 
 use super::{Baglam, Eylemler};
 use super::{hedef, metin, renk};
@@ -47,10 +47,14 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
             renk::YAZI,
         );
     }
-    let ayar_alani =
-        Rect::from_min_size(alan.right_top() + Vec2::new(-46.0, 18.0), Vec2::splat(18.0));
-    let kilit_alani =
-        Rect::from_min_size(alan.right_top() + Vec2::new(-23.0, 18.0), Vec2::splat(18.0));
+    let ayar_alani = Rect::from_min_size(
+        alan.right_top() + Vec2::new(-56.0, 16.0),
+        Vec2::new(24.0, 22.0),
+    );
+    let kilit_alani = Rect::from_min_size(
+        alan.right_top() + Vec2::new(-28.0, 16.0),
+        Vec2::new(24.0, 22.0),
+    );
     crate::kilit_alani::bildir(ui, kilit_alani);
     let ayar = ui
         .interact(ayar_alani, ui.id().with("ayarlar"), Sense::click())
@@ -64,10 +68,15 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
     } else {
         renk::COK_SOLUK
     };
-    let kilit_renk = if kilit.hovered() {
+    let kilit_zemin = if b.kilitli {
         renk::BEN
     } else {
-        renk::COK_SOLUK
+        renk::BEN.gamma_multiply(0.22)
+    };
+    let kilit_zemin = if kilit.hovered() {
+        kilit_zemin.gamma_multiply(1.15)
+    } else {
+        kilit_zemin
     };
     p.text(
         ayar_alani.center(),
@@ -76,12 +85,19 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
         FontId::new(14.0, yazi::aile(yazi::UI)),
         ayar_renk,
     );
-    p.text(
-        kilit_alani.center(),
-        Align2::CENTER_CENTER,
-        if b.kilitli { "▣" } else { "▢" },
-        FontId::new(14.0, yazi::aile(yazi::UI)),
-        kilit_renk,
+    p.rect_filled(kilit_alani, 5.0, kilit_zemin);
+    p.rect_stroke(
+        kilit_alani,
+        5.0,
+        Stroke::new(1.0, renk::BEN),
+        StrokeKind::Inside,
+    );
+    crate::kilit_simge::ciz(
+        p,
+        kilit_alani.shrink(4.0),
+        b.kilitli,
+        if b.kilitli { renk::PANEL } else { renk::YAZI },
+        kilit_zemin,
     );
     Eylemler {
         surukle,

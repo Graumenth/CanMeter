@@ -101,7 +101,8 @@ pub fn coz(tur: [u8; 2], govde: &[u8]) -> Option<Mesaj> {
         [0x33, 0x36] => kimlik::kimlik(govde).map(Mesaj::Kimlik),
         [0x45, 0x36] | [0x44, 0x36] => kimlik::oyuncu_spawn(govde).map(Mesaj::OyuncuSpawn),
         [0x02, 0x97] => kimlik::roster(govde).map(Mesaj::Roster),
-        [0x42, 0x36] | [0x41, 0x36] => kimlik::olum(govde).map(Mesaj::Olum),
+        // 41 36 NPC/summon spawn'dır (çözülmüyor); ölüm ve despawn yalnız 42 36.
+        [0x42, 0x36] => kimlik::olum(govde).map(Mesaj::Olum),
         _ => None,
     }
 }

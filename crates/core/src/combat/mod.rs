@@ -1,7 +1,7 @@
 //! Kimlikleri ve adla bekleyen parti bilgilerini birleştirir; summon eşleme faz 02'dedir.
 use crate::protocol::mesaj::{Mesaj, kimlik::sinif};
 use crate::stats::Sinif;
-use std::{collections::HashMap, fmt::Write};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Varlik {
@@ -46,19 +46,22 @@ impl Tablo {
                     self.parti.insert(uye.ad.clone(), (sinif, uye.seviye));
                 }
             }
-            Mesaj::Olum(o) if matches!(o.bayrak, 1 | 3 | 7) => {
-                if o.bayrak == 7 && !self.varlik(o.id).is_some_and(|v| v.oyuncu) {
+            // 7: despawn; NPC/summon tablodan düşer, oyuncu yalnız uzaklaşmıştır (ölü sayılmaz).
+            Mesaj::Olum(o) if o.bayrak == 7 => {
+                if !self.varlik(o.id).is_some_and(|v| v.oyuncu) {
                     self.varliklar.remove(&o.id);
                     self.seviyeler.remove(&o.id);
-                } else {
-                    let v = self.varliklar.entry(o.id).or_insert(Varlik {
-                        ad: String::new(),
-                        sinif: Sinif::Bilinmiyor,
-                        oyuncu: false,
-                        olu: false,
-                    });
-                    v.olu = true;
                 }
+            }
+            // 1: bölge başında ölü, 3: savaşta öldü.
+            Mesaj::Olum(o) if matches!(o.bayrak, 1 | 3) => {
+                let v = self.varliklar.entry(o.id).or_insert(Varlik {
+                    ad: String::new(),
+                    sinif: Sinif::Bilinmiyor,
+                    oyuncu: false,
+                    olu: false,
+                });
+                v.olu = true;
             }
             _ => {}
         }
@@ -98,23 +101,18 @@ impl Tablo {
                 .is_some_and(|v| v.oyuncu && self.parti.contains_key(&v.ad))
     }
 
-    /// Çağıranın tamponunu doldurur; kapasite yeterliyse ayırma yapmaz.
-    pub fn ad(&self, id: u32, cikti: &mut String) {
-        cikti.clear();
-        if let Some(v) = self.varlik(id).filter(|v| !v.ad.is_empty()) {
-            cikti.push_str(&v.ad);
-        } else {
-            let _ = write!(cikti, "#{id}");
+    /// HP mesajı: canı sıfırdan büyük görülen varlık dirilmiştir (diriltme mesajı çözülmüyor).
+    pub fn dirilt(&mut self, id: u32, hp: u32) {
+        if hp > 0
+            && let Some(v) = self.varliklar.get_mut(&id)
+        {
+            v.olu = false;
         }
-    }
-
-    pub fn temizle_npc(&mut self) {
-        self.varliklar.retain(|_, v| v.oyuncu);
-        self.seviyeler
-            .retain(|id, _| self.varliklar.contains_key(id));
     }
 }
 
+#[path = "tablo_sorgu.rs"]
+mod sorgu;
 #[cfg(test)]
 #[path = "tablo_testler.rs"]
 mod testler;

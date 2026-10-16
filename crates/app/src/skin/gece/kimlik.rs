@@ -48,14 +48,15 @@ pub fn ciz(
         FontId::new(10.0, yazi::aile(yazi::UI)),
         saydam_renk(renk::SOLUK, saydam),
     );
+    let mut durum_x = sinif_x + 48.0;
     if oyuncu.olu {
-        etiket(
+        durum_x += etiket(
             p,
-            egui::pos2(sinif_x + 48.0, ad_y - 1.0),
+            egui::pos2(durum_x, ad_y - 1.0),
             metin::metin(dil).oldu,
             Color32::from_rgba_unmultiplied(255, 90, 90, 36),
             renk::OLU,
-        );
+        ) + 4.0;
         p.line_segment(
             [
                 egui::pos2(ad_x, ad_y + 7.0),
@@ -64,11 +65,25 @@ pub fn ciz(
             Stroke::new(1.0, renk::OLU),
         );
     }
+    if oyuncu.olum > 0 {
+        let sayac_renk = if oyuncu.olu {
+            renk::OLU
+        } else {
+            renk::OLU.gamma_multiply(0.8)
+        };
+        durum_x += etiket(
+            p,
+            egui::pos2(durum_x, ad_y - 1.0),
+            &format!("†{}", oyuncu.olum),
+            Color32::from_rgba_unmultiplied(255, 90, 90, 36),
+            sayac_renk,
+        ) + 4.0;
+    }
     if oyuncu.iyilestirme > 0 {
         let hps = format!("+{} {}", kisalt(oyuncu.hps), metin::metin(dil).hps);
         etiket(
             p,
-            egui::pos2(sinif_x + 48.0, ad_y - 1.0),
+            egui::pos2(durum_x, ad_y - 1.0),
             &hps,
             Color32::from_rgba_unmultiplied(94, 224, 160, 31),
             renk::IYILESTIRME,
@@ -76,7 +91,7 @@ pub fn ciz(
     }
 }
 
-fn etiket(p: &egui::Painter, konum: egui::Pos2, yazi: &str, zemin: Color32, renk: Color32) {
+fn etiket(p: &egui::Painter, konum: egui::Pos2, yazi: &str, zemin: Color32, renk: Color32) -> f32 {
     let alan = Rect::from_min_size(
         konum,
         Vec2::new(yazi.chars().count() as f32 * 5.8 + 10.0, 14.0),
@@ -89,4 +104,5 @@ fn etiket(p: &egui::Painter, konum: egui::Pos2, yazi: &str, zemin: Color32, renk
         FontId::new(9.0, yazi::aile(yazi::KALIN)),
         renk,
     );
+    alan.width()
 }

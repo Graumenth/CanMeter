@@ -11,24 +11,39 @@ pub fn ciz(p: &Painter, rect: Rect, oyuncu: &OyuncuAnlik, dil: Dil, renk_satir: 
     let y = rect.center().y;
     let ad_x = rect.min.x + tablo::SOL + tablo::SIRA + tablo::SINIF + tablo::BOSLUK * 2.0;
     let ad_y = y - if oyuncu.iyilestirme > 0 { 5.0 } else { 0.0 };
-    p.text(
+    let ad = p.text(
         Pos2::new(ad_x, ad_y),
         Align2::LEFT_CENTER,
         &oyuncu.ad,
         FontId::new(12.0, yazi::aile(yazi::KALIN)),
         renk_satir,
     );
+    let mut sayac_x = ad.right() + 6.0;
     if oyuncu.olu {
         p.line_segment(
             [Pos2::new(ad_x, y), Pos2::new(ad_x + 52.0, y)],
             Stroke::new(1.0, renk::OLU),
         );
-        p.text(
+        let oldu = p.text(
             Pos2::new(ad_x + 62.0, y),
             Align2::LEFT_CENTER,
             format!("☠ {}", m.olu),
             FontId::new(11.0, yazi::aile(yazi::UI)),
             renk::OLU,
+        );
+        sayac_x = oldu.right() + 4.0;
+    }
+    if oyuncu.olum > 0 {
+        p.text(
+            Pos2::new(sayac_x, y),
+            Align2::LEFT_CENTER,
+            format!("†{}", oyuncu.olum),
+            FontId::new(9.0, yazi::aile(yazi::KALIN)),
+            if oyuncu.olu {
+                renk::OLU
+            } else {
+                renk::OLU.gamma_multiply(0.8)
+            },
         );
     }
     if oyuncu.ben {
