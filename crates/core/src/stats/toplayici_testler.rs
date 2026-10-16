@@ -33,12 +33,12 @@ pub(super) fn yalniz() -> Tablo {
 #[test]
 fn pencere_acilir_kapanir_yeniden_acilir() {
     let (mut t, b) = (Toplayici::new(), yalniz());
-    t.hasar(100, &h(1, 90, 100, 2));
+    t.hasar(100, &h(1, 90, 100, 2), false);
     assert!(t.anlik(100, &b).unwrap().aktif);
     assert!(t.anlik(30_100, &b).is_none());
     assert!(!t.anlik(30_101, &b).unwrap().aktif);
     assert!(t.anlik(30_102, &b).is_none());
-    t.hasar(30_103, &h(1, 91, 20, 2));
+    t.hasar(30_103, &h(1, 91, 20, 2), false);
     let a = t.anlik(30_103, &b).unwrap();
     assert_eq!((a.savas_id, a.sure_ms, a.toplam_hasar), (2, 0, 20));
 }
@@ -46,7 +46,7 @@ fn pencere_acilir_kapanir_yeniden_acilir() {
 fn miss_resist_kritik_ve_ek_vuruslar() {
     let mut t = Toplayici::new();
     for tur in [1, 6, 3, 2] {
-        t.hasar(0, &h(1, 90, 100, tur));
+        t.hasar(0, &h(1, 90, 100, tur), false);
     }
     let a = t.anlik(0, &yalniz()).unwrap();
     assert_eq!((a.toplam_hasar, a.oyuncular[0].kritik_orani), (200, 0.25));
@@ -54,12 +54,12 @@ fn miss_resist_kritik_ve_ek_vuruslar() {
 #[test]
 fn kendine_iyilestirme_pencere_acmaz_uzatmaz() {
     let mut t = Toplayici::new();
-    t.hasar(0, &h(1, 1, 70, 3));
+    t.hasar(0, &h(1, 1, 70, 3), false);
     let a = t.anlik(0, &yalniz()).unwrap();
     assert!(!a.aktif);
     assert_eq!((a.toplam_hasar, a.oyuncular[0].iyilestirme), (0, 70));
-    t.hasar(0, &h(1, 90, 20, 2));
-    t.hasar(30_001, &h(1, 1, 80, 2));
+    t.hasar(0, &h(1, 90, 20, 2), false);
+    t.hasar(30_001, &h(1, 1, 80, 2), false);
     assert!(!t.anlik(30_001, &yalniz()).unwrap().aktif);
 }
 #[test]
@@ -77,8 +77,8 @@ fn dot_hot_ve_bilinmeyen_etkiler() {
 #[test]
 fn pay_dps_sure_ve_siralama() {
     let mut t = Toplayici::new();
-    t.hasar(0, &h(1, 90, 100, 2));
-    t.hasar(2000, &h(2, 90, 300, 2));
+    t.hasar(0, &h(1, 90, 100, 2), false);
+    t.hasar(2000, &h(2, 90, 300, 2), false);
     let a = t
         .anlik(5000, &parti(&[(1, "Yerel"), (2, "Partili")]))
         .unwrap();
@@ -90,7 +90,7 @@ fn pay_dps_sure_ve_siralama() {
 fn hedef_hp_tahmini_ve_yogun_trafik() {
     let mut t = Toplayici::new();
     for zaman in 0..10_000 {
-        t.hasar(zaman, &h(1, 90, 1, 2));
+        t.hasar(zaman, &h(1, 90, 1, 2), false);
     }
     t.hp(&hp(500));
     let hedef = t.anlik(10_000, &yalniz()).unwrap().hedef.unwrap();
@@ -101,7 +101,7 @@ fn hedef_hp_tahmini_ve_yogun_trafik() {
 fn kirli_hp_ve_tahminin_zaman_asimi() {
     let (mut t, b) = (Toplayici::new(), yalniz());
     assert!(t.anlik(0, &b).is_none());
-    t.hasar(0, &h(1, 90, 100, 2));
+    t.hasar(0, &h(1, 90, 100, 2), false);
     assert_eq!(t.anlik(0, &b).unwrap().hedef.unwrap().hp_yuzde, 100.0);
     let hp = hp(100);
     t.hp(&hp);

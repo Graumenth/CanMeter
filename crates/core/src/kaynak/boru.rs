@@ -60,7 +60,8 @@ impl Boru {
                     Mesaj::Hasar(h) => {
                         let mut h = *h;
                         h.actor = tablo.kok(h.actor);
-                        toplayici.hasar(zaman_ms, &h);
+                        let dost = tablo.partide(h.actor) && tablo.partide(h.hedef);
+                        toplayici.hasar(zaman_ms, &h, dost);
                     }
                     Mesaj::Periyodik(p) => {
                         let mut p = *p;

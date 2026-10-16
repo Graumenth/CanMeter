@@ -9,7 +9,7 @@ pub const TAHMIN_PENCERESI_MS: u64 = 10_000;
 mod sayac;
 pub use sayac::OyuncuSayac;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Toplayici {
     savas_id: u64,
     baslangic_ms: Option<u64>,
@@ -23,24 +23,17 @@ pub struct Toplayici {
     kirli: bool,
 }
 
-impl Default for Toplayici {
-    #[rustfmt::skip]
-    fn default() -> Self {
-        Self {
-            savas_id: 0, baslangic_ms: None, son_hasar_ms: 0, hedef: None,
-            hp: HashMap::new(), oyuncular: HashMap::new(), hedefler: HashMap::new(),
-            son_hasarlari: VecDeque::with_capacity(64), aktif: false, kirli: false,
-        }
-    }
-}
-
 impl Toplayici {
     pub fn new() -> Self {
-        Self::default()
+        Self {
+            son_hasarlari: VecDeque::with_capacity(64),
+            ..Self::default()
+        }
     }
 
-    pub fn hasar(&mut self, zaman_ms: u64, h: &Hasar) {
-        if h.actor == h.hedef {
+    /// `dost`: aktör ve hedef aynı partide; oyuncu parti üyesine vuramaz, bu mesaj iyileştirmedir (0.6.3).
+    pub fn hasar(&mut self, zaman_ms: u64, h: &Hasar, dost: bool) {
+        if h.actor == h.hedef || dost {
             self.iyilestir(h.actor, h.deger);
         } else {
             let miktar = if matches!(h.vurus_turu, 1 | 6) {
@@ -118,3 +111,6 @@ mod testler;
 #[cfg(test)]
 #[path = "toplayici_testler_parti.rs"]
 mod testler_parti;
+#[cfg(test)]
+#[path = "toplayici_testler_pvp.rs"]
+mod testler_pvp;

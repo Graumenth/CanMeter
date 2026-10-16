@@ -1,5 +1,13 @@
 # PATCHNOTES
 
+## 0.6.3 (2026-10-17)
+### Düzeltmeler
+- PvP'de hedef seçilmiyor ve satır çıkmıyordu: son vurduğun rakip oyuncu artık hedef olur (ad, HP, kalan süre),
+  kendi satırın ve parti satırları görünür.
+- Parti üyesine yapılan iyileştirme artık hasar değil iyileştirme olarak sayılır.
+- Hedefe yalnız kaçınılan vuruşla dokunup hasar vermeyen varlıklar (Sealed Dungeon'daki sıfırlı `#id` satırları) satır
+  almaz.
+
 ## 0.6.2 (2026-10-16)
 ### Düzeltmeler
 - Kuşak görünümünde çubuğun üstüne düşen ad, hasar, DPS ve iyileştirme yazıları artık koyu renkte; sarı ve açık yeşil

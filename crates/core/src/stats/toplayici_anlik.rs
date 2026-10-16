@@ -17,18 +17,17 @@ impl Toplayici {
             return None;
         }
         self.kirli = false;
-        // Hedef: yerelin son vurduğu varlık; yerel yok ya da vurmadıysa (eski kimlik) en çok hasar alan. Oyuncu olamaz.
-        let aday =
-            |id: u32| Some(id) != tablo.yerel() && !tablo.varlik(id).is_some_and(|v| v.oyuncu);
+        // Hedef: yerelin son vurduğu parti dışı varlık (PvP'de rakip oyuncu da, 0.6.3); yerel yoksa en çok hasar alan NPC.
         let yerel_hedef = tablo
             .yerel()
             .and_then(|y| self.oyuncular.get(&y))
             .map(|s| s.son_hedef)
-            .filter(|h| self.hedefler.contains_key(h) && aday(*h));
+            .filter(|h| self.hedefler.contains_key(h) && !tablo.partide(*h));
+        let oyuncu = |id: u32| tablo.varlik(id).is_some_and(|v| v.oyuncu);
         self.hedef = yerel_hedef.or_else(|| {
             self.hedefler
                 .iter()
-                .filter(|(id, _)| aday(**id))
+                .filter(|(id, _)| Some(**id) != tablo.yerel() && !oyuncu(**id))
                 .max_by_key(|(id, hasar)| (**hasar, std::cmp::Reverse(**id)))
                 .map(|(&id, _)| id)
         });
@@ -37,7 +36,7 @@ impl Toplayici {
             .map_or(0, |b| self.son_hasar_ms.saturating_sub(b));
         let sure = (sure_ms as f64 / 1000.0).max(1.0);
         // Parti kuralına ek: spawn'ı görülmemiş aktör seçili hedefe vuruyorsa sen ya da summon'unsun (kendi spawn'ın
-        // gelmez, bölge değişince kimlik yenilenir, oyun içinde açınca 33 36 gelmez). Moblar oyunculara vurur, elenir.
+        // gelmez, oyun içinde açınca 33 36 gelmez). Katkısız (yalnız kaçınılan vuruş, ölüm) aktör satır almaz (0.6.3).
         let hedef = self.hedef;
         let mut oyuncular: Vec<_> = self
             .oyuncular
@@ -46,6 +45,7 @@ impl Toplayici {
                 (s.vurus > 0 || s.iyilestirme > 0 || s.olum > 0)
                     && (tablo.partide(**id)
                         || (hedef.is_some_and(|h| s.hedefi_vurdu(h))
+                            && (s.hasar > 0 || s.iyilestirme > 0)
                             && !tablo.varlik(**id).is_some_and(|v| v.oyuncu)
                             && !tablo.npc_mi(**id)))
             })
