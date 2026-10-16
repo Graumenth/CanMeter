@@ -3,7 +3,6 @@
 //! `--hex` istenince basılır. Kullanım: incele [--dosya <pcap>] [--port <sunucu portu>] [--hex 0438 --adet 5]
 
 use std::collections::HashMap;
-use std::net::SocketAddrV4;
 use std::path::{Path, PathBuf};
 
 use canmeter_core::capture::akis::Akis;
