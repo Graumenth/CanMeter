@@ -18,8 +18,7 @@ impl Toplayici {
             return None;
         }
         self.kirli = false;
-        // Hedef: yerel oyuncunun en son vurduğu varlık. Yerel yoksa ya da bu savaşta vurmadıysa (bölge
-        // değişiminden sonra eski kimlik) en çok hasar alan; oyuncular ve yerel hedef olamaz.
+        // Hedef: yerelin son vurduğu varlık; yerel yok ya da vurmadıysa (eski kimlik) en çok hasar alan. Oyuncu olamaz.
         let aday =
             |id: u32| Some(id) != tablo.yerel() && !tablo.varlik(id).is_some_and(|v| v.oyuncu);
         let yerel_hedef = tablo
@@ -38,9 +37,8 @@ impl Toplayici {
             .baslangic_ms
             .map_or(0, |b| self.son_hasar_ms.saturating_sub(b));
         let sure = (sure_ms as f64 / 1000.0).max(1.0);
-        // Parti kuralına ek: spawn'ı görülmemiş (oyuncu sayılmayan) bir aktör seçili hedefe vuruyorsa o sensin
-        // ya da senin summon'un: kendi spawn'ın sana gelmez, bölge değişince kimliğin yenilenir (33 36 eski kalır),
-        // oyun içindeyken açınca 33 36 hiç gelmez. Moblar hedefe değil oyunculara vurur, bu yüzden elenir.
+        // Parti kuralına ek: spawn'ı görülmemiş aktör seçili hedefe vuruyorsa sen ya da summon'unsun (kendi spawn'ın
+        // gelmez, bölge değişince kimlik yenilenir, oyun içinde açınca 33 36 gelmez). Moblar oyunculara vurur, elenir.
         let hedef = self.hedef;
         let mut oyuncular: Vec<_> = self
             .oyuncular
