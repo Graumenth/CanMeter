@@ -32,7 +32,7 @@ const TR: Sozluk = Sozluk {
     dps: "DPS",
     pay: "Pay",
     ben: "BEN",
-    oldu: "ÖLDÜ",
+    oldu: "ÖLÜ",
     hps: "HPS",
     demo_verisi: "Demo verisi",
     savas_bekleniyor: "Savaş bekleniyor",

@@ -43,7 +43,7 @@ const TR: Sozluk = Sozluk {
     oyuncu: "Oyuncu",
     pay: "Pay",
     ben: "BEN",
-    olu: "ÖLDÜ",
+    olu: "ÖLÜ",
     hps: "HPS",
     demo_verisi: "Demo verisi",
     kilitle: "Kilitle",

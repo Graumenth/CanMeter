@@ -23,7 +23,7 @@ const TR: Sozluk = Sozluk {
     can_meter: "CanMeter",
     savas_bekleniyor: "Savaş bekleniyor",
     sen: "SEN",
-    oldu: "ÖLDÜ",
+    oldu: "ÖLÜ",
     hps: "HPS",
     hedef_yok: "Hedef yok",
     sure: "Süre",

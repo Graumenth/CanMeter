@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.5.1 (2026-10-16)
+### Düzeltmeler
+- Ölü oyuncu rozeti "ÖLDÜ" yerine "ÖLÜ" (İngilizce "DEAD").
+
 ## 0.5.0 (2026-10-16)
 ### Yenilikler
 - Ölüm sayacı: savaşta ölen oyuncunun satırında "†2" gibi kaç kez öldüğü görünür; "ÖLDÜ" rozeti yalnız o an ölüyken.
