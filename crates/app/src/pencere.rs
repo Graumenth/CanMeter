@@ -45,6 +45,8 @@ pub fn kenarlik_kaldir(cc: &eframe::CreationContext<'_>) {
             4,
         );
     }
+    // Üstteki 1 px şerit: bkz. pencere_nc.rs.
+    crate::pencere_nc::uygula(pencere.hwnd.get() as _);
 }
 
 #[cfg(not(windows))]

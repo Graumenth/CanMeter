@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.5.2 (2026-10-16)
+### Düzeltmeler
+- Overlay'in üst kenarındaki ince açık çizgi kaldırıldı.
+
 ## 0.5.1 (2026-10-16)
 ### Düzeltmeler
 - Ölü oyuncu rozeti "ÖLDÜ" yerine "ÖLÜ" (İngilizce "DEAD").

@@ -15,6 +15,8 @@ mod kisayol;
 mod komut_satiri;
 mod konum;
 mod pencere;
+#[cfg(windows)]
+mod pencere_nc;
 mod sayi;
 mod sinif_ikon;
 mod sinif_renk;
