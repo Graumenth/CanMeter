@@ -1,5 +1,13 @@
 # PATCHNOTES
 
+## 0.6.0 (2026-10-16)
+### Yenilikler
+- Summon, pet, yer büyüsü ve skill efektlerinin hasarı ve iyileştirmesi artık sahibi olan oyuncunun satırına yazılır;
+  boss savaşındaki `#id` satır seli bitti.
+- Hedefin HP çubuğu spawn anından itibaren doğru; HP güncellemelerinin ikinci düzeni çözüldü.
+### Düzeltmeler
+- Ölüm sayacı yalnız oyuncular için artar (summon ölümleri sayılmaz).
+
 ## 0.5.3 (2026-10-16)
 ### Düzeltmeler
 - Alan savaşında (raid) tanınmayan oyuncular listeyi dolduruyordu; artık parti dışından en çok 3 satır görünür.

@@ -1,7 +1,7 @@
 //! Kimlikleri ve adla bekleyen parti bilgilerini birleştirir; summon eşleme faz 02'dedir.
 use crate::protocol::mesaj::{Mesaj, kimlik::sinif};
 use crate::stats::Sinif;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Varlik {
@@ -17,6 +17,10 @@ pub struct Tablo {
     yerel: Option<u32>,
     parti: HashMap<String, (Sinif, u32)>,
     seviyeler: HashMap<u32, u32>,
+    /// Summon/efekt -> sahip oyuncu; `kok` zinciri izler.
+    sahipler: HashMap<u32, u32>,
+    /// 41 36 ile spawn olmuş kimlikler (asla oyuncu değil).
+    npcler: HashSet<u32>,
 }
 
 impl Tablo {
@@ -33,6 +37,7 @@ impl Tablo {
                 self.yerel = Some(k.id);
             }
             Mesaj::OyuncuSpawn(s) => self.oyuncu(s.id, &s.ad, s.sinif_kodu),
+            Mesaj::NpcSpawn(s) => self.npc_spawn(s),
             Mesaj::Roster(r) => {
                 for uye in &r.uyeler {
                     let sinif = sinif(uye.sinif_kodu);
@@ -67,24 +72,6 @@ impl Tablo {
         }
     }
 
-    fn oyuncu(&mut self, id: u32, ad: &str, kod: u32) {
-        let mut sinif = sinif(kod);
-        self.seviyeler.remove(&id);
-        if let Some(&(parti_sinifi, seviye)) = self.parti.get(ad) {
-            sinif = parti_sinifi;
-            self.seviyeler.insert(id, seviye);
-        }
-        self.varliklar.insert(
-            id,
-            Varlik {
-                ad: ad.to_owned(),
-                sinif,
-                oyuncu: true,
-                olu: false,
-            },
-        );
-    }
-
     pub fn varlik(&self, id: u32) -> Option<&Varlik> {
         self.varliklar.get(&id)
     }
@@ -111,8 +98,13 @@ impl Tablo {
     }
 }
 
+#[path = "tablo_npc.rs"]
+mod npc;
 #[path = "tablo_sorgu.rs"]
 mod sorgu;
 #[cfg(test)]
 #[path = "tablo_testler.rs"]
 mod testler;
+#[cfg(test)]
+#[path = "tablo_testler_npc.rs"]
+mod testler_npc;

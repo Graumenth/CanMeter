@@ -15,10 +15,17 @@ use canmeter_core::protocol::yuruyucu::Yuruyucu;
 mod args;
 mod ozet;
 mod sinif;
+mod sunucu;
 
 const HEX_IZINLI: [[u8; 2]; 3] = [[0x04, 0x38], [0x05, 0x38], [0x1B, 0x92]];
 /// Ad taşıyan türler: yalnız harf dizileri maskelenmiş hex basılır.
-const HEX_MASKELI: [[u8; 2]; 3] = [[0x33, 0x36], [0x45, 0x36], [0x02, 0x97]];
+const HEX_MASKELI: [[u8; 2]; 5] = [
+    [0x33, 0x36],
+    [0x45, 0x36],
+    [0x02, 0x97],
+    [0x41, 0x36],
+    [0x42, 0x36],
+];
 
 fn main() {
     let args::Secenekler {
@@ -31,7 +38,7 @@ fn main() {
     let dosya = dosya
         .or_else(en_yeni_kayit)
         .expect("kayıt bulunamadı (--dosya ver)");
-    let sunucu = sunucu_sec(&dosya, port).expect("oyun akışı bulunamadı");
+    let sunucu = sunucu::sec(&dosya, port).expect("oyun akışı bulunamadı");
     println!(
         "dosya: {}",
         dosya.file_name().unwrap_or_default().to_string_lossy()
@@ -87,23 +94,6 @@ fn main() {
     }
     ozet::yaz(segment, bayt, imza, akis.veri().len(), &turler);
     siniflar.yaz();
-}
-
-/// İlk geçiş: gönderen uç başına bayt; 443/80 dışı en çok veri gönderen uç oyun sunucusudur.
-fn sunucu_sec(dosya: &Path, port: Option<u16>) -> Option<SocketAddrV4> {
-    let mut kaynak = PcapDosyasi::ac(dosya).ok()?;
-    let mut toplam: HashMap<SocketAddrV4, u64> = HashMap::new();
-    while let Some(p) = kaynak.sonraki() {
-        if let Some(s) = paket::ayristir(p.veri) {
-            *toplam.entry(s.kaynak).or_default() += s.yuk.len() as u64;
-        }
-    }
-    toplam
-        .into_iter()
-        .filter(|(uc, _)| port.is_none_or(|p| uc.port() == p))
-        .filter(|(uc, _)| ![443, 80].contains(&uc.port()))
-        .max_by_key(|(_, b)| *b)
-        .map(|(uc, _)| uc)
 }
 
 fn en_yeni_kayit() -> Option<PathBuf> {

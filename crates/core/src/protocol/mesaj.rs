@@ -4,6 +4,9 @@
 
 pub mod hasar;
 pub mod kimlik;
+pub mod spawn_npc;
+
+pub use spawn_npc::NpcSpawn;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Mesaj {
@@ -18,6 +21,8 @@ pub enum Mesaj {
     Roster(Roster),
     /// `42 36` (eski `41 36`): ölüm ya da despawn.
     Olum(Olum),
+    /// `41 36` (eski `40 36`): NPC, summon, pet ya da skill-efekt varlığı; summon ve efektte sahip bilgisi.
+    NpcSpawn(NpcSpawn),
 }
 
 /// `04 38` doğrudan hasar. `deger` vuruşun toplamıdır; `ek_*` alt vuruşlar (toplama dahil).
@@ -49,7 +54,7 @@ pub struct Periyodik {
     pub miktar: u64,
 }
 
-/// `1B 92` HP güncellemesi (kayıtta u32 düzeni; §6'daki varint düzeni eski).
+/// `1B 92` HP güncellemesi: actor varint, iki varint, mevcut ve azami u32 (2026-10-16 kaydıyla doğrulandı).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Hp {
     pub actor: u32,
@@ -101,8 +106,8 @@ pub fn coz(tur: [u8; 2], govde: &[u8]) -> Option<Mesaj> {
         [0x33, 0x36] => kimlik::kimlik(govde).map(Mesaj::Kimlik),
         [0x45, 0x36] | [0x44, 0x36] => kimlik::oyuncu_spawn(govde).map(Mesaj::OyuncuSpawn),
         [0x02, 0x97] => kimlik::roster(govde).map(Mesaj::Roster),
-        // 41 36 NPC/summon spawn'dır (çözülmüyor); ölüm ve despawn yalnız 42 36.
         [0x42, 0x36] => kimlik::olum(govde).map(Mesaj::Olum),
+        [0x41, 0x36] | [0x40, 0x36] => spawn_npc::npc_spawn(govde).map(Mesaj::NpcSpawn),
         _ => None,
     }
 }

@@ -1,7 +1,10 @@
 //! Segmentleri çözüme ve savaş istatistiklerine taşır.
 use crate::capture::{akis::Akis, paket::Segment};
 use crate::combat::Tablo;
-use crate::protocol::{mesaj::coz, yuruyucu::Yuruyucu};
+use crate::protocol::{
+    mesaj::{Hp, Mesaj, coz},
+    yuruyucu::Yuruyucu,
+};
 use crate::stats::{SavasAnlik, toplayici::Toplayici};
 use std::net::SocketAddrV4;
 
@@ -52,14 +55,32 @@ impl Boru {
         let n = self.yuruyucu.yurut(self.akis.veri(), &mut |tur, govde| {
             if let Some(mesaj) = coz(tur, govde) {
                 tablo.isle(&mesaj);
+                // Summon ve efekt hasarı sahibine yazılır; ölüm yalnız oyuncular için sayılır.
                 match &mesaj {
-                    crate::protocol::mesaj::Mesaj::Hasar(h) => toplayici.hasar(zaman_ms, h),
-                    crate::protocol::mesaj::Mesaj::Periyodik(p) => toplayici.periyodik(zaman_ms, p),
-                    crate::protocol::mesaj::Mesaj::Hp(h) => {
+                    Mesaj::Hasar(h) => {
+                        let mut h = *h;
+                        h.actor = tablo.kok(h.actor);
+                        toplayici.hasar(zaman_ms, &h);
+                    }
+                    Mesaj::Periyodik(p) => {
+                        let mut p = *p;
+                        p.actor = tablo.kok(p.actor);
+                        toplayici.periyodik(zaman_ms, &p);
+                    }
+                    Mesaj::Hp(h) => {
                         tablo.dirilt(h.actor, h.mevcut);
                         toplayici.hp(h);
                     }
-                    crate::protocol::mesaj::Mesaj::Olum(o) if o.bayrak == 3 => toplayici.olum(o.id),
+                    Mesaj::Olum(o) if o.bayrak == 3 && !tablo.npc_mi(o.id) => toplayici.olum(o.id),
+                    Mesaj::NpcSpawn(s) => {
+                        if let Some((mevcut, azami)) = s.hp {
+                            toplayici.hp(&Hp {
+                                actor: s.id,
+                                mevcut,
+                                azami,
+                            });
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -70,20 +91,6 @@ impl Boru {
         self.zaman_asimi(simdi_ms);
         self.toplayici.anlik(simdi_ms, &self.tablo)
     }
-    fn imzali(yuk: &[u8]) -> bool {
-        matches!(yuk, [0x0e | 0x06, 0x00, 0x36, ..])
-    }
-
-    fn aday_ekle(&mut self, uc: SocketAddrV4, zaman: u64) -> bool {
-        let konum = self
-            .adaylar
-            .iter()
-            .position(|a| a.uc == Some(uc))
-            .or_else(|| self.adaylar.iter().position(|a| a.uc.is_none()))
-            .unwrap_or(0);
-        self.adaylar[konum].ekle(uc, zaman)
-    }
-
     fn zaman_asimi(&mut self, simdi: u64) {
         if self
             .son_sunucu_ms

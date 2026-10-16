@@ -1,7 +1,6 @@
 //! Anlık üretimi olay yolundan ayrıdır; sahipli çıktı burada oluşturulur.
 use super::{BOSLUK_MS, TAHMIN_PENCERESI_MS, Toplayici};
-
-/// Parti dışı (tanımsız, hedefe vuran) satır sınırı: alan savaşında başka partiler gürültü yapmasın.
+/// Parti dışı satır sınırı: alan savaşında başka partiler gürültü yapmasın.
 const TANIMSIZ_SINIRI: usize = 3;
 use crate::{
     combat::Tablo,
@@ -47,7 +46,8 @@ impl Toplayici {
                 (s.vurus > 0 || s.iyilestirme > 0 || s.olum > 0)
                     && (tablo.partide(**id)
                         || (hedef.is_some_and(|h| s.hedefi_vurdu(h))
-                            && !tablo.varlik(**id).is_some_and(|v| v.oyuncu)))
+                            && !tablo.varlik(**id).is_some_and(|v| v.oyuncu)
+                            && !tablo.npc_mi(**id)))
             })
             .map(|(&id, s)| {
                 let v = tablo.varlik(id);

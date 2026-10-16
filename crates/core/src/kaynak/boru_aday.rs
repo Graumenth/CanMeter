@@ -1,5 +1,5 @@
 //! Sunucu adayı: 3 sn içinde 12 kalp atışı (00 36) görülen uç kilitlenir.
-use super::{IMZA_ESIGI, IMZA_PENCERESI_MS};
+use super::{Boru, IMZA_ESIGI, IMZA_PENCERESI_MS};
 use std::net::SocketAddrV4;
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -26,5 +26,21 @@ impl Aday {
             self.bas = (self.bas + 1) % self.zamanlar.len();
         }
         self.uzunluk >= IMZA_ESIGI as usize
+    }
+}
+
+impl Boru {
+    pub(super) fn imzali(yuk: &[u8]) -> bool {
+        matches!(yuk, [0x0e | 0x06, 0x00, 0x36, ..])
+    }
+
+    pub(super) fn aday_ekle(&mut self, uc: SocketAddrV4, zaman: u64) -> bool {
+        let konum = self
+            .adaylar
+            .iter()
+            .position(|a| a.uc == Some(uc))
+            .or_else(|| self.adaylar.iter().position(|a| a.uc.is_none()))
+            .unwrap_or(0);
+        self.adaylar[konum].ekle(uc, zaman)
     }
 }

@@ -83,7 +83,9 @@ pub fn periyodik(govde: &[u8]) -> Option<Periyodik> {
 pub fn hp(govde: &[u8]) -> Option<Hp> {
     let mut o = Okuyucu::yeni(govde);
     let actor = o.varint()?;
-    o.u32()?;
+    // Kayıt (2026-10-16): actor'dan sonra iki varint; ilk kayıtta ikisi de 2 bayt olduğundan u32 sanılmıştı.
+    o.varint()?;
+    o.varint()?;
     let mevcut = o.u32()?;
     let azami = o.u32()?;
     o.atla(8)?;
@@ -100,3 +102,6 @@ pub fn hp(govde: &[u8]) -> Option<Hp> {
 #[cfg(test)]
 #[path = "hasar_testler.rs"]
 mod testler;
+#[cfg(test)]
+#[path = "hasar_testler_hp.rs"]
+mod testler_hp;

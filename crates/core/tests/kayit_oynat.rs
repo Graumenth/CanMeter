@@ -27,10 +27,17 @@ fn kayit_uctan_uca_dps_uretir() {
         eprintln!("kayıt yok, atlandı");
         return;
     };
-    let mut motor = Motor::kayit(&yol, true).expect("kayıt açılamadı");
+    // Kayıt zamanına göre 5 sn adımlarla oynatılır; en çok hasarlı anlık (kaydın en büyük savaşı) denetlenir.
+    let mut motor = Motor::kayit(&yol, false).expect("kayıt açılamadı");
     let mut son = None;
-    for _ in 0..8 {
-        if let Some(anlik) = motor.ilerle(Duration::from_secs(1)) {
+    for _ in 0..2_000 {
+        if let Some(anlik) = motor.ilerle(Duration::from_secs(5))
+            && son
+                .as_ref()
+                .is_none_or(|s: &canmeter_core::stats::SavasAnlik| {
+                    anlik.toplam_hasar >= s.toplam_hasar
+                })
+        {
             son = Some(anlik);
         }
     }
