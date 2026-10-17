@@ -1,15 +1,15 @@
 //! Tek süreçte motor, kullanıcı ayarları ve overlay kare döngüsü.
 use crate::skin::{Baglam, Skin, kayit};
 use crate::{
-    ayarlar::Ayarlar, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, konum::Konum, pencere,
-    tutamac, uyari, yazi,
+    ayarlar::Ayarlar, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, kisayol_global::GlobalKisayol,
+    konum::Konum, pencere, tutamac, uyari, yazi, yenileme::Yenileme,
 };
 use canmeter_core::{Motor, stats::SavasAnlik};
 use std::time::{Duration, Instant};
 #[path = "uygulama_kare.rs"]
 mod kare;
 /// Ayarlar paneli açıkken en az bu kadar yükseklik (nokta).
-const PANEL_YUKSEKLIK: f32 = 380.0;
+const PANEL_YUKSEKLIK: f32 = 420.0;
 /// Ölçek ya da konum değişince ayar dosyası bu kadar sessizlikten sonra yazılır (sürükleme boyunca değil).
 const KAYIT_GECIKMESI: Duration = Duration::from_secs(1);
 pub struct Uygulama {
@@ -17,6 +17,8 @@ pub struct Uygulama {
     kalici: Ayarlar,
     skin: &'static dyn Skin,
     kilit: Kilit,
+    kisayol_global: GlobalKisayol,
+    yenileme: Yenileme,
     ayarlar_acik: bool,
     motor: Motor,
     son: Option<SavasAnlik>,
@@ -40,6 +42,8 @@ impl Uygulama {
             ayarlar,
             kalici,
             kilit: Kilit::new(&cc.egui_ctx),
+            kisayol_global: GlobalKisayol::new(),
+            yenileme: Yenileme::new(),
             ayarlar_acik: false,
             motor: crate::komut_satiri::motor(),
             son: None,
@@ -95,7 +99,8 @@ impl eframe::App for Uygulama {
                 (skin.inner, skin.response.rect.height() + ipucu)
             })
             .inner;
-        self.kare_sonu(&ctx, eylemler, icerik);
+        let basilan = self.kisayol_global.oku();
+        self.kare_sonu(&ctx, eylemler, icerik, basilan);
         ctx.request_repaint_after(Duration::from_millis(250));
     }
 }
