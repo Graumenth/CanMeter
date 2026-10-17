@@ -128,15 +128,22 @@ fn hata(hata: impl std::fmt::Display) -> (u8, String) {
     (1, hata.to_string())
 }
 
+/// Var olan dosyanın üstüne yazılmaz: aynı dakikada açılan ikinci kayıt öncekini ezmişti (2026-10-17), ad saniyeli.
 fn cikti_yolunu_hazirla(cikti: Option<PathBuf>) -> Result<PathBuf, (u8, String)> {
-    if let Some(yol) = cikti {
-        return Ok(yol);
+    let yol = match cikti {
+        Some(yol) => yol,
+        None => {
+            // Çalışma dizinine değil workspace köküne göre: crates/core içinden koşulsa da kayitlar/ tek yerde.
+            let kok = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../kayitlar");
+            std::fs::create_dir_all(&kok).map_err(hata)?;
+            let damga = Local::now().format("%Y-%m-%d_%H%M%S");
+            kok.join(format!("{damga}.pcap"))
+        }
+    };
+    if yol.exists() {
+        return Err((2, format!("Çıktı dosyası zaten var: {}", yol.display())));
     }
-    // Çalışma dizinine değil workspace köküne göre: crates/core içinden koşulsa da kayitlar/ tek yerde.
-    let kok = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../kayitlar");
-    std::fs::create_dir_all(&kok).map_err(hata)?;
-    let damga = Local::now().format("%Y-%m-%d_%H%M");
-    Ok(kok.join(format!("{damga}.pcap")))
+    Ok(yol)
 }
 
 fn kaydet(

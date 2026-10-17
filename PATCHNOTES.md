@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.8.1 (2026-10-17)
+### Düzeltmeler
+- Kayıt aracı var olan dosyanın üstüne yazmaz; dosya adı saniye içerir.
+
 ## 0.8.0 (2026-10-17)
 ### Yeni
 - CanMeter yeni bir derleme gördüğünde savaş bitince kendini yeniden başlatır; Ctrl+Shift+R (oyundayken de) hemen
