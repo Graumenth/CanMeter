@@ -221,7 +221,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-app"
-version = "0.6.4"
+version = "0.6.5"
 dependencies = [
  "canmeter-core",
  "eframe",
@@ -236,7 +236,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-core"
-version = "0.6.4"
+version = "0.6.5"
 dependencies = [
  "chrono",
  "ctrlc",

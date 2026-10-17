@@ -63,7 +63,8 @@ impl Kalem<'_> {
         konum.x
     }
 
-    /// "+miktar": yeşil şeridin hemen sağında (rayda yeşil); yer yoksa şeridin içinde (koyu).
+    /// "+miktar": yeşil şeridin hemen sağında (rayda yeşil); yer yoksa şeridin içinde (koyu). İçerideyken de
+    /// sayıların soluna kelepçelenir: çubuk tam doluyken yazı DPS'in üstüne biniyordu (0.6.5).
     fn iyilestirme(&self, miktar: u64, hasar_solu: f32) -> f32 {
         let g = self.p.layout_no_wrap(
             format!("+{}", kisalt(miktar as f64)),
@@ -71,11 +72,10 @@ impl Kalem<'_> {
             Color32::PLACEHOLDER,
         );
         let dis_solu = self.sinir.0 + 6.0;
-        let icte = dis_solu + g.size().x > hasar_solu - 6.0;
-        let x = if icte {
-            self.sinir.0 - 6.0 - g.size().x
-        } else {
+        let x = if dis_solu + g.size().x <= hasar_solu - 6.0 {
             dis_solu
+        } else {
+            (self.sinir.0 - 6.0).min(hasar_solu - 6.0) - g.size().x
         };
         let konum = egui::pos2(x, self.y - g.size().y / 2.0);
         self.sinir.ikili(self.p, |p, k| {

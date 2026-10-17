@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.6.5 (2026-10-17)
+### Düzeltmeler
+- Kuşak görünümünde çubuk satırın sonuna kadar dolar; en yüksek hasarlı satırın çubuğu artık yüzde sütununda bitmez.
+- Kuşak görünümünde çubuk tam doluyken iyileştirme yazısı DPS sayısının üstüne binmiyor; sayıların soluna dizilir.
+
 ## 0.6.4 (2026-10-17)
 ### Düzeltmeler
 - CanMeter'ın kendi logosu var: exe simgesi, görev çubuğu ve Alt+Tab'da "Crimson Wings" amblemi.
