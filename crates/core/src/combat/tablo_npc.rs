@@ -30,7 +30,7 @@ impl Tablo {
         }
     }
 
-    fn oyuncu_id(&self, ad: &str) -> Option<u32> {
+    pub(super) fn oyuncu_id(&self, ad: &str) -> Option<u32> {
         self.varliklar
             .iter()
             .find(|(_, v)| v.oyuncu && v.ad == ad)

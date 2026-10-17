@@ -34,7 +34,8 @@ impl Tablo {
             Mesaj::Kimlik(k) => {
                 self.oyuncu(k.id, &k.ad, k.sinif_kodu);
                 self.seviyeler.insert(k.id, k.seviye);
-                self.yerel = Some(k.id);
+                // Takma kimlikse kök: olaylar ve satır köktedir.
+                self.yerel = Some(self.kok(k.id));
             }
             Mesaj::OyuncuSpawn(s) => self.oyuncu(s.id, &s.ad, s.sinif_kodu),
             Mesaj::NpcSpawn(s) => self.npc_spawn(s),
@@ -51,23 +52,7 @@ impl Tablo {
                     self.parti.insert(uye.ad.clone(), (sinif, uye.seviye));
                 }
             }
-            // 7: despawn; NPC/summon tablodan düşer, oyuncu yalnız uzaklaşmıştır (ölü sayılmaz).
-            Mesaj::Olum(o) if o.bayrak == 7 => {
-                if !self.varlik(o.id).is_some_and(|v| v.oyuncu) {
-                    self.varliklar.remove(&o.id);
-                    self.seviyeler.remove(&o.id);
-                }
-            }
-            // 1: bölge başında ölü, 3: savaşta öldü.
-            Mesaj::Olum(o) if matches!(o.bayrak, 1 | 3) => {
-                let v = self.varliklar.entry(o.id).or_insert(Varlik {
-                    ad: String::new(),
-                    sinif: Sinif::Bilinmiyor,
-                    oyuncu: false,
-                    olu: false,
-                });
-                v.olu = true;
-            }
+            Mesaj::Olum(o) => self.olum(o),
             _ => {}
         }
     }
@@ -87,15 +72,6 @@ impl Tablo {
                 .varlik(id)
                 .is_some_and(|v| v.oyuncu && self.parti.contains_key(&v.ad))
     }
-
-    /// HP mesajı: canı sıfırdan büyük görülen varlık dirilmiştir (diriltme mesajı çözülmüyor).
-    pub fn dirilt(&mut self, id: u32, hp: u32) {
-        if hp > 0
-            && let Some(v) = self.varliklar.get_mut(&id)
-        {
-            v.olu = false;
-        }
-    }
 }
 
 #[path = "tablo_npc.rs"]
@@ -105,6 +81,9 @@ mod sorgu;
 #[cfg(test)]
 #[path = "tablo_testler.rs"]
 mod testler;
+#[cfg(test)]
+#[path = "tablo_testler_ad.rs"]
+mod testler_ad;
 #[cfg(test)]
 #[path = "tablo_testler_npc.rs"]
 mod testler_npc;

@@ -72,7 +72,9 @@ impl Boru {
                         tablo.dirilt(h.actor, h.mevcut);
                         toplayici.hp(h);
                     }
-                    Mesaj::Olum(o) if o.bayrak == 3 && !tablo.npc_mi(o.id) => toplayici.olum(o.id),
+                    Mesaj::Olum(o) if o.bayrak == 3 && !tablo.npc_mi(o.id) => {
+                        toplayici.olum(tablo.kok(o.id));
+                    }
                     Mesaj::NpcSpawn(s) => {
                         if let Some((mevcut, azami)) = s.hp {
                             toplayici.hp(&Hp {

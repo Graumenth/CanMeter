@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.8.2 (2026-10-17)
+### Düzeltmeler
+- Aynı karakter iki satır olarak görünmüyor: bölge geçişinde yeni kimlik alan ya da sahibinin adını taşıyan varlıkların
+  hasarı ve iyileştirmesi karakterin kendi satırına yazılır; ölüm ve diriliş de aynı satırda.
+
 ## 0.8.1 (2026-10-17)
 ### Düzeltmeler
 - Kayıt aracı var olan dosyanın üstüne yazmaz; dosya adı saniye içerir.
