@@ -42,6 +42,8 @@ pub struct Baglam<'a> {
     pub kilitli: bool,
     /// Üst özet satırı (solda toplam DPS, sağda toplam hasar; yalnız yazı).
     pub toplam_goster: bool,
+    /// Hedef satırı (ad, HP çubuğu, kalan süre). Sahip isteğiyle eklendi (0.7.0); sözleşmenin tek genişlemesi.
+    pub hedef_goster: bool,
     pub zemin: Zemin,
     /// Veri demo kaynağından geliyor (alt bilgide gösterilir).
     pub demo: bool,

@@ -77,6 +77,7 @@ impl eframe::App for Uygulama {
             dil: self.ayarlar.dil,
             kilitli: self.kilit.kilitli,
             toplam_goster: self.ayarlar.toplam_goster,
+            hedef_goster: self.ayarlar.hedef_goster,
             zemin: self.ayarlar.zemin(),
             demo: self.motor.demo_mu(),
             surum: canmeter_core::surum(),

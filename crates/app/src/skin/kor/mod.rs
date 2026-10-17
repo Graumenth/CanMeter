@@ -58,7 +58,9 @@ impl Skin for Kor {
 
                 let mut e = Eylemler::default();
                 e = e.birlestir(baslik::ciz(ui, b, Some(savas.sure_ms)));
-                hedef::ciz(ui, savas.hedef.as_ref(), b.dil);
+                if b.hedef_goster {
+                    hedef::ciz(ui, savas.hedef.as_ref(), b.dil);
+                }
                 if b.toplam_goster {
                     toplam::ciz(ui, savas, b.dil);
                 }

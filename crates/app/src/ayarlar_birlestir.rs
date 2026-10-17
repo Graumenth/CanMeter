@@ -16,6 +16,7 @@ impl Ayarlar {
         kalici.zemin_renk = self.zemin_renk;
         kalici.zemin_opaklik = self.zemin_opaklik;
         kalici.toplam_goster = self.toplam_goster;
+        kalici.hedef_goster = self.hedef_goster;
         kalici.olcek = self.olcek;
         kalici.konum = self.konum;
         kalici.kaydet();

@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.7.0 (2026-10-17)
+### Yeni
+- Ayarlar'da "Hedef çubuğu" seçeneği: hedefin adı, HP çubuğu ve kalan süre satırı gizlenebilir. Varsayılan açık.
+
 ## 0.6.5 (2026-10-17)
 ### Düzeltmeler
 - Kuşak görünümünde çubuk satırın sonuna kadar dolar; en yüksek hasarlı satırın çubuğu artık yüzde sütununda bitmez.
