@@ -82,14 +82,15 @@ fn olum_bayraklari_ve_npc_despawn() {
     assert!(t.varlik(3).is_none());
 }
 #[test]
-fn yeniden_kimlik_oluyu_diriltir_yereli_degistirir() {
+fn yeniden_kimlik_oluyu_diriltir_yeni_kimlik_koke_baglanir() {
     let mut t = Tablo::new();
     t.isle(&kimlik(1));
     t.isle(&olum(1, 3));
     t.isle(&kimlik(1));
     assert!(!t.varlik(1).unwrap().olu);
+    // 0.6.9: aynı adla yeni kimlik takma kimliktir; yerel kök kalır, olaylar köke yazılır.
     t.isle(&kimlik(2));
-    assert_eq!(t.yerel(), Some(2));
+    assert_eq!((t.yerel(), t.kok(2)), (Some(1), 1));
 }
 #[test]
 fn npc_temizligi_oyuncuyu_ve_bekleyen_adi_korur() {
