@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.6.4 (2026-10-17)
+### Düzeltmeler
+- CanMeter'ın kendi logosu var: exe simgesi, görev çubuğu ve Alt+Tab'da "Crimson Wings" amblemi.
+
 ## 0.6.3 (2026-10-17)
 ### Düzeltmeler
 - PvP'de hedef seçilmiyor ve satır çıkmıyordu: son vurduğun rakip oyuncu artık hedef olur (ad, HP, kalan süre),

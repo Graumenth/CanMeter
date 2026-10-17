@@ -1,7 +1,15 @@
-//! Yerel overlay penceresi ve Windows DWM kenarlık ayarı.
+//! Yerel overlay penceresi ve Windows DWM kenarlık ayarı. Pencere ikonu (görev çubuğu, Alt+Tab) sahibin
+//! logosu, 64x64 ham RGBA gömülü (`ikonlar/logo-64.rgba`, çözücü yok); exe ikonu build.rs ile.
 
 pub fn secenekler(konum: Option<[i32; 2]>) -> eframe::NativeOptions {
-    let mut gorunum = egui::ViewportBuilder::default().with_title("CanMeter");
+    let logo = egui::IconData {
+        rgba: include_bytes!("../ikonlar/logo-64.rgba").to_vec(),
+        width: 64,
+        height: 64,
+    };
+    let mut gorunum = egui::ViewportBuilder::default()
+        .with_title("CanMeter")
+        .with_icon(std::sync::Arc::new(logo));
     if let Some([x, y]) = konum {
         gorunum = gorunum.with_position([x as f32, y as f32]);
     }

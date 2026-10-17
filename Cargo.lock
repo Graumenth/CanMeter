@@ -221,7 +221,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-app"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "canmeter-core",
  "eframe",
@@ -231,11 +231,12 @@ dependencies = [
  "serde",
  "toml",
  "windows-sys 0.61.2",
+ "winresource",
 ]
 
 [[package]]
 name = "canmeter-core"
-version = "0.6.3"
+version = "0.6.4"
 dependencies = [
  "chrono",
  "ctrlc",
@@ -2855,6 +2856,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "winresource"
+version = "0.1.34"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a2bc6d36480b829272a5bdabf08e6dca8004761c1da7e35efef800540c66221b"
+dependencies = [
+ "toml",
+ "version_check",
 ]
 
 [[package]]

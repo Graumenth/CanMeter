@@ -22,3 +22,7 @@ windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphic
 raw-window-handle = "0.6"
 # Kilitliyken pencere tıklama almaz (kilit düğmesi hariç); oyun odaktayken de çalışan global kısayol.
 global-hotkey = "0.8"
+
+[build-dependencies]
+# Exe ikonu (build.rs); yalnız derleme zamanı, çalışma zamanına girmez.
+winresource = "0.1"

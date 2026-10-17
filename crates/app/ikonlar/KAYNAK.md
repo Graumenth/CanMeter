@@ -17,3 +17,10 @@ tanıtmak için kullanılır (diğer topluluk araçlarıyla aynı kullanım). Oy
 | spiritmaster.rgba | Spiritmaster |
 | cleric.rgba | Cleric |
 | chanter.rgba | Chanter |
+
+# Uygulama logosu
+
+`canmeter.ico` (16, 24, 32, 48, 64, 128, 256 px; exe ikonu, `build.rs` + rc.exe) ve `logo-64.rgba` (pencere ikonu,
+ham RGBA) proje sahibinin (Graumenth) "Crimson Wings Damage Meter Emblem" çalışmasından üretilir; kaynak
+`tasarim/logo/canmeter-logo.png` (1254 px). Üretim: `araclar/logo-cevir.py <png> crates/app/ikonlar` (Pillow).
+Marka varlığıdır; telif proje sahibinindir.
