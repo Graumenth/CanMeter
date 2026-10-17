@@ -1,10 +1,13 @@
-//! Komut satırı: [--dosya <pcap>] [--port <sunucu portu>] [--hex 0438 --adet 5 [--hatali]]
+//! Komut satırı: [--dosya <pcap>] [--port <sunucu portu>] [--sunucu <ip:port>] [--hex 0438 --adet 5 [--hatali]]
 
+use std::net::SocketAddrV4;
 use std::path::PathBuf;
 
 pub struct Secenekler {
     pub dosya: Option<PathBuf>,
     pub port: Option<u16>,
+    /// Verilirse uç seçimi yapılmaz (aynı kayıtta ikinci sunucu, 0.6.10).
+    pub sunucu: Option<SocketAddrV4>,
     pub hex: Option<[u8; 2]>,
     pub adet: usize,
     /// `--hex` ile yalnız çözülemeyen gövdeleri bas.
@@ -22,6 +25,7 @@ pub fn oku() -> Secenekler {
     Secenekler {
         dosya: deger("--dosya").map(PathBuf::from),
         port: deger("--port").and_then(|p| p.parse().ok()),
+        sunucu: deger("--sunucu").and_then(|s| s.parse().ok()),
         hex: deger("--hex")
             .and_then(|h| u16::from_str_radix(&h, 16).ok())
             .map(u16::to_be_bytes),

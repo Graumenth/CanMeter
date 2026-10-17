@@ -30,6 +30,7 @@ fn main() {
     let args::Secenekler {
         dosya,
         port,
+        sunucu: sunucu_secimi,
         hex,
         adet,
         hatali,
@@ -37,7 +38,9 @@ fn main() {
     let dosya = dosya
         .or_else(en_yeni_kayit)
         .expect("kayıt bulunamadı (--dosya ver)");
-    let sunucu = sunucu::sec(&dosya, port).expect("oyun akışı bulunamadı");
+    let sunucu = sunucu_secimi
+        .or_else(|| sunucu::sec(&dosya, port))
+        .expect("oyun akışı bulunamadı");
     println!(
         "dosya: {}",
         dosya.file_name().unwrap_or_default().to_string_lossy()

@@ -37,6 +37,16 @@ impl Tablo {
             .map(|(&id, _)| id)
     }
 
+    /// Aynı adlı başka bir oyuncu kimliğinin kökü (`haric` dışında). Takma kimlik yeniden spawn olunca kendisini
+    /// bulup bağı düşürüyordu (0.6.10): HashMap sırası rastgele, `oyuncu_id` kendisini döndürebiliyordu.
+    pub(super) fn ad_koku(&self, ad: &str, haric: u32) -> Option<u32> {
+        self.varliklar
+            .iter()
+            .find(|(id, v)| **id != haric && v.oyuncu && v.ad == ad)
+            .map(|(id, _)| self.kok(*id))
+            .filter(|&k| k != haric)
+    }
+
     /// Sahip zincirinin kökü (en çok 4 adım); sahipsizse kendisi.
     pub fn kok(&self, id: u32) -> u32 {
         let mut k = id;

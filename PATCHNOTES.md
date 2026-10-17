@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.6.10 (2026-10-17)
+### Düzeltmeler
+- Aynı karakterin ikinci satır olarak geri gelmesi (görüş alanına yeniden girince) düzeltildi.
+
 ## 0.6.9 (2026-10-17)
 ### Düzeltmeler
 - Aynı karakter iki satır olarak görünmüyor: bölge geçişinde yeni kimlik alan ya da sahibinin adını taşıyan varlıkların

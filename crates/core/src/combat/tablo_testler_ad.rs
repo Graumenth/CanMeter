@@ -27,6 +27,18 @@ fn ayni_ad_yeni_kimlik_koke_baglanir_yerel_kok_kalir() {
 }
 
 #[test]
+fn takma_kimlik_yeniden_spawn_olunca_bag_korunur() {
+    let mut t = Tablo::new();
+    t.isle(&kimlik(1, "Ben"));
+    for _ in 0..3 {
+        t.isle(&spawn(2, "Ben"));
+        t.isle(&spawn(3, "Ben"));
+        t.isle(&spawn(1, "Ben"));
+    }
+    assert_eq!((t.kok(1), t.kok(2), t.kok(3)), (1, 1, 1));
+}
+
+#[test]
 fn takma_kimligin_olumu_ve_dirilisi_koke_islenir() {
     let mut t = Tablo::new();
     t.isle(&kimlik(1, "Ben"));

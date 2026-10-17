@@ -12,7 +12,7 @@ impl Tablo {
         self.npcler.remove(&id);
         self.sahipler.remove(&id);
         self.seviyeler.remove(&id);
-        if let Some(kok) = self.oyuncu_id(ad).map(|k| self.kok(k)).filter(|&k| k != id) {
+        if let Some(kok) = self.ad_koku(ad, id) {
             self.sahipler.insert(id, kok);
         }
         if let Some(&(parti_sinifi, seviye)) = self.parti.get(ad) {
