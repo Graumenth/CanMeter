@@ -37,7 +37,9 @@ pub fn ciz(ui: &mut egui::Ui, b: &Baglam) -> Eylemler {
             alan.min + Vec2::new(78.0, 10.0),
             hpv_alani.left_top() - Vec2::new(12.0, -8.0),
         );
-        hedef::ciz(p, hedef_alani, hpv_alani, savas.hedef.as_ref(), b.dil);
+        if b.hedef_goster {
+            hedef::ciz(p, hedef_alani, hpv_alani, savas.hedef.as_ref(), b.dil);
+        }
     } else {
         p.text(
             alan.left_top() + Vec2::new(14.0, 18.0),

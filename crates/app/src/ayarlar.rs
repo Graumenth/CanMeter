@@ -15,6 +15,8 @@ pub struct Ayarlar {
     pub zemin_renk: Option<[u8; 3]>,
     pub zemin_opaklik: f32,
     pub toplam_goster: bool,
+    /// Hedef satırı (ad, HP çubuğu, kalan süre); sahip isteği 0.6.6.
+    pub hedef_goster: bool,
     /// Overlay ölçeği (1.0 = 440 px genişlik); kenardan sürükleyince değişir.
     pub olcek: f32,
     /// Pencere dış köşesi (doğal nokta); taşıyınca güncellenir, açılışta kullanılır.
@@ -29,6 +31,7 @@ impl Default for Ayarlar {
             zemin_renk: None,
             zemin_opaklik: 0.92,
             toplam_goster: true,
+            hedef_goster: true,
             olcek: 1.0,
             konum: None,
         }
@@ -95,6 +98,7 @@ mod testler {
                 zemin_renk: Some([12, 34, 56]),
                 zemin_opaklik: 0.3,
                 toplam_goster: false,
+                hedef_goster: false,
                 olcek: 1.5,
                 konum: Some([120, -40]),
             },

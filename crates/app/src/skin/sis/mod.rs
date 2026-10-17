@@ -52,7 +52,9 @@ impl Skin for Sis {
                     );
                     return;
                 };
-                hedef::ciz(ui, savas.hedef.as_ref(), b.dil);
+                if b.hedef_goster {
+                    hedef::ciz(ui, savas.hedef.as_ref(), b.dil);
+                }
                 if b.toplam_goster {
                     toplam::ciz(ui, savas, b.dil);
                 }
