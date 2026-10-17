@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.6.7 (2026-10-17)
+### Yeni
+- CanMeter yeni bir derleme gördüğünde savaş bitince kendini yeniden başlatır; Ctrl+Shift+R (oyundayken de) hemen
+  yeniden başlatır. Pencere aynı yerde ve ölçekte açılır.
+
 ## 0.6.6 (2026-10-17)
 ### Yeni
 - Ayarlar'da "Hedef çubuğu" seçeneği: hedefin adı, HP çubuğu ve kalan süre satırı gizlenebilir. Varsayılan açık.

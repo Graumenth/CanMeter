@@ -1,14 +1,22 @@
-//! Kare sonu: skin eylemleri, ayarlar paneli, pencere boyutu/konumu ve gecikmeli ayar kaydı.
+//! Kare sonu: skin eylemleri, global kısayollar, ayarlar paneli, pencere boyutu/konumu, gecikmeli ayar kaydı ve
+//! yeni derlemeyle yeniden başlatma.
 use super::{KAYIT_GECIKMESI, PANEL_YUKSEKLIK, Uygulama};
-use crate::{ayarlar_paneli, skin::Eylemler};
+use crate::{ayarlar_paneli, kisayol_global::Basilanlar, skin::Eylemler};
 use std::time::Instant;
 
 impl Uygulama {
-    pub(super) fn kare_sonu(&mut self, ctx: &egui::Context, eylemler: Eylemler, icerik: f32) {
+    pub(super) fn kare_sonu(
+        &mut self,
+        ctx: &egui::Context,
+        eylemler: Eylemler,
+        icerik: f32,
+        basilan: Basilanlar,
+    ) {
         if eylemler.surukle && !self.kilit.kilitli {
             ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
         }
-        self.kilit.kare(ctx, eylemler.kilit_degistir);
+        self.kilit
+            .kare(ctx, eylemler.kilit_degistir || basilan.kilit);
         if eylemler.ayarlar_ac {
             self.ayarlar_acik = true;
         }
@@ -33,6 +41,13 @@ impl Uygulama {
         {
             self.kayit_zamani = None;
             self.kaydet(self.ayarlar.dil);
+        }
+        // Yeni derleme (ya da Ctrl+Shift+R): ayarlar yazılır, yeni exe açılır, bu pencere kapanır.
+        let savas_aktif = self.son.as_ref().is_some_and(|s| s.aktif);
+        if self.yenileme.kare(basilan.yenile, savas_aktif) {
+            self.kayit_zamani = None;
+            self.kaydet(self.ayarlar.dil);
+            self.yenileme.baslat(ctx);
         }
     }
 }

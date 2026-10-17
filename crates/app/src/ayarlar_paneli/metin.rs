@@ -15,6 +15,7 @@ pub struct Sozluk {
     pub gorunum_kisayol: &'static str,
     pub dil_kisayol: &'static str,
     pub kilit_kisayol: &'static str,
+    pub yenile_kisayol: &'static str,
 }
 
 pub const TR: Sozluk = Sozluk {
@@ -31,6 +32,7 @@ pub const TR: Sozluk = Sozluk {
     gorunum_kisayol: "Ctrl+Shift+S görünüm",
     dil_kisayol: "Ctrl+Shift+L dil",
     kilit_kisayol: "Ctrl+Shift+K kilit (oyundayken de)",
+    yenile_kisayol: "Ctrl+Shift+R yeniden başlat (yeni derleme)",
 };
 
 pub const EN: Sozluk = Sozluk {
@@ -47,6 +49,7 @@ pub const EN: Sozluk = Sozluk {
     gorunum_kisayol: "Ctrl+Shift+S appearance",
     dil_kisayol: "Ctrl+Shift+L language",
     kilit_kisayol: "Ctrl+Shift+K lock (works in game)",
+    yenile_kisayol: "Ctrl+Shift+R restart (new build)",
 };
 
 pub fn metin(dil: Dil) -> &'static Sozluk {
