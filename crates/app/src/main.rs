@@ -12,6 +12,7 @@ mod kilit_alani;
 mod kilit_fare;
 mod kilit_simge;
 mod kisayol;
+mod kisayol_global;
 mod komut_satiri;
 mod konum;
 mod pencere;
@@ -25,6 +26,7 @@ mod tutamac;
 mod uyari;
 mod uygulama;
 mod yazi;
+mod yenileme;
 
 fn main() -> eframe::Result {
     let kalici = ayarlar::Ayarlar::yukle();
