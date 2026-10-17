@@ -1,0 +1,17 @@
+[package]
+name = "canmeter-rapor"
+description = "CanMeter geçmiş raporu: encounter dosyalarından statik HTML (sunucu yok, WebView yok)"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "canmeter-rapor"
+path = "src/main.rs"
+
+[dependencies]
+# JSON satırları ve işletim sisteminin yerel saati.
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }

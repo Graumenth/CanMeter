@@ -16,6 +16,8 @@ Arayüzü Türkçe yaptık. İhtiyacımız olan bilgileri gösteren sade bir met
 ## Yapı
 - `crates/core`: Rust çekirdek (yakalama, protokol, savaş olayları, istatistik, replay).
 - `crates/app`: overlay arayüzü, saf Rust (egui). Tek süreç, tarayıcı bileşeni yok.
+- `crates/rapor`: geçmiş raporu aracı `canmeter-rapor`; encounter dosyalarından statik HTML üretir (sunucu yok,
+  WebView yok), `index.html` tarayıcıda açılır. Şema: `CanMeterCC/sema-encounter-v1.md`.
 
 Kurallar ve komutlar: `CLAUDE.md`. Kullanıcı-dönük değişiklikler: `PATCHNOTES.md`.
 

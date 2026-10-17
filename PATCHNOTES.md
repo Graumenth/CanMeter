@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.7.0 (2026-10-17)
+### Yeni
+- Geçmiş raporu: `canmeter-rapor` aracı savaş kayıtlarından tek klasöre HTML rapor üretir; savaş listesi, DPS
+  grafiği, oyuncu tablosu ve beceri kırılımı tarayıcıda açılır, sunucu gerekmez. Meter'ın kayıt yazması sonraki sürümde.
+
 ## 0.6.10 (2026-10-17)
 ### Düzeltmeler
 - Aynı karakterin ikinci satır olarak geri gelmesi (görüş alanına yeniden girince) düzeltildi.
