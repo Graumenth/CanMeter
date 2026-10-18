@@ -12,6 +12,7 @@ use canmeter_core::protocol::mesaj;
 use canmeter_core::protocol::yuruyucu::Yuruyucu;
 
 mod args;
+mod boru_izi;
 mod ozet;
 mod sinif;
 mod sunucu;
@@ -31,10 +32,16 @@ fn main() {
         dosya,
         port,
         sunucu: sunucu_secimi,
+        boru,
+        hepsi,
         hex,
         adet,
         hatali,
     } = args::oku();
+    if boru {
+        boru_izi::calistir(dosya, hepsi);
+        return;
+    }
     let dosya = dosya
         .or_else(en_yeni_kayit)
         .expect("kayıt bulunamadı (--dosya ver)");

@@ -52,3 +52,17 @@ fn tuket() {
     akis.tuket(9);
     assert!(akis.veri().is_empty());
 }
+#[test]
+fn ileri_mi_yeniden_iletim_ve_keepalive_false() {
+    let mut akis = Akis::new();
+    assert!(akis.ileri_mi(5)); // taban yokken her seq ileridir
+    akis.ekle(100, b"abcd");
+    assert!(akis.ileri_mi(104)); // tam sıradaki
+    assert!(akis.ileri_mi(200)); // ilerideki (sıra dışı) segment de ileridir
+    assert!(!akis.ileri_mi(103)); // keepalive: seq - 1
+    assert!(!akis.ileri_mi(100)); // yeniden iletim
+    let mut sarmal = Akis::new();
+    sarmal.ekle(u32::MAX - 1, b"ab");
+    assert!(sarmal.ileri_mi(0)); // sarma sonrası ileri
+    assert!(!sarmal.ileri_mi(u32::MAX - 1)); // sarma öncesi tekrar
+}

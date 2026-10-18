@@ -81,6 +81,13 @@ impl Akis {
         }
     }
 
+    /// Segment akışı ilerletir mi: sıra numarası beklenenin gerisinde değilse `true`.
+    /// Yeniden iletim ve 1 baytlık keepalive (seq - 1) `false` verir; sunucu canlılığı için kullanılır.
+    pub fn ileri_mi(&self, seq: u32) -> bool {
+        self.sonraki_seq
+            .is_none_or(|sonraki| (seq.wrapping_sub(sonraki) as i32) >= 0)
+    }
+
     /// Henüz tüketilmemiş, sıralı birleşik veri.
     pub fn veri(&self) -> &[u8] {
         &self.tampon

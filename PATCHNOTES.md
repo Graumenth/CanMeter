@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.7.2 (2026-10-19)
+### Düzeltmeler
+- Zindana ya da yeni sunucuya geçince ilk 2 dakika kaybolmuyor: CanMeter yeni sunucuya birkaç saniye içinde geçer,
+  geçiş sırasındaki mesajlar zamanıyla saklanır ve işlenir.
+
 ## 0.7.1 (2026-10-19)
 ### Düzeltmeler
 - Rapor sol şeridinde filtre çipleri iki satıra ayrıldı (tür, sonuç); açık savaşın kartı belirgin.
