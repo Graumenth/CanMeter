@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.7.1 (2026-10-19)
+### Düzeltmeler
+- Rapor sol şeridinde filtre çipleri iki satıra ayrıldı (tür, sonuç); açık savaşın kartı belirgin.
+
 ## 0.7.0 (2026-10-17)
 ### Yeni
 - Geçmiş raporu: `canmeter-rapor` aracı savaş kayıtlarından tek klasöre HTML rapor üretir; savaş listesi, DPS
