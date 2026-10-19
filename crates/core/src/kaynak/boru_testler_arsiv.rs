@@ -12,7 +12,7 @@ fn arsiv_kapaliyken_yazmaz_acikken_bir_kez() {
     assert!(kapali.toplayici.yazilacak().is_some());
 
     let (mut boru, mut b) = kilitli();
-    let kok = std::env::temp_dir().join(format!("canmeter-arsiv-{}", std::process::id()));
+    let kok = std::env::temp_dir().join(format!("canmeter-boru-arsiv-{}", std::process::id()));
     boru.arsiv_ayarla(Some(kok));
     b.gonder(&mut boru, 1200, &hasar_cercevesi());
     boru.kapat(Neden::KaynakSonu, 1300);

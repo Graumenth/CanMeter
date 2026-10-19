@@ -221,7 +221,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-app"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "canmeter-core",
  "canmeter-sema",
@@ -237,7 +237,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-core"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "canmeter-sema",
  "chrono",
@@ -250,7 +250,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-rapor"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "canmeter-sema",
  "chrono",
@@ -260,7 +260,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-sema"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "serde",
  "serde_json",

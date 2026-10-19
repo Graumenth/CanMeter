@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.8.2 (2026-10-19)
+### Düzeltme
+- Oyun açıkken CanMeter'ı başlatıp zindana girince ilk saniyeler (bölge, karakter, parti listesi) kaçabiliyordu;
+  artık yeni sunucu bağlantısı ilk paketinden itibaren tamponlanır.
+
 ## 0.8.1 (2026-10-19)
 ### Yeni
 - Savaşlar artık girilen bölgeyle (zindan, açık dünya alanı) kaydediliyor: rapor sol şeritte koşuya göre gruplar,
