@@ -14,18 +14,14 @@ use canmeter_core::protocol::yuruyucu::Yuruyucu;
 mod args;
 mod boru_izi;
 mod ozet;
+mod savas_izi;
 mod sinif;
 mod sunucu;
 
 const HEX_IZINLI: [[u8; 2]; 3] = [[0x04, 0x38], [0x05, 0x38], [0x1B, 0x92]];
 /// Ad taşıyan türler: yalnız harf dizileri maskelenmiş hex basılır.
-const HEX_MASKELI: [[u8; 2]; 5] = [
-    [0x33, 0x36],
-    [0x45, 0x36],
-    [0x02, 0x97],
-    [0x41, 0x36],
-    [0x42, 0x36],
-];
+#[rustfmt::skip]
+const HEX_MASKELI: [[u8; 2]; 5] = [[0x33, 0x36], [0x45, 0x36], [0x02, 0x97], [0x41, 0x36], [0x42, 0x36]];
 
 fn main() {
     let args::Secenekler {
@@ -33,6 +29,7 @@ fn main() {
         port,
         sunucu: sunucu_secimi,
         boru,
+        savas,
         hepsi,
         hex,
         adet,
@@ -40,6 +37,10 @@ fn main() {
     } = args::oku();
     if boru {
         boru_izi::calistir(dosya, hepsi);
+        return;
+    }
+    if savas {
+        savas_izi::calistir(dosya, hepsi);
         return;
     }
     let dosya = dosya

@@ -1,6 +1,7 @@
 //! CanMeter çekirdeği.
 //!
 //! Saf kütüphane: UI'ı görmez, sunucuya paket göndermez, oyun belleğine dokunmaz.
+//! Kapanan savaşlar oturum içinde özetlenir ([`Motor::gecmis`]).
 //! Katmanlar ve desenler `CanMeterCC/mimari.md`'de. Uygulama yalnız [`Motor`] ve [`stats`] türlerini görür.
 
 pub mod capture;
@@ -14,6 +15,7 @@ use std::time::Duration;
 use kaynak::AnlikKaynagi;
 pub use kaynak::Durum;
 use stats::SavasAnlik;
+pub use stats::gecmis::{Etiket, Neden, Ozet, OzetHedef, Sonuc};
 
 /// Çekirdek giriş noktası (Facade): kaynak seçimi ve ilerletme tek yerden.
 pub struct Motor {
@@ -59,6 +61,16 @@ impl Motor {
     /// Zamanı ilerletir; yalnız değişim varsa anlık döner.
     pub fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         self.kaynak.ilerle(gecen)
+    }
+
+    /// Kapanmış savaşların oturum içi özetleri (eskiden yeniye).
+    pub fn gecmis(&self) -> &[Ozet] {
+        self.kaynak.gecmis()
+    }
+
+    /// Açık savaşı "uygulama kapandı" nedeniyle kapatır.
+    pub fn kapat(&mut self) {
+        self.kaynak.kapat()
     }
 }
 

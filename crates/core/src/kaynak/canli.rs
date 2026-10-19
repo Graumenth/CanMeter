@@ -6,7 +6,10 @@ use std::time::Duration;
 use super::{AnlikKaynagi, boru::Boru};
 use crate::{
     capture::{arayuz, paket::ayristir},
-    stats::SavasAnlik,
+    stats::{
+        SavasAnlik,
+        gecmis::{Neden, Ozet},
+    },
 };
 
 pub const KANAL_KAPASITESI: usize = 4096;
@@ -88,6 +91,12 @@ impl CanliKaynak {
 impl AnlikKaynagi for CanliKaynak {
     fn durum(&self) -> super::Durum {
         self.boru.durum()
+    }
+    fn gecmis(&self) -> &[Ozet] {
+        self.boru.gecmis()
+    }
+    fn kapat(&mut self) {
+        self.boru.kapat(Neden::UygulamaKapandi, self.simdi_ms);
     }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         let mut geldi = false;

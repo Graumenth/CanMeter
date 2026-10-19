@@ -53,3 +53,17 @@ pub(super) fn kilitli() -> (Boru, Uc) {
     assert_eq!((boru.sunucu(), boru.nesil()), (Some(a.0), 1));
     (boru, a)
 }
+
+/// 04 38 hasar çerçevesi (kalp önde); örnek gövdenin toplam hasarı 2162.
+pub(super) fn hasar_cercevesi() -> Vec<u8> {
+    let govde: Vec<_> =
+        "FA A9 01 04 00 81 65 B4 42 AE 00 07 02 5B 0E 12 44 01 00 00 00 9E 55 B9 08 01 00"
+            .split_whitespace()
+            .map(|bayt| u8::from_str_radix(bayt, 16).unwrap())
+            .collect();
+    let mut cerceve = Vec::new();
+    crate::protocol::varint::yaz((govde.len() + 6) as u32, &mut cerceve);
+    cerceve.extend([0x04, 0x38]);
+    cerceve.extend(govde);
+    [&kalp()[..], &cerceve].concat()
+}

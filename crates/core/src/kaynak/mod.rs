@@ -6,7 +6,7 @@
 
 use std::time::Duration;
 
-use crate::stats::SavasAnlik;
+use crate::stats::{SavasAnlik, gecmis::Ozet};
 
 pub mod boru;
 pub mod canli;
@@ -30,4 +30,10 @@ pub trait AnlikKaynagi: Send {
     fn durum(&self) -> Durum {
         Durum::Hazir
     }
+    /// Kapanmış savaşların özetleri; demo gibi kaynaklar boş döner.
+    fn gecmis(&self) -> &[Ozet] {
+        &[]
+    }
+    /// Açık savaşı "uygulama kapandı" nedeniyle kapatır (çıkışta ve kendini yenilemede çağrılır).
+    fn kapat(&mut self) {}
 }

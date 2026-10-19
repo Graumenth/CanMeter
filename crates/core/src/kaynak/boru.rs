@@ -2,6 +2,7 @@
 use crate::capture::{akis::Akis, paket::Segment};
 use crate::combat::Tablo;
 use crate::protocol::{mesaj::coz, yuruyucu::Yuruyucu};
+use crate::stats::gecmis::{Neden, Ozet};
 use crate::stats::{SavasAnlik, toplayici::Toplayici};
 use std::net::SocketAddrV4;
 
@@ -11,12 +12,14 @@ pub(super) const SUNUCU_ZAMAN_ASIMI_MS: u64 = 120_000;
 const ADAY_SAYISI: usize = 16;
 #[path = "boru_aday.rs"]
 mod aday;
+#[path = "boru_bekleyen.rs"]
+mod bekleyen;
 #[path = "boru_mesaj.rs"]
 mod mesaj;
 #[path = "boru_sunucu.rs"]
 mod sunucu;
 use aday::Aday;
-use sunucu::Bekleyen;
+use bekleyen::Bekleyen;
 #[derive(Debug, Default)]
 #[rustfmt::skip]
 pub struct Boru { sunucu: Option<SocketAddrV4>, son_sunucu_ms: Option<u64>, adaylar: [Aday; ADAY_SAYISI], akis: Akis, yuruyucu: Yuruyucu, tablo: Tablo, toplayici: Toplayici, bekleyen: Bekleyen, nesil: u32 }
@@ -63,6 +66,14 @@ impl Boru {
         });
         self.akis.tuket(n);
     }
+    /// Kapanmış savaşların oturum içi özetleri (eskiden yeniye).
+    pub fn gecmis(&self) -> &[Ozet] {
+        self.toplayici.gecmis()
+    }
+    /// Açık savaşı dış nedenle kapatır (kaynak bitti, uygulama kapanıyor).
+    pub fn kapat(&mut self, neden: Neden, zaman_ms: u64) {
+        self.toplayici.kapat(neden, zaman_ms, &self.tablo);
+    }
     pub fn anlik(&mut self, simdi_ms: u64) -> Option<SavasAnlik> {
         self.zaman_asimi(simdi_ms);
         self.toplayici.anlik(simdi_ms, &self.tablo)
@@ -84,3 +95,6 @@ mod testler_kayit;
 #[cfg(test)]
 #[path = "boru_testler_ortak.rs"]
 mod testler_ortak;
+#[cfg(test)]
+#[path = "boru_testler_savas.rs"]
+mod testler_savas;

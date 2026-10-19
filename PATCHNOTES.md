@@ -1,5 +1,13 @@
 # PATCHNOTES
 
+## 0.7.3 (2026-10-19)
+### Yeni
+- Biten savaşlar artık unutulmuyor: her savaşın özeti (süre, hedef, sonuç, toplam hasar ve iyileştirme, ölümler)
+  oturum boyunca saklanır. Sunucu değişimi, kayıt sonu ve kapanış savaşı "kesildi" olarak kapatır. Kalıcı kayıt ve
+  rapor bağlantısı sonraki sürümlerde.
+### Düzeltmeler
+- Savaş dışı iyileştirme artık tabloda satır açmıyor; iyileştirme savaş başlatmaz.
+
 ## 0.7.2 (2026-10-19)
 ### Düzeltmeler
 - Zindana ya da yeni sunucuya geçince ilk 2 dakika kaybolmuyor: CanMeter yeni sunucuya birkaç saniye içinde geçer,

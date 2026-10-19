@@ -1,4 +1,5 @@
 //! Olay sayaçları; ad çözümü ve görünüm üretimi yalnız anlık istendiğinde yapılır.
+use super::{SavasAnlik, gecmis::Gecmis};
 use crate::protocol::mesaj::{Hasar, Hp, Periyodik};
 use std::collections::{HashMap, VecDeque};
 
@@ -8,7 +9,6 @@ pub const TAHMIN_PENCERESI_MS: u64 = 10_000;
 #[path = "toplayici_sayac.rs"]
 mod sayac;
 pub use sayac::OyuncuSayac;
-
 #[derive(Debug, Default)]
 pub struct Toplayici {
     savas_id: u64,
@@ -19,8 +19,13 @@ pub struct Toplayici {
     oyuncular: HashMap<u32, OyuncuSayac>,
     hedefler: HashMap<u32, u64>,
     son_hasarlari: VecDeque<(u64, u64)>,
+    /// Bu savaşta ölü gözlenen hedefler (42 36 bayrak 3); ceset 30 sn içinde despawn olsa da Zafer korunur.
+    olen_hedefler: Vec<u32>,
     aktif: bool,
     kirli: bool,
+    gecmis: Gecmis,
+    /// Kapanan savaşın son görünümü; bir sonraki savaşa kadar overlay'de kalır.
+    son_kapali: Option<SavasAnlik>,
 }
 
 impl Toplayici {
@@ -53,17 +58,24 @@ impl Toplayici {
         }
     }
 
+    /// İyileştirme savaş açmaz; savaş dışı iyileştirme düşer.
     fn iyilestir(&mut self, actor: u32, miktar: u64) {
-        let s = self.oyuncular.entry(actor).or_default();
-        s.iyilestirme = s.iyilestirme.saturating_add(miktar);
-        self.kirli = true;
+        if self.aktif {
+            let s = self.oyuncular.entry(actor).or_default();
+            s.iyilestirme = s.iyilestirme.saturating_add(miktar);
+            self.kirli = true;
+        }
     }
 
     fn vurus(&mut self, zaman: u64, actor: u32, hedef: u32, miktar: u64, kritik: bool) {
-        if !self.aktif || zaman.saturating_sub(self.son_hasar_ms) > BOSLUK_MS {
+        if self.aktif && zaman.saturating_sub(self.son_hasar_ms) > BOSLUK_MS {
+            self.kapat_ic(super::gecmis::Neden::Sessizlik, zaman, None);
+        }
+        if !self.aktif {
             self.oyuncular.clear();
             self.hedefler.clear();
             self.son_hasarlari.clear();
+            self.olen_hedefler.clear();
             self.hedef = None;
             self.baslangic_ms = Some(zaman);
             self.savas_id = self.savas_id.saturating_add(1);
@@ -78,33 +90,17 @@ impl Toplayici {
         s.hedef_ekle(hedef);
         let h = self.hedefler.entry(hedef).or_default();
         *h = h.saturating_add(miktar);
-        // 160 ms kovalar: en çok 64 giriş; pencere kenarı en çok 159 ms erken düşer.
-        let kova = self.son_hasar_ms / 160 * 160;
-        if let Some(son) = self.son_hasarlari.back_mut().filter(|s| s.0 == kova) {
-            son.1 = son.1.saturating_add(miktar);
-        } else {
-            if self.son_hasarlari.len() == 64 {
-                self.son_hasarlari.pop_front();
-            }
-            self.son_hasarlari.push_back((kova, miktar));
-        }
+        self.kova_ekle(miktar);
         self.kirli = true;
-    }
-
-    /// Savaş ölümü (42 36 bayrak 3); yalnız savaş açıkken sayılır.
-    pub fn olum(&mut self, id: u32) {
-        if self.aktif {
-            self.oyuncular.entry(id).or_default().olum += 1;
-            self.kirli = true;
-        }
-    }
-    pub fn hp(&mut self, h: &Hp) {
-        self.kirli |= self.hp.insert(h.actor, (h.mevcut, h.azami)) != Some((h.mevcut, h.azami));
     }
 }
 
 #[path = "toplayici_anlik.rs"]
 mod anlik;
+#[path = "toplayici_hedef.rs"]
+mod hedef;
+#[path = "toplayici_sinir.rs"]
+mod sinir;
 #[cfg(test)]
 #[path = "toplayici_testler.rs"]
 mod testler;
@@ -114,3 +110,6 @@ mod testler_parti;
 #[cfg(test)]
 #[path = "toplayici_testler_pvp.rs"]
 mod testler_pvp;
+#[cfg(test)]
+#[path = "toplayici_testler_sinir.rs"]
+mod testler_sinir;

@@ -63,6 +63,10 @@ impl eframe::App for Uygulama {
     fn clear_color(&self, _: &egui::Visuals) -> [f32; 4] {
         [0.0, 0.0, 0.0, 0.0]
     }
+    /// Çıkışta (kendini yenilerken de) açık savaş "uygulama kapandı" nedeniyle kapanır; görev 4'te dosyaya yazılır.
+    fn on_exit(&mut self, _: Option<&eframe::glow::Context>) {
+        self.motor.kapat();
+    }
     fn ui(&mut self, ui: &mut egui::Ui, _: &mut eframe::Frame) {
         let ctx = ui.ctx().clone();
         let simdi = Instant::now();

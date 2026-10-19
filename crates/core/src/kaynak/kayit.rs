@@ -5,7 +5,10 @@ use std::{path::Path, time::Duration};
 use super::{AnlikKaynagi, boru::Boru};
 use crate::{
     capture::{kaynak_pcap::PcapDosyasi, paket::ayristir},
-    stats::SavasAnlik,
+    stats::{
+        SavasAnlik,
+        gecmis::{Neden, Ozet},
+    },
 };
 
 pub struct KayitKaynak {
@@ -49,6 +52,12 @@ impl AnlikKaynagi for KayitKaynak {
     fn durum(&self) -> super::Durum {
         self.boru.durum()
     }
+    fn gecmis(&self) -> &[Ozet] {
+        self.boru.gecmis()
+    }
+    fn kapat(&mut self) {
+        self.boru.kapat(Neden::UygulamaKapandi, self.son_zaman_ms);
+    }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         if self.bitti {
             return None;
@@ -59,6 +68,7 @@ impl AnlikKaynagi for KayitKaynak {
         loop {
             let Some((zaman_us, veri)) = self.bekleyen.take().or_else(|| self.sonraki()) else {
                 self.bitti = true;
+                self.boru.kapat(Neden::KaynakSonu, self.son_zaman_ms);
                 break;
             };
             let ilk = *self.ilk_paket_us.get_or_insert(zaman_us);

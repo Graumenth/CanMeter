@@ -1,7 +1,7 @@
 //! Sunucu seçimi: ilk kilit, imzalı yeni uca geçiş (segmentler zamanıyla tamponlanır), zaman aşımı.
 use super::{Boru, IMZA_ESIGI, SUNUCU_ZAMAN_ASIMI_MS};
 use crate::capture::paket::Segment;
-use std::net::SocketAddrV4;
+use crate::stats::gecmis::Neden;
 
 /// Eski uç bu kadar sustuysa imzalı yeni uca geçilir.
 pub const GECIS_SESSIZLIK_MS: u64 = 3_000;
@@ -12,16 +12,7 @@ pub const BEKLEYEN_YUK_TAVANI: usize = 512 * 1024;
 /// Penceresinde bu kadar imzası olan bekleyenin yerini yalnız eşiğe ulaşan uç alabilir.
 pub const CANLI_IMZA: usize = 2;
 
-#[derive(Debug, Default)]
-pub(super) struct Bekleyen {
-    pub(super) uc: Option<SocketAddrV4>,
-    /// Segment yükleri art arda; parcalar (seq, ms, bas, boy) ile adreslenir.
-    veri: Vec<u8>,
-    parcalar: Vec<(u32, u64, u32, u32)>,
-    pub(super) son_imza_ms: u64,
-    /// Tavan sıfırlanınca ilk imzalı segmente kadar imzasız yük saklanmaz.
-    taban_bekliyor: bool,
-}
+pub(super) use super::bekleyen::Bekleyen;
 
 impl Boru {
     pub(super) fn yabanci(&mut self, zaman_ms: u64, s: &Segment<'_>) {
@@ -86,6 +77,8 @@ impl Boru {
         self.sunucu = b.uc;
         self.son_sunucu_ms = Some(zaman_ms);
         self.nesil += 1;
+        self.toplayici
+            .kapat(Neden::SunucuDegisti, zaman_ms, &self.tablo);
         self.akis.sifirla();
         for (seq, ms, bas, boy) in b.parcalar {
             let (bas, boy) = (bas as usize, boy as usize);
@@ -112,7 +105,7 @@ impl Boru {
     }
 
     #[cfg(test)]
-    pub(super) fn bekleyen_uc(&self) -> Option<SocketAddrV4> {
+    pub(super) fn bekleyen_uc(&self) -> Option<std::net::SocketAddrV4> {
         self.bekleyen.uc
     }
 }

@@ -5,6 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
+pub mod gecmis;
 pub mod toplayici;
 
 /// AION 2 sınıfları. Oyunun özel adları olduğu için İngilizce kalır.

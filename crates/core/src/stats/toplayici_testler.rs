@@ -55,9 +55,7 @@ fn miss_resist_kritik_ve_ek_vuruslar() {
 fn kendine_iyilestirme_pencere_acmaz_uzatmaz() {
     let mut t = Toplayici::new();
     t.hasar(0, &h(1, 1, 70, 3), false);
-    let a = t.anlik(0, &yalniz()).unwrap();
-    assert!(!a.aktif);
-    assert_eq!((a.toplam_hasar, a.oyuncular[0].iyilestirme), (0, 70));
+    assert!(t.anlik(0, &yalniz()).is_none());
     t.hasar(0, &h(1, 90, 20, 2), false);
     t.hasar(30_001, &h(1, 1, 80, 2), false);
     assert!(!t.anlik(30_001, &yalniz()).unwrap().aktif);
