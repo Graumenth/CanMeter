@@ -1,10 +1,7 @@
 //! Segmentleri çözüme ve savaş istatistiklerine taşır.
-use crate::capture::{akis::Akis, paket::Segment};
-use crate::combat::Tablo;
-use crate::protocol::{mesaj::coz, yuruyucu::Yuruyucu};
-use crate::stats::gecmis::{Neden, Ozet};
-use crate::stats::{SavasAnlik, toplayici::Toplayici};
-use crate::stats::{arsiv::Arsiv, ayrinti::Ayrinti};
+use crate::stats::{SavasAnlik, arsiv::Arsiv, ayrinti::Ayrinti, toplayici::Toplayici};
+use crate::{capture::akis::Akis, capture::paket::Segment, combat::Tablo, protocol::mesaj::coz};
+use crate::{protocol::yuruyucu::Yuruyucu, stats::gecmis::Neden, stats::gecmis::Ozet};
 use std::net::SocketAddrV4;
 
 pub const IMZA_ESIGI: u32 = 12;
@@ -19,13 +16,14 @@ mod arsiv_yaz;
 mod bekleyen;
 #[path = "boru_mesaj.rs"]
 mod mesaj;
+#[path = "boru_on_tampon.rs"]
+mod on_tampon;
 #[path = "boru_sunucu.rs"]
 mod sunucu;
-use aday::Aday;
-use bekleyen::Bekleyen;
+use {aday::Aday, bekleyen::Bekleyen, on_tampon::OnTampon};
 #[derive(Debug, Default)]
 #[rustfmt::skip]
-pub struct Boru { sunucu: Option<SocketAddrV4>, son_sunucu_ms: Option<u64>, adaylar: [Aday; ADAY_SAYISI], akis: Akis, yuruyucu: Yuruyucu, tablo: Tablo, toplayici: Toplayici, bekleyen: Bekleyen, nesil: u32, arsiv: Option<Arsiv> }
+pub struct Boru { sunucu: Option<SocketAddrV4>, son_sunucu_ms: Option<u64>, adaylar: [Aday; ADAY_SAYISI], akis: Akis, yuruyucu: Yuruyucu, tablo: Tablo, toplayici: Toplayici, bekleyen: Bekleyen, on_tampon: OnTampon, nesil: u32, arsiv: Option<Arsiv> }
 impl Boru {
     pub fn new() -> Self {
         Self::default()
@@ -111,6 +109,9 @@ mod testler_gecis;
 #[cfg(test)]
 #[path = "boru_testler_kayit.rs"]
 mod testler_kayit;
+#[cfg(test)]
+#[path = "boru_testler_on_tampon.rs"]
+mod testler_on_tampon;
 #[cfg(test)]
 #[path = "boru_testler_ortak.rs"]
 mod testler_ortak;
