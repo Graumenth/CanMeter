@@ -54,11 +54,11 @@ pub fn cozumle(sozler: impl IntoIterator<Item = OsString>) -> Result<Secenekler,
 
 pub fn calistir() -> Result<(), String> {
     let secenek = cozumle(env::args_os().skip(1))?;
-    let savaslar = oku::klasor(&secenek.girdi)?;
-    uret::yaz(&savaslar, &secenek.cikti)?;
+    let gecmis = oku::gecmis(&secenek.girdi)?;
+    uret::yaz(&gecmis, &secenek.cikti)?;
     println!(
         "{} savaş raporu yazıldı: {}",
-        savaslar.len(),
+        gecmis.savaslar.len(),
         secenek.cikti.display()
     );
     if secenek.ac {

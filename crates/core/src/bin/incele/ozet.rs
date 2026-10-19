@@ -15,7 +15,22 @@ pub const ONEMLI: [[u8; 2]; 7] = [
     [0x02, 0x97],
 ];
 
-pub fn yaz(segment: u64, bayt: u64, imza: u64, kalan: usize, turler: &Sayaclar) {
+pub fn yaz(
+    segment: u64,
+    bayt: u64,
+    imza: u64,
+    kalan: usize,
+    turler: &Sayaclar,
+    tur: Option<[u8; 2]>,
+) {
+    // İstenen tür ilk 30'a girmese de sayımı görünsün (harita ve bölge gibi seyrek mesajlar).
+    if let Some(t) = tur {
+        let (adet, govde, cozulen) = turler.get(&t).copied().unwrap_or((0, 0, 0));
+        println!(
+            "istenen {:02X} {:02X}: adet={adet} gövde bayt={govde} çözülen={cozulen}",
+            t[0], t[1]
+        );
+    }
     let mesaj: u64 = turler.values().map(|v| v.0).sum();
     let cozulen: u64 = turler.values().map(|v| v.2).sum();
     println!(

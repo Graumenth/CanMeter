@@ -17,6 +17,7 @@ pub use kaynak::Durum;
 use stats::SavasAnlik;
 pub use stats::arsiv::varsayilan_kok;
 pub use stats::ayrinti::{Aile, Ayrinti, BeceriAnahtar, BeceriSayac, Kova, Olay, YasamOlayi};
+pub use stats::bolge::Bolge;
 pub use stats::gecmis::{Etiket, Neden, Ozet, OzetHedef, Sonuc};
 
 /// Çekirdek giriş noktası (Facade): kaynak seçimi ve ilerletme tek yerden.
@@ -78,6 +79,16 @@ impl Motor {
     /// Kapanan savaşların dosyaya yazıldığı kök; `None` kapatır.
     pub fn arsiv_ayarla(&mut self, kok: Option<std::path::PathBuf>) {
         self.kaynak.arsiv_ayarla(kok)
+    }
+
+    /// Oyuncunun bulunduğu bölge (açık koşu); bilinmiyorsa ya da demo kaynakta `None`.
+    pub fn bolge(&self) -> Option<Bolge> {
+        self.kaynak.bolge()
+    }
+
+    /// Oyuncunun verdiği harita adı; sonraki savaş ve koşu yazımlarında kullanılır. Dosyaya yazmayı uygulama yapar.
+    pub fn harita_adi(&mut self, harita: u32, ad: &str) {
+        self.kaynak.harita_adi(harita, ad)
     }
 
     /// Açık savaşı "uygulama kapandı" nedeniyle kapatır.

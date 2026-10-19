@@ -20,9 +20,9 @@ mod sinif;
 mod sunucu;
 
 const HEX_IZINLI: [[u8; 2]; 3] = [[0x04, 0x38], [0x05, 0x38], [0x1B, 0x92]];
-/// Ad taşıyan türler: yalnız harf dizileri maskelenmiş hex basılır.
+/// Ad taşıyan türler: yalnız harf dizileri maskelenmiş hex basılır (21 36 harita, 23 36 bölge de maskeli).
 #[rustfmt::skip]
-const HEX_MASKELI: [[u8; 2]; 5] = [[0x33, 0x36], [0x45, 0x36], [0x02, 0x97], [0x41, 0x36], [0x42, 0x36]];
+const HEX_MASKELI: [[u8; 2]; 7] = [[0x33, 0x36], [0x45, 0x36], [0x02, 0x97], [0x41, 0x36], [0x42, 0x36], [0x21, 0x36], [0x23, 0x36]];
 
 fn main() {
     let args::Secenekler {
@@ -91,7 +91,7 @@ fn main() {
             if istenen && basilan < adet {
                 basilan += 1;
                 println!(
-                    "  {:02X}{:02X} [{}]: {}",
+                    "  {:02X}{:02X} [{}] seg={segment} imza={imza}: {}",
                     tur[0],
                     tur[1],
                     govde.len(),
@@ -105,7 +105,7 @@ fn main() {
         });
         akis.tuket(n);
     }
-    ozet::yaz(segment, bayt, imza, akis.veri().len(), &turler);
+    ozet::yaz(segment, bayt, imza, akis.veri().len(), &turler, hex);
     siniflar.yaz();
 }
 

@@ -17,6 +17,29 @@ fn dort_dosya_tarihe_gore_azalan() {
 }
 
 #[test]
+fn kosu_satirlari_ve_bozuk_kayitlar() {
+    let g = oku::gecmis(&ortak::ornekler()).unwrap();
+    assert_eq!(g.kosular.len(), 2);
+    assert_eq!(g.kosular[0].harita, 600032);
+    assert_eq!(g.kosular[1].harita, 500038);
+    assert_eq!(g.savaslar.len(), 4);
+    let gecici = ortak::Gecici::yeni();
+    let alt = gecici.0.join("ay/alt");
+    fs::create_dir_all(&alt).unwrap();
+    let ornek = fs::read(ortak::ornekler().join("bolgeler.jsonl")).unwrap();
+    let mut baytlar = b"bozuk\n{\"tur\":\"son\",\"tamam\":true}\n\xff\n".to_vec();
+    baytlar.extend_from_slice(&ornek);
+    fs::write(alt.join("bolgeler.jsonl"), baytlar).unwrap();
+    fs::write(alt.join("bolgeler.jsonl.partial"), &ornek).unwrap();
+    fs::create_dir(alt.join("atlanir.partial")).unwrap();
+    fs::write(alt.join("atlanir.partial/bolgeler.jsonl"), ornek).unwrap();
+    let kosular = oku::kosular(&gecici.0).unwrap();
+    assert_eq!(kosular.len(), 2);
+    assert_eq!(kosular[0].sure_ms, 3_300_000);
+    assert_eq!(kosular[1].sure_ms, 420_000);
+}
+
+#[test]
 fn bozuk_satir_yarim_kayit_ve_onyineleme() {
     let gecici = ortak::Gecici::yeni();
     let alt = gecici.0.join("alt");
@@ -61,4 +84,15 @@ fn bozuk_utf8_satiri_atlanir() {
     let savas = oku::dosya(&yol).unwrap().unwrap();
     assert!(savas.tamam);
     assert_eq!(savas.baslik.kalite, ["satır 2 okunamadı"]);
+}
+
+#[test]
+#[rustfmt::skip]
+fn yeni_sema_kalite_notu() {
+    let yol = std::env::temp_dir().join(format!("cm-sema-{}.cmenc.jsonl", std::process::id()));
+    std::fs::write(&yol, "{\"tur\":\"baslik\",\"sema\":7}
+").unwrap();
+    let sonuc = canmeter_rapor::oku::dosya(&yol);
+    let _ = std::fs::remove_file(&yol);
+    assert!(sonuc.unwrap().unwrap().baslik.kalite.iter().any(|n| n.contains("şema 7")));
 }

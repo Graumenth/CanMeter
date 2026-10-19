@@ -1,44 +1,67 @@
-use crate::sema::{Encounter, Kayit};
+use crate::sema::{Encounter, Haritalar, Kayit, Kosu};
+use crate::{kosu::KosuOzeti, oku_tara::tara};
 use chrono::DateTime;
 use std::{
+    cell::OnceCell,
     fs,
     io::{BufRead, BufReader},
     path::Path,
 };
 
+#[derive(Debug, Default)]
+pub struct Gecmis {
+    pub savaslar: Vec<Encounter>,
+    pub kosular: Vec<Kosu>,
+    pub haritalar: Haritalar,
+    pub kosu_ozetleri: OnceCell<Vec<KosuOzeti>>,
+}
+
+pub fn gecmis(yol: &Path) -> Result<Gecmis, String> {
+    Ok(Gecmis {
+        savaslar: klasor(yol)?,
+        kosular: kosular(yol)?,
+        haritalar: Haritalar::yukle(),
+        kosu_ozetleri: OnceCell::new(),
+    })
+}
+
+pub fn kosular(yol: &Path) -> Result<Vec<Kosu>, String> {
+    let mut kosular = Vec::new();
+    tara(yol, &mut |yol| {
+        if yol.file_name().is_some_and(|ad| ad == "bolgeler.jsonl") {
+            match fs::File::open(yol) {
+                Ok(giris) => {
+                    for satir in BufReader::new(giris).split(b'\n') {
+                        let Ok(baytlar) = satir else { break };
+                        if let Ok(Kayit::Kosu(k)) = serde_json::from_slice(&baytlar) {
+                            kosular.push(k);
+                        }
+                    }
+                }
+                Err(h) => eprintln!("Uyarı: {} açılamadı: {h}", yol.display()),
+            }
+        }
+        Ok(())
+    })?;
+    kosular
+        .sort_by_cached_key(|k| std::cmp::Reverse(DateTime::parse_from_rfc3339(&k.giris_utc).ok()));
+    Ok(kosular)
+}
+
 pub fn klasor(yol: &Path) -> Result<Vec<Encounter>, String> {
     let mut savaslar = Vec::new();
-    tara(yol, &mut savaslar)?;
+    tara(yol, &mut |yol| {
+        if yol.to_string_lossy().ends_with(".cmenc.jsonl")
+            && let Some(savas) = dosya(yol)?
+        {
+            savaslar.push(savas);
+        }
+        Ok(())
+    })?;
     savaslar.sort_by_cached_key(|e| {
         std::cmp::Reverse(DateTime::parse_from_rfc3339(&e.baslik.baslangic_utc).ok())
     });
     Ok(savaslar)
-}
-
-fn tara(yol: &Path, savaslar: &mut Vec<Encounter>) -> Result<(), String> {
-    let liste =
-        fs::read_dir(yol).map_err(|h| format!("{} klasörü okunamadı: {h}", yol.display()))?;
-    let mut yollar = liste
-        .map(|g| g.map(|g| g.path()))
-        .collect::<Result<Vec<_>, _>>()
-        .map_err(|h| format!("{} klasörü taranamadı: {h}", yol.display()))?;
-    yollar.sort();
-    for yol in yollar {
-        let bilgi =
-            fs::symlink_metadata(&yol).map_err(|h| format!("{} okunamadı: {h}", yol.display()))?;
-        if bilgi.file_type().is_symlink() || yol.to_string_lossy().ends_with(".partial") {
-            continue;
-        }
-        if bilgi.is_dir() {
-            tara(&yol, savaslar)?;
-        } else if bilgi.is_file()
-            && yol.to_string_lossy().ends_with(".cmenc.jsonl")
-            && let Some(savas) = dosya(&yol)?
-        {
-            savaslar.push(savas);
-        }
-    }
-    Ok(())
 }
 
 pub fn dosya(yol: &Path) -> Result<Option<Encounter>, String> {
@@ -67,7 +90,7 @@ pub fn dosya(yol: &Path) -> Result<Option<Encounter>, String> {
             Some(Kayit::Kova(k)) => savas.kovalar.push(k),
             Some(Kayit::Yasam(y)) => savas.yasam.push(y),
             Some(Kayit::Son(s)) => savas.tamam = s.tamam,
-            Some(Kayit::Bilinmeyen) => {}
+            Some(Kayit::Bilinmeyen | Kayit::Kosu(_)) => {}
             None => notlar.push(format!("satır {} okunamadı", indeks + 1)),
         }
     }

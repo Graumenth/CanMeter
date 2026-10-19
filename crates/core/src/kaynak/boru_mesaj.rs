@@ -43,6 +43,7 @@ pub(super) fn isle(tablo: &mut Tablo, toplayici: &mut Toplayici, zaman_ms: u64, 
                 });
             }
         }
+        Mesaj::Harita(h) => toplayici.bolge_gir(h.harita, h.ornek, zaman_ms),
         _ => {}
     }
 }

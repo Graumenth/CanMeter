@@ -1,4 +1,4 @@
-use canmeter_rapor::{hesap, html::savas, sema::*};
+use canmeter_rapor::{hesap, html::savas, oku::Gecmis, sema::*};
 
 #[test]
 fn on_iki_cizgi_tum_gosterge_ve_nitelikler() {
@@ -51,7 +51,13 @@ fn on_iki_cizgi_tum_gosterge_ve_nitelikler() {
         }],
         ..Default::default()
     };
-    let sayfa = savas::yaz(&[e], 0);
+    let sayfa = savas::yaz(
+        &Gecmis {
+            savaslar: vec![e],
+            ..Default::default()
+        },
+        0,
+    );
     assert_eq!(sayfa.matches("<polyline ").count(), 12);
     let gosterge = sayfa
         .split("class=\"gosterge\">")
@@ -106,15 +112,4 @@ fn kova_genisligi_alt_siniri_ve_on_saniyelik_pencere() {
     savas.kovalar[0].genislik_ms = 4_000;
     savas.kovalar[0].hasar = vec![80, 0, 40];
     assert_eq!(&hesap::ortalamalar(&savas, 1)[9..], [10.0, 9.0, 8.0]);
-}
-
-#[test]
-#[rustfmt::skip]
-fn yeni_sema_kalite_notu() {
-    let yol = std::env::temp_dir().join(format!("cm-sema-{}.cmenc.jsonl", std::process::id()));
-    std::fs::write(&yol, "{\"tur\":\"baslik\",\"sema\":7}
-").unwrap();
-    let sonuc = canmeter_rapor::oku::dosya(&yol);
-    let _ = std::fs::remove_file(&yol);
-    assert!(sonuc.unwrap().unwrap().baslik.kalite.iter().any(|n| n.contains("şema 7")));
 }

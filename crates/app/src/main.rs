@@ -5,6 +5,7 @@
 mod ayarlar;
 mod ayarlar_birlestir;
 mod ayarlar_paneli;
+mod bolge_sor;
 mod boyut;
 mod dil;
 mod kilit;

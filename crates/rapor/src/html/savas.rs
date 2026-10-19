@@ -1,18 +1,21 @@
 use super::{grafik, kacis::kacis, ortak, oyuncu, serit};
-use crate::{bicim, hesap, sema::Encounter};
+use crate::{bicim, hesap, oku::Gecmis, sema::Encounter};
 
-pub fn yaz(savaslar: &[Encounter], indeks: usize) -> String {
-    let savas = &savaslar[indeks];
+pub fn yaz(g: &Gecmis, indeks: usize) -> String {
+    let savas = &g.savaslar[indeks];
     let b = &savas.baslik;
     let baslik = format!(
         "{} · {} · CanMeter",
         ortak::hedef(savas),
         bicim::tarih(&b.baslangic_utc, true)
     );
-    let mut cikti = ortak::bas(&baslik, "../", &serit::yaz(savaslar, Some(indeks), "../"));
+    let mut cikti = ortak::bas(&baslik, "../", &serit::yaz(g, Some(indeks), "../"));
+    let bolge = b.bolge.as_ref().map_or_else(String::new, |b| {
+        format!("{} · ", kacis(&hesap::bolge_adi(g, b.harita, &b.ad)))
+    });
     cikti.push_str(&format!(
         r#"<div class="baslik"><div><h1>{}</h1>
-<div class="meta">{}{}{}{} · süre {} · HP {} · {} oyuncu</div></div>
+<div class="meta">{}{}{}{bolge}{} · süre {} · HP {} · {} oyuncu</div></div>
 <div class="meta">CanMeter {} · kayıt {}</div></div>
 <div class="kutular">"#,
         ortak::hedef(savas),

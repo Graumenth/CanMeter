@@ -1,4 +1,5 @@
-//! Boru zaman çizelgesi: kayıt Boru'dan geçer; sunucu kilidi, geçiş ve hazırlık durumu değişince satır basar. Ad basmaz.
+//! Boru zaman çizelgesi: kayıt Boru'dan geçer; sunucu kilidi, geçiş, hazırlık durumu ya da bölge değişince satır basar.
+//! Oyuncu adı basmaz; bölge satırında yalnız harita adı yer alır.
 
 use std::collections::HashMap;
 use std::net::SocketAddrV4;
@@ -7,6 +8,7 @@ use std::path::{Path, PathBuf};
 use canmeter_core::capture::kaynak_pcap::PcapDosyasi;
 use canmeter_core::capture::paket::ayristir;
 use canmeter_core::kaynak::boru::Boru;
+use canmeter_sema::Haritalar;
 
 pub fn calistir(dosya: Option<PathBuf>, hepsi: bool) {
     if hepsi {
@@ -49,7 +51,16 @@ pub fn calistir(dosya: Option<PathBuf>, hepsi: bool) {
 pub fn yaz(dosya: &Path) {
     let mut kaynak = PcapDosyasi::ac(dosya).expect("pcap açılamadı");
     let mut boru = Boru::new();
-    let mut onceki = (boru.sunucu(), boru.nesil(), boru.durum());
+    let haritalar = Haritalar::yerlesik();
+    let izi = |b: &Boru| {
+        (
+            b.sunucu(),
+            b.nesil(),
+            b.durum(),
+            b.bolge().map(|k| (k.harita, k.ornek)),
+        )
+    };
+    let mut onceki = izi(&boru);
     let mut t0 = None;
     let mut son_ms = 0;
     let mut paket = 0u64;
@@ -73,13 +84,15 @@ pub fn yaz(dosya: &Path) {
             e.3 += u64::from(matches!(s.yuk, [0x0e | 0x06, 0x00, 0x36, ..]));
         }
         boru.segment(zaman_ms, &s);
-        let simdiki = (boru.sunucu(), boru.nesil(), boru.durum());
+        let simdiki = izi(&boru);
         if simdiki != onceki {
-            let uc = simdiki
-                .0
-                .map_or_else(|| "-".to_owned(), |uc| uc.to_string());
+            let uc = simdiki.0.map_or_else(|| "-".to_owned(), |u| u.to_string());
+            let bolge = simdiki.3.map_or_else(
+                || "-".to_owned(),
+                |(harita, ornek)| format!("{harita}/{ornek} {}", haritalar.goruntu(harita)),
+            );
             println!(
-                "+{:.3}s nesil={} uc={} durum={:?}",
+                "+{:.3}s nesil={} uc={} durum={:?} bolge={bolge}",
                 zaman_ms as f64 / 1000.0,
                 simdiki.1,
                 uc,

@@ -4,7 +4,7 @@ use super::testler::{tablo, vur};
 use crate::combat::Tablo;
 use crate::protocol::mesaj::{Hasar, Kimlik, Mesaj};
 use crate::stats::{KapananSavas, ayrinti::Ayrinti, gecmis::Neden, toplayici::Toplayici};
-use canmeter_sema::Kayit;
+use canmeter_sema::{Haritalar, Kayit};
 
 /// Toplayıcıyı kapatıp tam paket kurar (dosya yazmadan).
 #[rustfmt::skip]
@@ -14,7 +14,8 @@ fn paket(mut t: Toplayici, b: &mut Tablo) -> Vec<Kayit> {
     let ayrinti = Ayrinti { beceriler: a.beceriler.clone(), kovalar: a.kovalar.clone(),
         yasam: a.yasam.clone(), son_vurus: a.son_vurus.clone(), tasan: a.tasan };
     let anlik = t.anlik(200_001, b).unwrap();
-    kayitlar(&KapananSavas { ozet: t.gecmis()[0].clone(), anlik, ayrinti }, b, "k", "test")
+    let k = KapananSavas { ozet: t.gecmis()[0].clone(), anlik, ayrinti, bolge: None };
+    kayitlar(&k, b, "k", "test", &Haritalar::yerlesik())
 }
 
 #[test]

@@ -11,6 +11,7 @@ use crate::{
     stats::{
         SavasAnlik,
         ayrinti::Ayrinti,
+        bolge::Bolge,
         gecmis::{Neden, Ozet},
     },
 };
@@ -67,6 +68,12 @@ impl AnlikKaynagi for KayitKaynak {
     }
     fn arsiv_ayarla(&mut self, kok: Option<PathBuf>) {
         self.boru.arsiv_ayarla(kok);
+    }
+    fn bolge(&self) -> Option<Bolge> {
+        self.boru.bolge()
+    }
+    fn harita_adi(&mut self, harita: u32, ad: &str) {
+        self.boru.harita_adi(harita, ad);
     }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         if self.bitti {

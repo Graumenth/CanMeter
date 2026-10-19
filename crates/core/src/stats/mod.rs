@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod arsiv;
 pub mod ayrinti;
+pub mod bolge;
 pub mod gecmis;
 pub mod toplayici;
 
@@ -105,4 +106,6 @@ pub struct KapananSavas {
     pub ozet: gecmis::Ozet,
     pub anlik: SavasAnlik,
     pub ayrinti: ayrinti::Ayrinti,
+    /// Savaşın açıldığı bölge (bölge bilinmiyorsa `None`).
+    pub bolge: Option<bolge::Bolge>,
 }

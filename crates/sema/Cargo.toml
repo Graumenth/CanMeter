@@ -12,3 +12,7 @@ path = "src/lib.rs"
 [dependencies]
 # JSON satırları: alan adları snake_case, bilinmeyen alanlar yok sayılır.
 serde = { version = "1", features = ["derive"] }
+
+[dev-dependencies]
+# Yalnız testte: satır gidiş dönüş denemeleri.
+serde_json = "1"

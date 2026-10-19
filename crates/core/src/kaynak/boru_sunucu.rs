@@ -89,13 +89,15 @@ impl Boru {
 
     /// Uzun sessizlikte kilidi, ömrü dolunca bekleyen ucu düşürür.
     pub(super) fn zaman_asimi(&mut self, simdi: u64) {
-        if self
+        let sustu = self
             .son_sunucu_ms
-            .is_some_and(|son| simdi.saturating_sub(son) > SUNUCU_ZAMAN_ASIMI_MS)
-        {
+            .filter(|son| simdi.saturating_sub(*son) > SUNUCU_ZAMAN_ASIMI_MS);
+        if let Some(son) = sustu {
             self.sunucu = None;
             self.son_sunucu_ms = None;
             self.akis.sifirla();
+            // Oyun kapanınca koşu süresi uygulamanın açık kaldığı saatlerle şişmesin.
+            self.toplayici.bolge_kapat(son);
         }
         if self.bekleyen.uc.is_some()
             && simdi.saturating_sub(self.bekleyen.son_imza_ms) > BEKLEYEN_OMRU_MS

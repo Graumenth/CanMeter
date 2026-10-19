@@ -9,9 +9,13 @@ use crate::{
     stats::{
         SavasAnlik,
         ayrinti::Ayrinti,
+        bolge::Bolge,
         gecmis::{Neden, Ozet},
     },
 };
+
+#[path = "canli_yakalama.rs"]
+mod yakalama;
 
 pub const KANAL_KAPASITESI: usize = 4096;
 
@@ -38,37 +42,7 @@ impl CanliKaynak {
         let ad = secilen.ad.clone();
         std::thread::Builder::new()
             .name("canmeter-yakalama".into())
-            .spawn(move || {
-                let Ok(mut yakalama) = pcap::Capture::from_device(ad.as_str()).and_then(|c| {
-                    c.promisc(false)
-                        .snaplen(65_535)
-                        .immediate_mode(true)
-                        .timeout(500)
-                        .open()
-                }) else {
-                    return;
-                };
-                if yakalama.filter("tcp", true).is_err() {
-                    return;
-                }
-                loop {
-                    match yakalama.next_packet() {
-                        Ok(paket) => {
-                            let saniye = u64::try_from(paket.header.ts.tv_sec).unwrap_or(0);
-                            let mikro = u64::try_from(paket.header.ts.tv_usec).unwrap_or(0);
-                            let ham = HamSegment {
-                                zaman_ms: saniye.saturating_mul(1_000) + mikro / 1_000,
-                                veri: paket.data.to_vec(),
-                            };
-                            if gonderici.send(ham).is_err() {
-                                break;
-                            }
-                        }
-                        Err(pcap::Error::TimeoutExpired) => {}
-                        Err(_) => break,
-                    }
-                }
-            })
+            .spawn(move || yakalama::dongu(ad, gonderici))
             .map_err(|hata| hata.to_string())?;
         Ok(Self::kanaldan(alici))
     }
@@ -100,6 +74,12 @@ impl AnlikKaynagi for CanliKaynak {
     }
     fn arsiv_ayarla(&mut self, kok: Option<std::path::PathBuf>) {
         self.boru.arsiv_ayarla(kok);
+    }
+    fn bolge(&self) -> Option<Bolge> {
+        self.boru.bolge()
+    }
+    fn harita_adi(&mut self, harita: u32, ad: &str) {
+        self.boru.harita_adi(harita, ad);
     }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         let mut geldi = false;

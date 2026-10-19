@@ -100,6 +100,12 @@ mod testler_arsiv;
 #[path = "boru_testler_bekleyen.rs"]
 mod testler_bekleyen;
 #[cfg(test)]
+#[path = "boru_testler_bolge.rs"]
+mod testler_bolge;
+#[cfg(test)]
+#[path = "boru_testler_bolge2.rs"]
+mod testler_bolge2;
+#[cfg(test)]
 #[path = "boru_testler_gecis.rs"]
 mod testler_gecis;
 #[cfg(test)]

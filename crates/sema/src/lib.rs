@@ -6,6 +6,12 @@ use serde::{Deserialize, Serialize};
 
 mod satirlar;
 pub use satirlar::*;
+pub mod haritalar;
+pub use haritalar::Haritalar;
+
+#[cfg(test)]
+#[path = "testler.rs"]
+mod testler;
 
 pub const SEMA: u32 = 1;
 
@@ -18,6 +24,7 @@ pub enum Kayit {
     Kova(Kova),
     Yasam(Yasam),
     Son(Son),
+    Kosu(Kosu),
     #[serde(other)]
     Bilinmeyen,
 }
@@ -51,6 +58,8 @@ pub struct Baslik {
     pub surum: String,
     /// Kalite bayrakları: "baslangic_eksik", "tasan_beceri", "kovasiz_kaynak", "satır N okunamadı" ...
     pub kalite: Vec<String>,
+    /// Savaşın açıldığı bölge (0.8.1); eski dosyada yok.
+    pub bolge: Option<Bolge>,
 }
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
@@ -59,4 +68,26 @@ pub struct Son {
     /// Toplam satır (baslik dahil).
     pub kayit: u32,
     pub tamam: bool,
+}
+
+/// Savaşın açıldığı bölge; `ad` yazım anında bilinen ad, boş olabilir (rapor tabloyla yeniden çözer).
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Bolge {
+    pub harita: u32,
+    pub ad: String,
+    pub giris_utc: String,
+}
+
+/// Koşu satırı (`YYYY-MM/bolgeler.jsonl`, giriş başına bir satır; savaşsız koşular da): bölgeye girişten çıkışa.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct Kosu {
+    pub sema: u32,
+    pub harita: u32,
+    pub ad: String,
+    pub giris_utc: String,
+    pub cikis_utc: String,
+    pub sure_ms: u64,
+    pub surum: String,
 }

@@ -67,3 +67,15 @@ pub(super) fn hasar_cercevesi() -> Vec<u8> {
     cerceve.extend(govde);
     [&kalp()[..], &cerceve].concat()
 }
+
+/// 21 36 harita yükleme çerçevesi: 46 baytlık gövde (sira, harita, ornek LE; kalanı sıfır).
+pub(super) fn harita_cercevesi(sira: u32, harita: u32, ornek: u64) -> Vec<u8> {
+    let mut g = Vec::with_capacity(46);
+    g.extend(sira.to_le_bytes().into_iter().chain(harita.to_le_bytes()));
+    g.extend(ornek.to_le_bytes());
+    g.resize(46, 0);
+    assert!(matches!(coz([0x21, 0x36], &g), Some(Mesaj::Harita(_))));
+    let mut c = Vec::new();
+    yaz(u32::try_from(6 + g.len()).unwrap(), &mut c);
+    [c, vec![0x21, 0x36], g].concat()
+}

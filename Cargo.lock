@@ -221,9 +221,10 @@ dependencies = [
 
 [[package]]
 name = "canmeter-app"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "canmeter-core",
+ "canmeter-sema",
  "eframe",
  "egui",
  "global-hotkey",
@@ -236,7 +237,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-core"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "canmeter-sema",
  "chrono",
@@ -249,7 +250,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-rapor"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "canmeter-sema",
  "chrono",
@@ -259,9 +260,10 @@ dependencies = [
 
 [[package]]
 name = "canmeter-sema"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "serde",
+ "serde_json",
 ]
 
 [[package]]

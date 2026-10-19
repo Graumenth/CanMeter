@@ -1,4 +1,30 @@
+pub use crate::kosu::KosuOzeti;
+use crate::oku::Gecmis;
 use crate::sema::{Beceri, Encounter, Katilimci};
+
+pub fn kosular(g: &Gecmis) -> &[KosuOzeti] {
+    g.kosu_ozetleri.get_or_init(|| crate::kosu::hesapla(g))
+}
+
+pub fn bolge_adi(g: &Gecmis, harita: u32, dosyadaki: &str) -> String {
+    g.haritalar.ad(harita).map_or_else(
+        || {
+            if dosyadaki.trim().is_empty() {
+                format!("Bölge #{harita}")
+            } else {
+                dosyadaki.into()
+            }
+        },
+        str::to_string,
+    )
+}
+
+pub fn kosu_anahtari(e: &Encounter) -> Option<(u32, &str)> {
+    e.baslik
+        .bolge
+        .as_ref()
+        .map(|b| (b.harita, b.giris_utc.as_str()))
+}
 
 pub fn oran(pay: f64, toplam: f64) -> f64 {
     pay / toplam.max(1.0)

@@ -6,7 +6,7 @@
 
 use std::{path::PathBuf, time::Duration};
 
-use crate::stats::{SavasAnlik, ayrinti::Ayrinti, gecmis::Ozet};
+use crate::stats::{SavasAnlik, ayrinti::Ayrinti, bolge::Bolge, gecmis::Ozet};
 
 pub mod boru;
 pub mod canli;
@@ -42,4 +42,10 @@ pub trait AnlikKaynagi: Send {
     fn kapat(&mut self) {}
     /// Geçmiş arşivi kökü (`None` kapalı); demo kaynak yok sayar.
     fn arsiv_ayarla(&mut self, _kok: Option<PathBuf>) {}
+    /// Oyuncunun bulunduğu bölge (açık koşu); demo kaynakta yok.
+    fn bolge(&self) -> Option<Bolge> {
+        None
+    }
+    /// Oyuncunun verdiği harita adı arşive iletilir; demo kaynak yok sayar.
+    fn harita_adi(&mut self, _harita: u32, _ad: &str) {}
 }

@@ -17,7 +17,11 @@ impl Toplayici {
     }
 
     /// Açık savaşı verilen nedenle kapatır: özet geçmişe, sayaçlar sıfır, son görünüm saklanır. Açık savaş yoksa etkisiz.
+    /// Kaynak sonu ve uygulama kapanışı açık koşuyu da bitirir (savaş olmasa da).
     pub fn kapat(&mut self, neden: Neden, simdi_ms: u64, tablo: &Tablo) {
+        if matches!(neden, Neden::KaynakSonu | Neden::UygulamaKapandi) {
+            self.bolge.kapat(simdi_ms);
+        }
         self.kapat_ic(neden, simdi_ms, Some(tablo));
     }
 
@@ -84,6 +88,7 @@ impl Toplayici {
                     ozet: ozet.clone(),
                     anlik: anlik.clone(),
                     ayrinti: std::mem::take(&mut self.ayrinti),
+                    bolge: self.savas_bolge,
                 });
                 self.kapanan_yazildi = false;
             }
@@ -108,6 +113,7 @@ impl Toplayici {
         }
         self.hedef = None;
         self.baslangic_ms = None;
+        self.savas_bolge = None;
         self.aktif = false;
         self.kirli = true;
     }

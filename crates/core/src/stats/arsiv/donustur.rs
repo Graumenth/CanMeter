@@ -3,7 +3,6 @@ use crate::combat::Tablo;
 use crate::stats::KapananSavas;
 use crate::stats::ayrinti::{Aile, BeceriAnahtar, BeceriSayac, Kova, Olay};
 use canmeter_sema as sema;
-use chrono::{DateTime, SecondsFormat, Utc};
 use std::cmp::Reverse;
 
 /// Kova kaydı başına en çok değer.
@@ -15,9 +14,10 @@ pub(super) fn kayitlar(
     tablo: &Tablo,
     kimlik: &str,
     surum: &str,
+    haritalar: &sema::Haritalar,
 ) -> Vec<sema::Kayit> {
     let (a, oy) = (&k.ayrinti, &k.anlik.oyuncular);
-    let mut cikti = vec![baslik(k, kimlik, surum)];
+    let mut cikti = vec![super::donustur_baslik::baslik(k, kimlik, surum, haritalar)];
     let (mut beceriler, mut kovalar) = (Vec::new(), Vec::new());
     for (i, p) in oy.iter().enumerate() {
         let (no, id) = (i as u32 + 1, p.id as u32);
@@ -59,30 +59,6 @@ pub(super) fn kayitlar(
     let kayit = cikti.len() as u32 + 1;
     cikti.push(sema::Kayit::Son(sema::Son { kayit, tamam: true }));
     cikti
-}
-
-/// Başlık satırı; kalite bayrakları ayrıntıdan.
-fn baslik(k: &KapananSavas, kimlik: &str, surum: &str) -> sema::Kayit {
-    let (o, a, oy) = (&k.ozet, &k.ayrinti, &k.anlik.oyuncular);
-    let kovasiz = oy.iter().any(|p| !a.kovalar.contains_key(&(p.id as u32)));
-    #[rustfmt::skip]
-    let kalite = [(a.tasan > 0, "tasan_beceri"), (kovasiz, "kovasiz_kaynak")]
-        .iter().filter(|b| b.0).map(|b| b.1.to_owned()).collect();
-    #[rustfmt::skip]
-    let hedef = o.hedef.as_ref().map_or_else(sema::Hedef::default, |h| sema::Hedef {
-        ad: h.ad.clone(), kimlik: h.kimlik, azami_hp: u64::from(h.azami_hp), model: None,
-    });
-    let utc = DateTime::<Utc>::from_timestamp_millis(o.baslangic_ms as i64);
-    let baslangic_utc = utc.map(|z| z.to_rfc3339_opts(SecondsFormat::Secs, true));
-    #[rustfmt::skip]
-    let b = sema::Baslik {
-        sema: sema::SEMA, kimlik: kimlik.to_owned(), sure_ms: o.sure_ms,
-        sonuc: format!("{:?}", o.sonuc), etiket: format!("{:?}", o.etiket), hedef,
-        toplam_hasar: o.toplam_hasar, toplam_iyilestirme: o.toplam_iyilestirme,
-        surum: surum.to_owned(), kalite,
-        baslangic_utc: baslangic_utc.unwrap_or_default(),
-    };
-    sema::Kayit::Baslik(b)
 }
 
 /// Beceri satırı; nitelik alanı hiç gelmediyse (`kapsam == 0`) sayılar `None`.

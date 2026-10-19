@@ -1,13 +1,15 @@
 //! Tek süreçte motor, kullanıcı ayarları ve overlay kare döngüsü.
-use crate::skin::{Baglam, Skin, kayit};
+use crate::skin::{Baglam, Skin};
 use crate::{
-    ayarlar::Ayarlar, boyut::Boyut, dil::Dil, kilit::Kilit, kisayol, kisayol_global::GlobalKisayol,
-    konum::Konum, pencere, tutamac, uyari, yazi, yenileme::Yenileme,
+    ayarlar::Ayarlar, bolge_sor::BolgeSor, boyut::Boyut, kilit::Kilit, kisayol,
+    kisayol_global::GlobalKisayol, konum::Konum, tutamac, uyari, yenileme::Yenileme,
 };
 use canmeter_core::{Motor, stats::SavasAnlik};
 use std::time::{Duration, Instant};
 #[path = "uygulama_kare.rs"]
 mod kare;
+#[path = "uygulama_kur.rs"]
+mod kur;
 /// Ayarlar paneli açıkken en az bu kadar yükseklik (nokta).
 const PANEL_YUKSEKLIK: f32 = 420.0;
 /// Ölçek ya da konum değişince ayar dosyası bu kadar sessizlikten sonra yazılır (sürükleme boyunca değil).
@@ -21,51 +23,14 @@ pub struct Uygulama {
     yenileme: Yenileme,
     ayarlar_acik: bool,
     motor: Motor,
+    haritalar: canmeter_sema::Haritalar,
+    bolge_sor: BolgeSor,
     son: Option<SavasAnlik>,
     onceki: Instant,
     boyut: Boyut,
     konum: Konum,
     /// Son ölçek/konum değişiminin zamanı; kayıt gecikmeli.
     kayit_zamani: Option<Instant>,
-}
-
-impl Uygulama {
-    pub fn new(cc: &eframe::CreationContext<'_>, ayarlar: Ayarlar, kalici: Ayarlar) -> Self {
-        cc.egui_ctx.set_visuals(egui::Visuals::dark());
-        cc.egui_ctx.all_styles_mut(|stil| stil.animation_time = 0.0);
-        yazi::yukle(&cc.egui_ctx);
-        crate::sinif_ikon::yukle(&cc.egui_ctx);
-        pencere::kenarlik_kaldir(cc);
-        cc.egui_ctx.set_zoom_factor(ayarlar.olcek);
-        let mut motor = crate::komut_satiri::motor();
-        if ayarlar.gecmis_kaydet {
-            motor.arsiv_ayarla(canmeter_core::varsayilan_kok());
-        }
-        Self {
-            skin: kayit::bul(&ayarlar.skin),
-            ayarlar,
-            kalici,
-            kilit: Kilit::new(&cc.egui_ctx),
-            kisayol_global: GlobalKisayol::new(),
-            yenileme: Yenileme::new(),
-            ayarlar_acik: false,
-            motor,
-            son: None,
-            onceki: Instant::now(),
-            boyut: Boyut::default(),
-            konum: Konum,
-            kayit_zamani: None,
-        }
-    }
-    fn kaydet(&mut self, onceki_dil: Dil) {
-        if self.ayarlar.gecmis_kaydet != self.kalici.gecmis_kaydet {
-            let kok = canmeter_core::varsayilan_kok().filter(|_| self.ayarlar.gecmis_kaydet);
-            self.motor.arsiv_ayarla(kok);
-        }
-        self.ayarlar
-            .kaliciye_yaz(&mut self.kalici, onceki_dil, self.skin.ad());
-        self.skin = kayit::bul(&self.ayarlar.skin);
-    }
 }
 impl eframe::App for Uygulama {
     fn clear_color(&self, _: &egui::Visuals) -> [f32; 4] {
@@ -102,15 +67,22 @@ impl eframe::App for Uygulama {
         let kilitli = self.kilit.kilitli;
         let durum = self.motor.durum();
         let zemin = baglam.zemin.dolgu(self.skin.zemin_rengi());
-        let (eylemler, icerik) = egui::CentralPanel::default()
+        let bolge = self.motor.bolge();
+        let (eylemler, icerik, kayit) = egui::CentralPanel::default()
             .frame(egui::Frame::NONE)
             .show(ui, |ui| {
                 let skin = ui.scope(|ui| self.skin.ciz(ui, &baglam));
                 let ipucu = uyari::ciz(ui, baglam.dil, durum, zemin);
+                let (sor, kayit) =
+                    self.bolge_sor
+                        .ciz(ui, baglam.dil, bolge, &self.haritalar, kilitli, zemin);
                 tutamac::ciz(ui, skin.response.rect, kilitli);
-                (skin.inner, skin.response.rect.height() + ipucu)
+                (skin.inner, skin.response.rect.height() + ipucu + sor, kayit)
             })
             .inner;
+        if let Some((harita, ad)) = kayit {
+            self.harita_kaydet(harita, &ad);
+        }
         let basilan = self.kisayol_global.oku();
         self.kare_sonu(&ctx, eylemler, icerik, basilan);
         ctx.request_repaint_after(Duration::from_millis(250));

@@ -1,11 +1,12 @@
 use crate::{
     html::{dizin, savas},
-    sema::Encounter,
+    oku::Gecmis,
     varlik,
 };
 use std::{collections::HashSet, fs, path::Path};
 
-pub fn yaz(savaslar: &[Encounter], cikti: &Path) -> Result<(), String> {
+pub fn yaz(g: &Gecmis, cikti: &Path) -> Result<(), String> {
+    let savaslar = &g.savaslar;
     let mut kimlikler = HashSet::new();
     for e in savaslar {
         // Aynı çıktı yoluna sahip kayıtları sessizce ezmeyiz.
@@ -20,9 +21,9 @@ pub fn yaz(savaslar: &[Encounter], cikti: &Path) -> Result<(), String> {
     for (indeks, e) in savaslar.iter().enumerate() {
         let kimlik = crate::html::serit::dosya_kimligi(&e.baslik.kimlik);
         let yol = cikti.join("savas").join(format!("{kimlik}.html"));
-        fs::write(&yol, savas::yaz(savaslar, indeks))
+        fs::write(&yol, savas::yaz(g, indeks))
             .map_err(|h| format!("{} yazılamadı: {h}", yol.display()))?;
     }
-    fs::write(cikti.join("index.html"), dizin::yaz(savaslar))
+    fs::write(cikti.join("index.html"), dizin::yaz(g))
         .map_err(|h| format!("Dizin sayfası yazılamadı: {h}"))
 }

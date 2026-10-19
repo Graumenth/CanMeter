@@ -2,10 +2,12 @@
 //! anlam `protokol.md` §5-7. Sıcak yolda ayırma yok: yalnız ad taşıyan seyrek mesajlar `String` kurar.
 //! Çözülemeyen ya da ilgisiz tür `None`; çağıran saymaya devam eder.
 
+pub mod bolge;
 pub mod hasar;
 pub mod kimlik;
 pub mod spawn_npc;
 
+pub use bolge::Harita;
 pub use spawn_npc::NpcSpawn;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -23,6 +25,8 @@ pub enum Mesaj {
     Olum(Olum),
     /// `41 36` (eski `40 36`): NPC, summon, pet ya da skill-efekt varlığı; summon ve efektte sahip bilgisi.
     NpcSpawn(NpcSpawn),
+    /// `21 36`: harita yükleme (bölge girişi).
+    Harita(Harita),
 }
 
 /// `04 38` doğrudan hasar. `deger` vuruşun toplamıdır; `ek_*` alt vuruşlar (toplama dahil).
@@ -108,6 +112,7 @@ pub fn coz(tur: [u8; 2], govde: &[u8]) -> Option<Mesaj> {
         [0x02, 0x97] => kimlik::roster(govde).map(Mesaj::Roster),
         [0x42, 0x36] => kimlik::olum(govde).map(Mesaj::Olum),
         [0x41, 0x36] | [0x40, 0x36] => spawn_npc::npc_spawn(govde).map(Mesaj::NpcSpawn),
+        [0x21, 0x36] => bolge::harita(govde).map(Mesaj::Harita),
         _ => None,
     }
 }

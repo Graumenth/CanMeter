@@ -1,4 +1,4 @@
-{"tur": "baslik", "sema": 1, "kimlik": "20261017-201840-06", "baslangic_utc": "2026-10-17T20:18:40Z", "sure_ms": 96000, "sonuc": "Zafer", "etiket": "Trash", "hedef": {"ad": "Drakan Warmage", "kimlik": 40150, "azami_hp": 2600000}, "toplam_hasar": 38715986, "toplam_iyilestirme": 4175031, "surum": "0.6.10", "kalite": []}
+{"tur": "baslik", "sema": 1, "kimlik": "20261017-201840-06", "baslangic_utc": "2026-10-17T20:18:40Z", "sure_ms": 96000, "sonuc": "Zafer", "etiket": "Trash", "hedef": {"ad": "Drakan Warmage", "kimlik": 40150, "azami_hp": 2600000}, "toplam_hasar": 38715986, "toplam_iyilestirme": 4175031, "surum": "0.6.10", "kalite": [], "bolge":{"harita":600032,"ad":"","giris_utc":"2026-10-17T19:40:00Z"}}
 {"tur": "katilimci", "no": 1, "ad": "Kaelith", "sinif": "Sorcerer", "ben": true, "hasar": 7982479, "iyilestirme": 0, "olum": 0, "vurus": 116, "kritik": 41}
 {"tur": "katilimci", "no": 2, "ad": "Nyra", "sinif": "Assassin", "ben": false, "hasar": 7527215, "iyilestirme": 0, "olum": 0, "vurus": 126, "kritik": 32}
 {"tur": "katilimci", "no": 3, "ad": "Ozan", "sinif": "Gladiator", "ben": false, "hasar": 9349522, "iyilestirme": 0, "olum": 0, "vurus": 95, "kritik": 41}

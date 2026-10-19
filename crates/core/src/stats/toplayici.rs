@@ -1,4 +1,5 @@
 //! Olay sayaçları; ad çözümü ve görünüm üretimi yalnız anlık istendiğinde yapılır.
+use super::bolge::{Bolge, BolgeIzi};
 use super::{KapananSavas, SavasAnlik, ayrinti::Ayrinti, gecmis::Gecmis};
 use crate::protocol::mesaj::{Hasar, Hp, Periyodik};
 use std::collections::{HashMap, VecDeque};
@@ -32,6 +33,9 @@ pub struct Toplayici {
     kapanan_yazildi: bool,
     /// Art arda yazma hatası sayısı (üst sınır 3); başarılı yazma sıfırlar.
     yazma_denemesi: u8,
+    bolge: BolgeIzi,
+    /// Açık savaşın açıldığı bölge; kapanan pakete geçer.
+    savas_bolge: Option<Bolge>,
 }
 
 impl Toplayici {
@@ -45,6 +49,8 @@ impl Toplayici {
 
 #[path = "toplayici_anlik.rs"]
 mod anlik;
+#[path = "toplayici_bolge.rs"]
+mod bolge_iz;
 #[path = "toplayici_hedef.rs"]
 mod hedef;
 #[path = "toplayici_olay.rs"]
@@ -57,6 +63,9 @@ mod testler;
 #[cfg(test)]
 #[path = "toplayici_testler_ayrinti.rs"]
 mod testler_ayrinti;
+#[cfg(test)]
+#[path = "toplayici_testler_bolge.rs"]
+mod testler_bolge;
 #[cfg(test)]
 #[path = "toplayici_testler_parti.rs"]
 mod testler_parti;

@@ -1,8 +1,8 @@
 //! Encounter dosya yolu ve satır yazımı: `.partial` önce, tamamlanınca yeniden adlandırma.
 use canmeter_sema::Kayit;
-use chrono::{DateTime, Utc};
-use std::fs;
-use std::io::{BufWriter, Write};
+use chrono::{DateTime, SecondsFormat, Utc};
+use std::fs::{self, OpenOptions};
+use std::io::{BufWriter, Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
 
 /// Aynı saniyede en çok dosya sırası.
@@ -51,4 +51,41 @@ fn yaz_tasi(gecici: &Path, yol: &Path, kayitlar: &[Kayit]) -> std::io::Result<()
     w.flush()?;
     drop(w);
     fs::rename(gecici, yol)
+}
+
+/// Milisaniyeden RFC 3339 UTC (saniye, `Z`); geçersizse boş.
+pub(super) fn utc(ms: u64) -> String {
+    let zaman = DateTime::<Utc>::from_timestamp_millis(ms as i64);
+    zaman.map_or_else(String::new, |z| {
+        z.to_rfc3339_opts(SecondsFormat::Secs, true)
+    })
+}
+
+/// Koşu satırını `kok/YYYY-MM/bolgeler.jsonl` sonuna ekler (ay giriş zamanından, UTC); klasörü oluşturur.
+pub(super) fn kosu_ekle(kok: &Path, giris_ms: u64, satir: &Kayit) -> Result<(), String> {
+    let zaman = DateTime::<Utc>::from_timestamp_millis(giris_ms as i64)
+        .ok_or_else(|| format!("geçersiz zaman: {giris_ms}"))?;
+    let klasor = kok.join(zaman.format("%Y-%m").to_string());
+    let yol = klasor.join("bolgeler.jsonl");
+    let hata = |e: std::io::Error| format!("{}: {e}", yol.display());
+    fs::create_dir_all(&klasor).map_err(hata)?;
+    // Yarım kalmış son satırın üstüne yapışmasın.
+    let mut metin = String::from(if yarim_satir_var(&yol) { "\n" } else { "" });
+    metin += &serde_json::to_string(satir).map_err(|e| format!("{}: {e}", yol.display()))?;
+    metin.push('\n');
+    let mut dosya = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&yol)
+        .map_err(hata)?;
+    dosya.write_all(metin.as_bytes()).map_err(hata)
+}
+
+/// Dosya boş değilse ve son baytı satır sonu değilse (yarım satır) true; okunamazsa false.
+fn yarim_satir_var(yol: &Path) -> bool {
+    let Ok(mut f) = fs::File::open(yol) else {
+        return false;
+    };
+    let mut son = [0_u8; 1];
+    f.seek(SeekFrom::End(-1)).is_ok() && f.read_exact(&mut son).is_ok() && son[0] != b'\n'
 }

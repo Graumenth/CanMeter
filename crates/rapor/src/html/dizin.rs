@@ -1,8 +1,9 @@
-use super::{ortak, serit};
-use crate::{bicim, hesap, sema::Encounter};
+use super::{bolge, ortak, serit};
+use crate::{bicim, hesap, oku::Gecmis};
 
-pub fn yaz(savaslar: &[Encounter]) -> String {
-    let mut cikti = ortak::bas("CanMeter geçmiş", "", &serit::yaz(savaslar, None, ""));
+pub fn yaz(g: &Gecmis) -> String {
+    let savaslar = &g.savaslar;
+    let mut cikti = ortak::bas("CanMeter geçmiş", "", &serit::yaz(g, None, ""));
     cikti.push_str(
         r#"<div class="baslik"><div><h1>CanMeter geçmiş</h1></div></div><div class="kutular">"#,
     );
@@ -20,7 +21,9 @@ pub fn yaz(savaslar: &[Encounter]) -> String {
     ] {
         cikti.push_str(&ortak::kutu(ad, &deger));
     }
-    cikti.push_str(r#"</div><section class="bolum"><h2>Savaşlar</h2><table>
+    cikti.push_str("</div>");
+    cikti.push_str(&bolge::yaz(g));
+    cikti.push_str(r#"<section class="bolum"><h2>Savaşlar</h2><table>
 <thead><tr><th class="sol">Tarih</th><th class="sol">Hedef</th><th>Etiket</th><th>Sonuç</th><th>Süre</th><th>Toplam DPS</th><th>Hasar</th><th>Ölüm</th></tr></thead><tbody>"#);
     for savas in savaslar {
         let b = &savas.baslik;

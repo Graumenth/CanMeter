@@ -12,6 +12,8 @@ path = "src/main.rs"
 
 [dependencies]
 canmeter-core = { path = "../core" }
+# Harita adı tablosu ve kullanıcı dosyası.
+canmeter-sema = { path = "../sema" }
 # Yalnız OpenGL (glow) arka ucu ve gömülü yazı tipleri; accesskit, wgpu, web yok (RAM için).
 eframe = { version = "0.36", default-features = false, features = ["glow", "default_fonts"] }
 egui = "0.36"

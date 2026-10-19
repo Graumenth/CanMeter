@@ -1,5 +1,13 @@
 # PATCHNOTES
 
+## 0.8.1 (2026-10-19)
+### Yeni
+- Savaşlar artık girilen bölgeyle (zindan, açık dünya alanı) kaydediliyor: rapor sol şeritte koşuya göre gruplar,
+  index'te "Zindanlar" ve "Bölgeler" özetleri, bölge filtresi. Girilen her bölge savaş olmasa da kaydedilir.
+- 222 bölge adı yerleşik. Bilinmeyen bir bölgeye girince CanMeter adını sorar (overlay'in altındaki satır; kilit
+  açıkken yazılır); cevap `%APPDATA%\CanMeter\haritalar.toml` dosyasına kalıcı yazılır ve eski kayıtlar da o adla
+  görünür.
+
 ## 0.8.0 (2026-10-19)
 ### Yeni
 - Biten savaşlar artık diske kaydediliyor (`%LOCALAPPDATA%\CanMeter\encounters`): oyun oynarken dosyalar kendiliğinden

@@ -1,20 +1,22 @@
-//! Arşiv yazıcı: tam dosya gidiş dönüşü, kısa savaş, aynı saniye sırası, hata yolu.
+//! Arşiv yazıcı: tam dosya gidiş dönüşü, kısa savaş, aynı saniye sırası (hata yolu `testler_kosu.rs`).
 use super::{Arsiv, yol::gecici};
 use crate::combat::Tablo;
 use crate::protocol::mesaj::{Hasar, Kimlik, Mesaj, NpcSpawn, Olum, OyuncuSpawn, Periyodik};
 use crate::protocol::mesaj::{Roster, RosterUye};
 use crate::stats::gecmis::{Etiket, Neden, Ozet, Sonuc};
-use crate::stats::{KapananSavas, SavasAnlik, ayrinti::Ayrinti, toplayici::Toplayici};
+use crate::stats::{
+    KapananSavas, SavasAnlik, ayrinti::Ayrinti, bolge::Bolge, toplayici::Toplayici,
+};
 use canmeter_sema::Kayit;
 use std::{fs, path::PathBuf};
 
 /// Test başına ayrı geçici klasör (testler paralel koşar); `temizle` siler.
 #[rustfmt::skip]
-fn kok(ad: &str) -> PathBuf {
+pub(super) fn kok(ad: &str) -> PathBuf {
     std::env::temp_dir().join(format!("canmeter-arsiv-{}", std::process::id())).join(ad)
 }
 #[rustfmt::skip]
-fn temizle(k: &PathBuf) {
+pub(super) fn temizle(k: &PathBuf) {
     let _ = (fs::remove_dir_all(k), fs::remove_file(k), k.parent().map(fs::remove_dir));
 }
 /// Doğrudan vuruş; aktör hedefe eşitse iyileştirmedir.
@@ -37,11 +39,11 @@ pub(super) fn tablo() -> Tablo {
     t
 }
 #[rustfmt::skip]
-fn kapanan(sure_ms: u64, toplam_hasar: u64) -> KapananSavas {
+pub(super) fn kapanan(sure_ms: u64, toplam_hasar: u64) -> KapananSavas {
     let ozet = Ozet { kimlik: 1, baslangic_ms: 1_700_000_000_000, sure_ms, neden: Neden::Sessizlik,
         sonuc: Sonuc::Bilinmiyor, etiket: Etiket::Bilinmiyor, hedef: None, toplam_hasar,
         toplam_iyilestirme: 0, katilimci: 0, olum: 0 };
-    KapananSavas { ozet, anlik: SavasAnlik::default(), ayrinti: Ayrinti::default() }
+    KapananSavas { ozet, anlik: SavasAnlik::default(), ayrinti: Ayrinti::default(), bolge: None }
 }
 /// İki kişilik savaş: vuruşlar (kritik, miss), DoT, kendine iyileştirme, NPC'nin öldürdüğü 2.
 #[rustfmt::skip]
@@ -58,7 +60,8 @@ fn savas(b: &mut Tablo) -> KapananSavas {
     let a = t.ayrinti();
     let ayrinti = Ayrinti { beceriler: a.beceriler.clone(), kovalar: a.kovalar.clone(),
         yasam: a.yasam.clone(), son_vurus: a.son_vurus.clone(), tasan: a.tasan };
-    KapananSavas { ozet: t.gecmis()[0].clone(), anlik: t.anlik(60_001, b).unwrap(), ayrinti }
+    let bolge = Some(Bolge { harita: 600032, ornek: 1, giris_ms: 1_700_000_000_000 });
+    KapananSavas { ozet: t.gecmis()[0].clone(), anlik: t.anlik(60_001, b).unwrap(), ayrinti, bolge }
 }
 #[test]
 #[rustfmt::skip]
@@ -81,6 +84,8 @@ fn tam_dosya_yazilir_ve_okunur() {
     } }
     assert_eq!((bas.sema, bas.kimlik.len()), (1, 18));
     assert!(bas.baslangic_utc.ends_with('Z') && ["Bilinmiyor", "Zafer"].contains(&&*bas.sonuc));
+    let bolge = bas.bolge.as_ref().unwrap();
+    assert!(bolge.ad == "Draupnir" && bolge.giris_utc.ends_with('Z'));
     assert_eq!(kat.iter().map(|k| k.no).collect::<Vec<_>>(), vec![1, 2]);
     assert_eq!(bas.toplam_hasar, kat.iter().map(|k| k.hasar).sum::<u64>());
     let top = |v: &[(u32, u64)], no| v.iter().filter(|p| p.0 == no).map(|p| p.1).sum::<u64>();
@@ -106,14 +111,5 @@ fn ayni_saniyede_iki_dosya() {
     let mut yaz = || a.yaz(&kapanan(10_000, 5), &b).unwrap();
     let adlar = [yaz(), yaz()].map(|y| y.to_string_lossy().into_owned());
     assert!(adlar[0].ends_with("-01.cmenc.jsonl") && adlar[1].ends_with("-02.cmenc.jsonl"));
-    temizle(&k);
-}
-#[test]
-fn klasor_olusturulamazsa_hata() {
-    let (k, b) = (kok("dosya"), tablo());
-    fs::create_dir_all(k.parent().unwrap()).unwrap();
-    fs::write(&k, b"dosya").unwrap();
-    let mut a = Arsiv::new(k.clone());
-    assert!(a.yaz(&kapanan(10_000, 5), &b).is_none() && a.son_hata.is_some());
     temizle(&k);
 }

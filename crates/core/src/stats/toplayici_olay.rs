@@ -61,6 +61,7 @@ impl Toplayici {
             self.hedef = None;
             self.baslangic_ms = Some(zaman);
             self.savas_id = self.savas_id.saturating_add(1);
+            self.savas_bolge = self.bolge.simdiki();
             self.aktif = true;
         }
         self.son_hasar_ms = self.son_hasar_ms.max(zaman);
