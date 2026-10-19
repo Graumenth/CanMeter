@@ -91,6 +91,7 @@ impl Toplayici {
         self.hedefler.clear();
         self.son_hasarlari.clear();
         self.olen_hedefler.clear();
+        self.son_ayrinti = Some(std::mem::take(&mut self.ayrinti));
         if neden == Neden::SunucuDegisti {
             self.hp.clear();
         }

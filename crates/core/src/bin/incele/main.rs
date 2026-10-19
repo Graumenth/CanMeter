@@ -12,6 +12,7 @@ use canmeter_core::protocol::mesaj;
 use canmeter_core::protocol::yuruyucu::Yuruyucu;
 
 mod args;
+mod beceri_izi;
 mod boru_izi;
 mod ozet;
 mod savas_izi;
@@ -30,6 +31,7 @@ fn main() {
         sunucu: sunucu_secimi,
         boru,
         savas,
+        beceri,
         hepsi,
         hex,
         adet,
@@ -40,7 +42,7 @@ fn main() {
         return;
     }
     if savas {
-        savas_izi::calistir(dosya, hepsi);
+        savas_izi::calistir(dosya, hepsi, beceri);
         return;
     }
     let dosya = dosya

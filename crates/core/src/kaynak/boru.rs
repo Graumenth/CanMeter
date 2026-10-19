@@ -2,6 +2,7 @@
 use crate::capture::{akis::Akis, paket::Segment};
 use crate::combat::Tablo;
 use crate::protocol::{mesaj::coz, yuruyucu::Yuruyucu};
+use crate::stats::ayrinti::Ayrinti;
 use crate::stats::gecmis::{Neden, Ozet};
 use crate::stats::{SavasAnlik, toplayici::Toplayici};
 use std::net::SocketAddrV4;
@@ -69,6 +70,10 @@ impl Boru {
     /// Kapanmış savaşların oturum içi özetleri (eskiden yeniye).
     pub fn gecmis(&self) -> &[Ozet] {
         self.toplayici.gecmis()
+    }
+    /// Açık savaşın ayrıntısı; yoksa son kapananınki.
+    pub fn ayrinti(&self) -> &Ayrinti {
+        self.toplayici.ayrinti()
     }
     /// Açık savaşı dış nedenle kapatır (kaynak bitti, uygulama kapanıyor).
     pub fn kapat(&mut self, neden: Neden, zaman_ms: u64) {

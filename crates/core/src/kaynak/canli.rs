@@ -95,6 +95,9 @@ impl AnlikKaynagi for CanliKaynak {
     fn gecmis(&self) -> &[Ozet] {
         self.boru.gecmis()
     }
+    fn ayrinti(&self) -> Option<&crate::stats::ayrinti::Ayrinti> {
+        Some(self.boru.ayrinti())
+    }
     fn kapat(&mut self) {
         self.boru.kapat(Neden::UygulamaKapandi, self.simdi_ms);
     }

@@ -5,6 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
+pub mod ayrinti;
 pub mod gecmis;
 pub mod toplayici;
 

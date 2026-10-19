@@ -1,4 +1,4 @@
-//! Komut satırı: [--dosya <pcap>] [--port <sunucu portu>] [--sunucu <ip:port>] [--boru [--hepsi]] [--savas [--hepsi]] [--hex 0438 --adet 5 [--hatali]]
+//! Komut satırı: [--dosya <pcap>] [--port <sunucu portu>] [--sunucu <ip:port>] [--boru [--hepsi]] [--savas [--hepsi] [--beceri]] [--hex 0438 --adet 5 [--hatali]]
 
 use std::net::SocketAddrV4;
 use std::path::PathBuf;
@@ -10,6 +10,7 @@ pub struct Secenekler {
     pub sunucu: Option<SocketAddrV4>,
     pub boru: bool,
     pub savas: bool,
+    pub beceri: bool,
     pub hepsi: bool,
     pub hex: Option<[u8; 2]>,
     pub adet: usize,
@@ -31,6 +32,7 @@ pub fn oku() -> Secenekler {
         sunucu: deger("--sunucu").and_then(|s| s.parse().ok()),
         boru: a.iter().any(|x| x == "--boru"),
         savas: a.iter().any(|x| x == "--savas"),
+        beceri: a.iter().any(|x| x == "--beceri"),
         hepsi: a.iter().any(|x| x == "--hepsi"),
         hex: deger("--hex")
             .and_then(|h| u16::from_str_radix(&h, 16).ok())

@@ -7,6 +7,7 @@ use crate::{
     capture::{kaynak_pcap::PcapDosyasi, paket::ayristir},
     stats::{
         SavasAnlik,
+        ayrinti::Ayrinti,
         gecmis::{Neden, Ozet},
     },
 };
@@ -54,6 +55,9 @@ impl AnlikKaynagi for KayitKaynak {
     }
     fn gecmis(&self) -> &[Ozet] {
         self.boru.gecmis()
+    }
+    fn ayrinti(&self) -> Option<&Ayrinti> {
+        Some(self.boru.ayrinti())
     }
     fn kapat(&mut self) {
         self.boru.kapat(Neden::UygulamaKapandi, self.son_zaman_ms);

@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.7.4 (2026-10-19)
+### Yeni
+- Her savaş için beceri kırılımı toplanıyor (vuruş, tick, kritik, kaçınma, ek vuruş, en büyük; perfect, block, back),
+  saniyelik hasar ve iyileştirme serisi, ölüm ve diriliş anları (son vuranla). Şimdilik bellekte; dosyaya yazma ve rapor
+  bağlantısı bir sonraki sürümde.
+
 ## 0.7.3 (2026-10-19)
 ### Yeni
 - Biten savaşlar artık unutulmuyor: her savaşın özeti (süre, hedef, sonuç, toplam hasar ve iyileştirme, ölümler)

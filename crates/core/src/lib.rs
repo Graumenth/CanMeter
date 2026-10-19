@@ -15,6 +15,7 @@ use std::time::Duration;
 use kaynak::AnlikKaynagi;
 pub use kaynak::Durum;
 use stats::SavasAnlik;
+pub use stats::ayrinti::{Aile, Ayrinti, BeceriAnahtar, BeceriSayac, Kova, Olay, YasamOlayi};
 pub use stats::gecmis::{Etiket, Neden, Ozet, OzetHedef, Sonuc};
 
 /// Çekirdek giriş noktası (Facade): kaynak seçimi ve ilerletme tek yerden.
@@ -66,6 +67,11 @@ impl Motor {
     /// Kapanmış savaşların oturum içi özetleri (eskiden yeniye).
     pub fn gecmis(&self) -> &[Ozet] {
         self.kaynak.gecmis()
+    }
+
+    /// Açık savaşın ayrıntısı; yoksa son kapananınki. Demo kaynakta yok (None).
+    pub fn ayrinti(&self) -> Option<&Ayrinti> {
+        self.kaynak.ayrinti()
     }
 
     /// Açık savaşı "uygulama kapandı" nedeniyle kapatır.

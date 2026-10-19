@@ -1,6 +1,7 @@
 //! Savaş sınırı bağlama testleri: sunucu geçişi, kaynak sonu, sessizlik, kayıt bitişi.
 use super::testler_ortak::*;
 use super::*;
+use crate::stats::ayrinti::{Aile, BeceriAnahtar};
 use crate::stats::gecmis::Sonuc;
 use std::{fs, net::Ipv4Addr, time::Duration};
 
@@ -47,6 +48,22 @@ fn sessizlik_olaydan_once_kapatir() {
     let anlik = boru.anlik(40_000).unwrap();
     assert!(anlik.aktif);
     assert_eq!(anlik.savas_id, ilk + 1);
+}
+
+#[test]
+fn hasar_cercevesi_ayrintiya_islenir() {
+    let (mut boru, mut a) = kilitli();
+    a.gonder(&mut boru, 1200, &hasar_cercevesi());
+    let anahtar = BeceriAnahtar {
+        kaynak: 12929,
+        aile: Aile::Dogrudan,
+        beceri: 11420340,
+    };
+    let s = &boru.ayrinti().beceriler[&anahtar];
+    assert_eq!((s.hasar, s.vurus, s.kapsam), (1081, 1, 0));
+    assert_eq!(boru.ayrinti().kovalar[&12929].hasar[0], 1081);
+    boru.kapat(Neden::KaynakSonu, 1300);
+    assert_eq!(boru.ayrinti().beceriler[&anahtar].hasar, 1081);
 }
 
 /// Ethernet/IP/TCP çerçevesi: A ucu 198.51.100.20:13328 -> istemci 192.0.2.1:50000.

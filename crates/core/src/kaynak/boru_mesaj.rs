@@ -20,8 +20,13 @@ pub(super) fn isle(tablo: &mut Tablo, toplayici: &mut Toplayici, zaman_ms: u64, 
             toplayici.periyodik(zaman_ms, &p);
         }
         Mesaj::Hp(h) => {
+            // Ölü bilinen varlık HP > 0 ile dirildi: yaşam olayı (satır kökü).
+            let dirildi = h.mevcut > 0 && tablo.varlik(h.actor).is_some_and(|v| v.olu);
             tablo.dirilt(h.actor, h.mevcut);
             toplayici.hp(h);
+            if dirildi {
+                toplayici.dirildi(tablo.kok(h.actor));
+            }
         }
         Mesaj::Olum(o) if o.bayrak == 3 => {
             toplayici.hedef_oldu(o.id);

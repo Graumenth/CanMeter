@@ -1,5 +1,5 @@
 //! Olay sayaçları; ad çözümü ve görünüm üretimi yalnız anlık istendiğinde yapılır.
-use super::{SavasAnlik, gecmis::Gecmis};
+use super::{SavasAnlik, ayrinti::Ayrinti, gecmis::Gecmis};
 use crate::protocol::mesaj::{Hasar, Hp, Periyodik};
 use std::collections::{HashMap, VecDeque};
 
@@ -26,6 +26,9 @@ pub struct Toplayici {
     gecmis: Gecmis,
     /// Kapanan savaşın son görünümü; bir sonraki savaşa kadar overlay'de kalır.
     son_kapali: Option<SavasAnlik>,
+    ayrinti: Ayrinti,
+    /// Kapanan savaşın ayrıntısı; görev 4 dosyaya yazar, analiz penceresi okur.
+    son_ayrinti: Option<Ayrinti>,
 }
 
 impl Toplayici {
@@ -35,75 +38,22 @@ impl Toplayici {
             ..Self::default()
         }
     }
-
-    /// `dost`: aktör ve hedef aynı partide; oyuncu parti üyesine vuramaz, bu mesaj iyileştirmedir (0.6.3).
-    pub fn hasar(&mut self, zaman_ms: u64, h: &Hasar, dost: bool) {
-        if h.actor == h.hedef || dost {
-            self.iyilestir(h.actor, h.deger);
-        } else {
-            let miktar = if matches!(h.vurus_turu, 1 | 6) {
-                0
-            } else {
-                h.deger
-            };
-            self.vurus(zaman_ms, h.actor, h.hedef, miktar, h.vurus_turu == 3);
-        }
-    }
-
-    pub fn periyodik(&mut self, zaman_ms: u64, p: &Periyodik) {
-        match p.etki_turu {
-            0x02 | 0x0A => self.vurus(zaman_ms, p.actor, p.hedef, p.miktar, false),
-            0x01 | 0x09 | 0x0B => self.iyilestir(p.actor, p.miktar),
-            _ => {}
-        }
-    }
-
-    /// İyileştirme savaş açmaz; savaş dışı iyileştirme düşer.
-    fn iyilestir(&mut self, actor: u32, miktar: u64) {
-        if self.aktif {
-            let s = self.oyuncular.entry(actor).or_default();
-            s.iyilestirme = s.iyilestirme.saturating_add(miktar);
-            self.kirli = true;
-        }
-    }
-
-    fn vurus(&mut self, zaman: u64, actor: u32, hedef: u32, miktar: u64, kritik: bool) {
-        if self.aktif && zaman.saturating_sub(self.son_hasar_ms) > BOSLUK_MS {
-            self.kapat_ic(super::gecmis::Neden::Sessizlik, zaman, None);
-        }
-        if !self.aktif {
-            self.oyuncular.clear();
-            self.hedefler.clear();
-            self.son_hasarlari.clear();
-            self.olen_hedefler.clear();
-            self.hedef = None;
-            self.baslangic_ms = Some(zaman);
-            self.savas_id = self.savas_id.saturating_add(1);
-            self.aktif = true;
-        }
-        self.son_hasar_ms = self.son_hasar_ms.max(zaman);
-        let s = self.oyuncular.entry(actor).or_default();
-        s.hasar = s.hasar.saturating_add(miktar);
-        s.vurus = s.vurus.saturating_add(1);
-        s.kritik = s.kritik.saturating_add(u32::from(kritik));
-        s.son_hasar_ms = self.son_hasar_ms;
-        s.hedef_ekle(hedef);
-        let h = self.hedefler.entry(hedef).or_default();
-        *h = h.saturating_add(miktar);
-        self.kova_ekle(miktar);
-        self.kirli = true;
-    }
 }
 
 #[path = "toplayici_anlik.rs"]
 mod anlik;
 #[path = "toplayici_hedef.rs"]
 mod hedef;
+#[path = "toplayici_olay.rs"]
+mod olay;
 #[path = "toplayici_sinir.rs"]
 mod sinir;
 #[cfg(test)]
 #[path = "toplayici_testler.rs"]
 mod testler;
+#[cfg(test)]
+#[path = "toplayici_testler_ayrinti.rs"]
+mod testler_ayrinti;
 #[cfg(test)]
 #[path = "toplayici_testler_parti.rs"]
 mod testler_parti;

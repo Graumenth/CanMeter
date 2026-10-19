@@ -1,5 +1,5 @@
 //! Hedef işleri: seçim, HP ve kalan süre tahmini, tahmin kovaları.
-use super::{Hp, TAHMIN_PENCERESI_MS, Toplayici};
+use super::{Ayrinti, Hp, TAHMIN_PENCERESI_MS, Toplayici};
 use crate::{
     combat::Tablo,
     stats::{HedefAnlik, SavasAnlik, gecmis::Sonuc},
@@ -15,7 +15,25 @@ impl Toplayici {
     pub fn olum(&mut self, id: u32) {
         if self.aktif {
             self.oyuncular.entry(id).or_default().olum += 1;
+            let ms = self.goreli(self.son_hasar_ms);
+            self.ayrinti.olum(ms, id);
             self.kirli = true;
+        }
+    }
+
+    /// Diriliş yalnız açık savaşın ayrıntısına girer.
+    pub fn dirildi(&mut self, id: u32) {
+        if self.aktif {
+            self.ayrinti.dirilis(self.goreli(self.son_hasar_ms), id);
+        }
+    }
+
+    /// Açık savaşın ayrıntısı; savaş yoksa son kapananınki (o da yoksa boş).
+    pub fn ayrinti(&self) -> &Ayrinti {
+        if self.aktif {
+            &self.ayrinti
+        } else {
+            self.son_ayrinti.as_ref().unwrap_or(&self.ayrinti)
         }
     }
 
