@@ -12,6 +12,7 @@ fn orneklerden_statiktum_sayfalar() {
     assert!(dizin.contains("savas/20261017-203012-07.html"));
     assert!(dizin.contains("Toplam süre"));
     assert!(dizin.contains("<h2>Zindanlar</h2>"));
+    assert!(!dizin.contains("Henüz kayıtlı savaş yok"));
     assert!(dizin.contains("<h2>Bölgeler</h2>"));
     assert!(dizin.contains("Draupnir"));
     assert!(dizin.contains("Bölge #500038"));
@@ -111,5 +112,6 @@ fn kalite_yarim_guvenli_yol_ve_bos_gecmis() {
     assert!(bos.join("index.html").is_file());
     let dizin = fs::read_to_string(bos.join("index.html")).unwrap();
     assert_eq!(dizin.matches("Henüz bölge kaydı yok.").count(), 2);
+    assert!(dizin.contains("Henüz kayıtlı savaş yok"));
     assert_eq!(fs::read_dir(bos.join("savas")).unwrap().count(), 0);
 }

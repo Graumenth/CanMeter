@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.8.3 (2026-10-19)
+### Düzeltme
+- Rapor aracı henüz kayıtlı savaş yokken hata vermiyor; boş rapor açılır ve savaşların nerede birikeceğini söyler.
+
 ## 0.8.2 (2026-10-19)
 ### Düzeltme
 - Oyun açıkken CanMeter'ı başlatıp zindana girince ilk saniyeler (bölge, karakter, parti listesi) kaçabiliyordu;

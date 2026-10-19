@@ -38,7 +38,11 @@ pub fn yaz(g: &Gecmis) -> String {
             bicim::sayi(hesap::dps(b.toplam_hasar, b.sure_ms)), b.toplam_hasar,
             bicim::sayi(b.toplam_hasar as f64), hesap::olum(savas)));
     }
-    cikti.push_str("</tbody></table></section>");
+    cikti.push_str("</tbody></table>");
+    if savaslar.is_empty() {
+        cikti.push_str(r#"<p class="soluk">Henüz kayıtlı savaş yok. CanMeter açıkken biten her savaş (5 saniye ve üstü) geçmişe yazılır ve burada görünür.</p>"#);
+    }
+    cikti.push_str("</section>");
     cikti.push_str(&ortak::son(""));
     cikti
 }

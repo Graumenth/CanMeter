@@ -3,6 +3,8 @@ use std::{env, ffi::OsString, path::PathBuf};
 
 pub struct Secenekler {
     pub girdi: PathBuf,
+    /// `--girdi` açıkça verildiyse true; varsayılan klasör yoksa boş rapor üretilir.
+    pub girdi_verildi: bool,
     pub cikti: PathBuf,
     pub ac: bool,
 }
@@ -39,7 +41,9 @@ pub fn cozumle(sozler: impl IntoIterator<Item = OsString>) -> Result<Secenekler,
             .map(|p| PathBuf::from(p).join("CanMeter"))
             .ok_or_else(|| "LOCALAPPDATA tanımlı değil; --girdi ve --cikti belirtin".to_string())
     };
+    let girdi_verildi = girdi.is_some();
     Ok(Secenekler {
+        girdi_verildi,
         girdi: match girdi {
             Some(yol) => yol,
             None => varsayilan()?.join("encounters"),
@@ -54,7 +58,19 @@ pub fn cozumle(sozler: impl IntoIterator<Item = OsString>) -> Result<Secenekler,
 
 pub fn calistir() -> Result<(), String> {
     let secenek = cozumle(env::args_os().skip(1))?;
-    let gecmis = oku::gecmis(&secenek.girdi)?;
+    let gecmis = if !secenek.girdi_verildi && !secenek.girdi.is_dir() {
+        // İlk açılış: meter daha savaş yazmadı. Boş rapor; klasör ilk savaşta meter tarafından açılır.
+        eprintln!(
+            "Not: {} henüz yok; CanMeter açıkken biten savaşlar oraya yazılır. Boş rapor üretildi.",
+            secenek.girdi.display()
+        );
+        oku::Gecmis {
+            haritalar: canmeter_sema::Haritalar::yukle(),
+            ..Default::default()
+        }
+    } else {
+        oku::gecmis(&secenek.girdi)?
+    };
     uret::yaz(&gecmis, &secenek.cikti)?;
     println!(
         "{} savaş raporu yazıldı: {}",
