@@ -4,7 +4,7 @@
 //! Kaynak kendi saat tutmaz, zamanı `gecen` ile dışarıdan alır: deterministik test edilir ve
 //! kimseyi boşuna uyandırmaz.
 
-use std::time::Duration;
+use std::{path::PathBuf, time::Duration};
 
 use crate::stats::{SavasAnlik, ayrinti::Ayrinti, gecmis::Ozet};
 
@@ -40,4 +40,6 @@ pub trait AnlikKaynagi: Send {
     }
     /// Açık savaşı "uygulama kapandı" nedeniyle kapatır (çıkışta ve kendini yenilemede çağrılır).
     fn kapat(&mut self) {}
+    /// Geçmiş arşivi kökü (`None` kapalı); demo kaynak yok sayar.
+    fn arsiv_ayarla(&mut self, _kok: Option<PathBuf>) {}
 }

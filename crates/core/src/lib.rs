@@ -15,6 +15,7 @@ use std::time::Duration;
 use kaynak::AnlikKaynagi;
 pub use kaynak::Durum;
 use stats::SavasAnlik;
+pub use stats::arsiv::varsayilan_kok;
 pub use stats::ayrinti::{Aile, Ayrinti, BeceriAnahtar, BeceriSayac, Kova, Olay, YasamOlayi};
 pub use stats::gecmis::{Etiket, Neden, Ozet, OzetHedef, Sonuc};
 
@@ -72,6 +73,11 @@ impl Motor {
     /// Açık savaşın ayrıntısı; yoksa son kapananınki. Demo kaynakta yok (None).
     pub fn ayrinti(&self) -> Option<&Ayrinti> {
         self.kaynak.ayrinti()
+    }
+
+    /// Kapanan savaşların dosyaya yazıldığı kök; `None` kapatır.
+    pub fn arsiv_ayarla(&mut self, kok: Option<std::path::PathBuf>) {
+        self.kaynak.arsiv_ayarla(kok)
     }
 
     /// Açık savaşı "uygulama kapandı" nedeniyle kapatır.

@@ -1,6 +1,9 @@
 //! Pcap kayıtlarını zamanına göre veya hızlandırılmış olarak oynatır.
 
-use std::{path::Path, time::Duration};
+use std::{
+    path::{Path, PathBuf},
+    time::Duration,
+};
 
 use super::{AnlikKaynagi, boru::Boru};
 use crate::{
@@ -61,6 +64,9 @@ impl AnlikKaynagi for KayitKaynak {
     }
     fn kapat(&mut self) {
         self.boru.kapat(Neden::UygulamaKapandi, self.son_zaman_ms);
+    }
+    fn arsiv_ayarla(&mut self, kok: Option<PathBuf>) {
+        self.boru.arsiv_ayarla(kok);
     }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         if self.bitti {

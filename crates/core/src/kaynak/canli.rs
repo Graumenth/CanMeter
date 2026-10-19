@@ -8,6 +8,7 @@ use crate::{
     capture::{arayuz, paket::ayristir},
     stats::{
         SavasAnlik,
+        ayrinti::Ayrinti,
         gecmis::{Neden, Ozet},
     },
 };
@@ -69,11 +70,7 @@ impl CanliKaynak {
                 }
             })
             .map_err(|hata| hata.to_string())?;
-        Ok(Self {
-            alici,
-            boru: Boru::new(),
-            simdi_ms: 0,
-        })
+        Ok(Self::kanaldan(alici))
     }
 
     pub fn kanaldan(alici: Receiver<HamSegment>) -> Self {
@@ -95,11 +92,14 @@ impl AnlikKaynagi for CanliKaynak {
     fn gecmis(&self) -> &[Ozet] {
         self.boru.gecmis()
     }
-    fn ayrinti(&self) -> Option<&crate::stats::ayrinti::Ayrinti> {
+    fn ayrinti(&self) -> Option<&Ayrinti> {
         Some(self.boru.ayrinti())
     }
     fn kapat(&mut self) {
         self.boru.kapat(Neden::UygulamaKapandi, self.simdi_ms);
+    }
+    fn arsiv_ayarla(&mut self, kok: Option<std::path::PathBuf>) {
+        self.boru.arsiv_ayarla(kok);
     }
     fn ilerle(&mut self, gecen: Duration) -> Option<SavasAnlik> {
         let mut geldi = false;

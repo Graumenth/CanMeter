@@ -2,7 +2,7 @@
 use super::{Ayrinti, Hp, TAHMIN_PENCERESI_MS, Toplayici};
 use crate::{
     combat::Tablo,
-    stats::{HedefAnlik, SavasAnlik, gecmis::Sonuc},
+    stats::{HedefAnlik, KapananSavas, SavasAnlik, gecmis::Sonuc},
 };
 
 impl Toplayici {
@@ -29,13 +29,25 @@ impl Toplayici {
     }
 
     /// Açık savaşın ayrıntısı; savaş yoksa son kapananınki (o da yoksa boş).
+    #[rustfmt::skip]
     pub fn ayrinti(&self) -> &Ayrinti {
-        if self.aktif {
-            &self.ayrinti
-        } else {
-            self.son_ayrinti.as_ref().unwrap_or(&self.ayrinti)
-        }
+        if self.aktif { &self.ayrinti } else { self.kapanan.as_ref().map_or(&self.ayrinti, |k| &k.ayrinti) }
     }
+
+    /// Kapanan savaş paketi; yazılmamışsa işaretleyip bir kez döner.
+    pub fn yazilacak(&mut self) -> Option<&KapananSavas> {
+        let yeni = !self.kapanan_yazildi;
+        self.kapanan_yazildi = true;
+        self.kapanan.as_ref().filter(|_| yeni)
+    }
+
+    /// Yazma başarısız: en çok 3 kez yeniden denenir (sonraki `anlik` paketi yeniden verir).
+    #[rustfmt::skip]
+    pub fn yazma_basarisiz(&mut self) {
+        if self.yazma_denemesi < 3 { self.yazma_denemesi += 1; self.kapanan_yazildi = false; }
+    }
+    #[rustfmt::skip]
+    pub fn yazma_basarili(&mut self) { self.yazma_denemesi = 0; }
 
     /// Hedef ölü gözlendi (42 36 bayrak 3); yalnız bu savaşta vurulan hedefler saklanır, tekrar eklenmez.
     pub fn hedef_oldu(&mut self, id: u32) {
@@ -46,10 +58,8 @@ impl Toplayici {
 
     /// Hedef: yerelin son vurduğu parti dışı varlık (PvP'de rakip oyuncu da, 0.6.3); yerel yoksa en çok hasar alan NPC.
     pub(super) fn hedef_sec(&mut self, tablo: &Tablo) {
-        let yerel_hedef = tablo
-            .yerel()
-            .and_then(|y| self.oyuncular.get(&y))
-            .map(|s| s.son_hedef)
+        #[rustfmt::skip]
+        let yerel_hedef = tablo.yerel().and_then(|y| self.oyuncular.get(&y)).map(|s| s.son_hedef)
             .filter(|h| self.hedefler.contains_key(h) && !tablo.partide(*h));
         let oyuncu = |id: u32| tablo.varlik(id).is_some_and(|v| v.oyuncu);
         self.hedef = yerel_hedef.or_else(|| {
@@ -66,9 +76,8 @@ impl Toplayici {
         let mut ad = String::new();
         tablo.ad(id, &mut ad);
         let hp = self.hp.get(&id).filter(|(_, azami)| *azami > 0);
-        let son_hasar = self
-            .son_hasarlari
-            .iter()
+        #[rustfmt::skip]
+        let son_hasar = self.son_hasarlari.iter()
             .filter(|(z, _)| simdi.saturating_sub(*z) <= TAHMIN_PENCERESI_MS)
             .fold(0_u64, |t, (_, h)| t.saturating_add(*h));
         Some(HedefAnlik {
@@ -98,10 +107,8 @@ impl Toplayici {
         let hedef_olu = self.hedef.is_some_and(|h| {
             self.olen_hedefler.contains(&h) || tablo.varlik(h).is_some_and(|v| v.olu)
         });
-        let mut parti = anlik
-            .oyuncular
-            .iter()
-            .filter(|o| tablo.partide(o.id as u32));
+        #[rustfmt::skip]
+        let mut parti = anlik.oyuncular.iter().filter(|o| tablo.partide(o.id as u32));
         if hedef_olu {
             Sonuc::Zafer
         } else if parti.clone().next().is_some() && parti.all(|o| o.olu || o.olum > 0) {

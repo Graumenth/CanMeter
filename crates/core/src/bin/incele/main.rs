@@ -32,6 +32,7 @@ fn main() {
         boru,
         savas,
         beceri,
+        arsiv,
         hepsi,
         hex,
         adet,
@@ -42,7 +43,7 @@ fn main() {
         return;
     }
     if savas {
-        savas_izi::calistir(dosya, hepsi, beceri);
+        savas_izi::calistir(dosya, hepsi, beceri, arsiv);
         return;
     }
     let dosya = dosya

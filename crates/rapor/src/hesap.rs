@@ -58,9 +58,12 @@ pub fn ortalamalar(savas: &Encounter, no: u32) -> Vec<f64> {
     let uzunluk = savas.baslik.sure_ms.div_ceil(1_000).max(1) as usize;
     let mut kovalar = vec![0.0; uzunluk];
     for kova in savas.kovalar.iter().filter(|k| k.katilimci == no) {
-        for (indeks, hasar) in kova.hasar.iter().enumerate() {
-            if let Some(hucre) = kovalar.get_mut(kova.bas as usize + indeks) {
-                *hucre += f64::from(*hasar);
+        let n = (kova.genislik_ms / 1_000).max(1);
+        for (indeks, &hasar) in kova.hasar.iter().enumerate() {
+            let bas = (kova.bas as usize + indeks) * n as usize;
+            // Kalan ilk saniyeye eklenir; kova toplamı korunur.
+            for (saniye, hucre) in kovalar.iter_mut().skip(bas).take(n as usize).enumerate() {
+                *hucre += f64::from(hasar / n + if saniye == 0 { hasar % n } else { 0 });
             }
         }
     }

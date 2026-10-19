@@ -17,6 +17,8 @@ pub struct Ayarlar {
     pub toplam_goster: bool,
     /// Hedef satırı (ad, HP çubuğu, kalan süre); sahip isteği 0.6.6.
     pub hedef_goster: bool,
+    /// Kapanan savaş `%LOCALAPPDATA%\CanMeter\encounters` altına yazılır (rapor için).
+    pub gecmis_kaydet: bool,
     /// Overlay ölçeği (1.0 = 440 px genişlik); kenardan sürükleyince değişir.
     pub olcek: f32,
     /// Pencere dış köşesi (doğal nokta); taşıyınca güncellenir, açılışta kullanılır.
@@ -32,6 +34,7 @@ impl Default for Ayarlar {
             zemin_opaklik: 0.92,
             toplam_goster: true,
             hedef_goster: true,
+            gecmis_kaydet: true,
             olcek: 1.0,
             konum: None,
         }
@@ -99,6 +102,7 @@ mod testler {
                 zemin_opaklik: 0.3,
                 toplam_goster: false,
                 hedef_goster: false,
+                gecmis_kaydet: false,
                 olcek: 1.5,
                 konum: Some([120, -40]),
             },

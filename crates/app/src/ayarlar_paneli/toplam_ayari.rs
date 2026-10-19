@@ -7,6 +7,7 @@ pub fn ciz(ui: &mut egui::Ui, ayarlar: &mut Ayarlar) -> bool {
     let sozluk = metin(ayarlar.dil);
     satir(ui, sozluk.hedef_cubugu, &mut ayarlar.hedef_goster)
         | satir(ui, sozluk.toplam_gostergesi, &mut ayarlar.toplam_goster)
+        | satir(ui, sozluk.gecmis_kaydet, &mut ayarlar.gecmis_kaydet)
 }
 
 fn satir(ui: &mut egui::Ui, etiket: &str, deger: &mut bool) -> bool {

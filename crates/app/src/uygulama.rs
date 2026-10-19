@@ -37,6 +37,10 @@ impl Uygulama {
         crate::sinif_ikon::yukle(&cc.egui_ctx);
         pencere::kenarlik_kaldir(cc);
         cc.egui_ctx.set_zoom_factor(ayarlar.olcek);
+        let mut motor = crate::komut_satiri::motor();
+        if ayarlar.gecmis_kaydet {
+            motor.arsiv_ayarla(canmeter_core::varsayilan_kok());
+        }
         Self {
             skin: kayit::bul(&ayarlar.skin),
             ayarlar,
@@ -45,7 +49,7 @@ impl Uygulama {
             kisayol_global: GlobalKisayol::new(),
             yenileme: Yenileme::new(),
             ayarlar_acik: false,
-            motor: crate::komut_satiri::motor(),
+            motor,
             son: None,
             onceki: Instant::now(),
             boyut: Boyut::default(),
@@ -54,6 +58,10 @@ impl Uygulama {
         }
     }
     fn kaydet(&mut self, onceki_dil: Dil) {
+        if self.ayarlar.gecmis_kaydet != self.kalici.gecmis_kaydet {
+            let kok = canmeter_core::varsayilan_kok().filter(|_| self.ayarlar.gecmis_kaydet);
+            self.motor.arsiv_ayarla(kok);
+        }
         self.ayarlar
             .kaliciye_yaz(&mut self.kalici, onceki_dil, self.skin.ad());
         self.skin = kayit::bul(&self.ayarlar.skin);
@@ -63,7 +71,7 @@ impl eframe::App for Uygulama {
     fn clear_color(&self, _: &egui::Visuals) -> [f32; 4] {
         [0.0, 0.0, 0.0, 0.0]
     }
-    /// Çıkışta (kendini yenilerken de) açık savaş "uygulama kapandı" nedeniyle kapanır; görev 4'te dosyaya yazılır.
+    /// Çıkışta (kendini yenilerken de) açık savaş "uygulama kapandı" nedeniyle kapanır; arşiv açıksa dosyaya yazılır.
     fn on_exit(&mut self, _: Option<&eframe::glow::Context>) {
         self.motor.kapat();
     }

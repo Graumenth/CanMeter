@@ -5,6 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
+pub mod arsiv;
 pub mod ayrinti;
 pub mod gecmis;
 pub mod toplayici;
@@ -96,4 +97,12 @@ pub struct SavasAnlik {
     pub hedef: Option<HedefAnlik>,
     pub toplam_hasar: u64,
     pub oyuncular: Vec<OyuncuAnlik>,
+}
+
+/// Kapanan savaşın tam paketi: özet, son görünüm (satırlar) ve ayrıntı; `arsiv` dosyaya yazar.
+#[derive(Debug)]
+pub struct KapananSavas {
+    pub ozet: gecmis::Ozet,
+    pub anlik: SavasAnlik,
+    pub ayrinti: ayrinti::Ayrinti,
 }

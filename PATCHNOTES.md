@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.8.0 (2026-10-19)
+### Yeni
+- Biten savaşlar artık diske kaydediliyor (`%LOCALAPPDATA%\CanMeter\encounters`): oyun oynarken dosyalar kendiliğinden
+  birikir, `canmeter-rapor` çift tıklamayla gerçek savaşlarınızı gösterir (liste, DPS grafiği, oyuncu tablosu, beceri
+  kırılımı, ölümler). Ayarlarda "Geçmişi kaydet" ile kapatılabilir.
+
 ## 0.7.4 (2026-10-19)
 ### Yeni
 - Her savaş için beceri kırılımı toplanıyor (vuruş, tick, kritik, kaçınma, ek vuruş, en büyük; perfect, block, back),

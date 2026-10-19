@@ -2,7 +2,10 @@
 use super::{BOSLUK_MS, Toplayici};
 use crate::{
     combat::Tablo,
-    stats::gecmis::{Etiket, Neden, Ozet, OzetHedef, Sonuc},
+    stats::{
+        KapananSavas,
+        gecmis::{Etiket, Neden, Ozet, OzetHedef, Sonuc},
+    },
 };
 
 impl Toplayici {
@@ -76,6 +79,14 @@ impl Toplayici {
                 ozet.toplam_iyilestirme = ozet.toplam_iyilestirme.saturating_add(o.iyilestirme);
                 ozet.olum = ozet.olum.saturating_add(o.olum);
             }
+            if kaydet {
+                self.kapanan = Some(KapananSavas {
+                    ozet: ozet.clone(),
+                    anlik: anlik.clone(),
+                    ayrinti: std::mem::take(&mut self.ayrinti),
+                });
+                self.kapanan_yazildi = false;
+            }
             self.son_kapali = Some(anlik);
         } else {
             for s in self.oyuncular.values() {
@@ -91,7 +102,7 @@ impl Toplayici {
         self.hedefler.clear();
         self.son_hasarlari.clear();
         self.olen_hedefler.clear();
-        self.son_ayrinti = Some(std::mem::take(&mut self.ayrinti));
+        self.ayrinti = Default::default();
         if neden == Neden::SunucuDegisti {
             self.hp.clear();
         }

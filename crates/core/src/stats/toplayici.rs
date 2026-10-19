@@ -1,5 +1,5 @@
 //! Olay sayaçları; ad çözümü ve görünüm üretimi yalnız anlık istendiğinde yapılır.
-use super::{SavasAnlik, ayrinti::Ayrinti, gecmis::Gecmis};
+use super::{KapananSavas, SavasAnlik, ayrinti::Ayrinti, gecmis::Gecmis};
 use crate::protocol::mesaj::{Hasar, Hp, Periyodik};
 use std::collections::{HashMap, VecDeque};
 
@@ -27,8 +27,11 @@ pub struct Toplayici {
     /// Kapanan savaşın son görünümü; bir sonraki savaşa kadar overlay'de kalır.
     son_kapali: Option<SavasAnlik>,
     ayrinti: Ayrinti,
-    /// Kapanan savaşın ayrıntısı; görev 4 dosyaya yazar, analiz penceresi okur.
-    son_ayrinti: Option<Ayrinti>,
+    /// Kapanan savaşın tam paketi (arşiv yazar, analiz penceresi okur); son geçerli paket kalır.
+    kapanan: Option<KapananSavas>,
+    kapanan_yazildi: bool,
+    /// Art arda yazma hatası sayısı (üst sınır 3); başarılı yazma sıfırlar.
+    yazma_denemesi: u8,
 }
 
 impl Toplayici {

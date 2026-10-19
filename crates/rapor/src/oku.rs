@@ -56,6 +56,9 @@ pub fn dosya(yol: &Path) -> Result<Option<Encounter>, String> {
             .and_then(|s| serde_json::from_str::<Kayit>(s).ok());
         match kayit {
             Some(Kayit::Baslik(b)) => {
+                if b.sema > canmeter_sema::SEMA {
+                    notlar.push(format!("şema {} bu sürümden yeni", b.sema));
+                }
                 savas.baslik = b;
                 baslik_var = true;
             }
