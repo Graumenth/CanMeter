@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.8.6 (2026-10-29)
+### Değişti
+- CanMeter artık kurulu bir program gibi sabit yerden çalışır: D:\CanMeter\Meter (meter, bekçi, rapor). Derleme
+  betiği her yeni sürümü oraya da yazar; çalışan meter yeni sürümü görünce savaş dışında kendini yeniler. Ayarlar ve
+  geçmiş dosyaları yerinde kaldı.
+
 ## 0.8.5 (2026-10-29)
 ### Değişti
 - Görünürde değişiklik yok: CanMeter artık Rust 1.99.1 ile derleniyor (önce 1.98.1).

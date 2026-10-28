@@ -3,8 +3,10 @@
 # meter aynı yetkiyi alır (oyun odaktayken global kısayollar ancak yöneticiyle çalışır). Oyuna dokunulmaz.
 # Yönetici PowerShell'de çalıştırılır. Yeniden çalıştırmak günceller (çalışan bekçi durdurulur, yeni exe alınır).
 # -Baslat: kurduktan sonra görevi hemen başlatır. -Kaldir: görevi ve çalışan bekçiyi kaldırır.
-# -Exe: bekçi yolu (varsayılan <repo>\target\release\canmeter-bekci.exe). -Argumanlar: bekçiye geçer (örn. "--iz D:\bekci.log").
+# -Exe: bekçi yolu (varsayılan kurulu kopya $MeterKlasor\canmeter-bekci.exe, bkz. kurulum.ps1; target\release
+# kullanılmaz, CC kuralı kural-kurulu-kopya.md). -Argumanlar: bekçiye geçer (örn. "--iz D:\bekci.log").
 param([switch]$Baslat, [switch]$Kaldir, [string]$Exe = "", [string]$Argumanlar = "")
+. (Join-Path $PSScriptRoot "kurulum.ps1")
 $ad = "CanMeter oyunla baslat"
 $yonetici = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
     [Security.Principal.WindowsBuiltInRole]::Administrator)
@@ -16,8 +18,8 @@ if ($Kaldir) {
     Write-Output ("kaldirildi: " + $ad)
     exit 0
 }
-if (-not $Exe) { $Exe = Join-Path (Split-Path -Parent $PSScriptRoot) "target\release\canmeter-bekci.exe" }
-if (-not (Test-Path $Exe)) { Write-Error ("bekci yok: " + $Exe + " (cargo build --release -p canmeter-bekci)"); exit 1 }
+if (-not $Exe) { $Exe = Join-Path $MeterKlasor "canmeter-bekci.exe" }
+if (-not (Test-Path $Exe)) { Write-Error ("bekci yok: " + $Exe + " (once araclar\yenile.ps1 calistir)"); exit 1 }
 $kullanici = ([Security.Principal.WindowsIdentity]::GetCurrent()).Name
 if ($Argumanlar) {
     $eylem = New-ScheduledTaskAction -Execute $Exe -Argument $Argumanlar -WorkingDirectory (Split-Path -Parent $Exe)
