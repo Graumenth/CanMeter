@@ -1,5 +1,9 @@
 # PATCHNOTES
 
+## 0.8.5 (2026-10-29)
+### Değişti
+- Görünürde değişiklik yok: CanMeter artık Rust 1.99.1 ile derleniyor (önce 1.98.1).
+
 ## 0.8.4 (2026-10-29)
 ### Yeni
 - Oyunla başlat: küçük bir bekçi programı (canmeter-bekci.exe) oyun açılınca CanMeter'ı kendiliğinden açar, oyun
