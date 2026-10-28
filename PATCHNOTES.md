@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.8.4 (2026-10-29)
+### Yeni
+- Oyunla başlat: küçük bir bekçi programı (canmeter-bekci.exe) oyun açılınca CanMeter'ı kendiliğinden açar, oyun
+  kapanınca dokunmaz. Kurulum tek komut: araclar\oyunla-baslat-kur.ps1 (yönetici PowerShell); kaldırmak için -Kaldir.
+  Oyuna dokunmaz, yalnız çalışan programların listesine bakar; boşta 1 MB'tan az bellek.
+
 ## 0.8.3 (2026-10-19)
 ### Düzeltme
 - Rapor aracı henüz kayıtlı savaş yokken hata vermiyor; boş rapor açılır ve savaşların nerede birikeceğini söyler.

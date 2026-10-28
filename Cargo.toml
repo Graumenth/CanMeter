@@ -1,9 +1,9 @@
 [workspace]
-members = ["crates/core", "crates/app", "crates/rapor", "crates/sema"]
+members = ["crates/core", "crates/app", "crates/rapor", "crates/sema", "crates/bekci"]
 resolver = "2"
 
 [workspace.package]
-version = "0.8.3"
+version = "0.8.4"
 edition = "2024"
 publish = false
 license = "GPL-3.0-only"

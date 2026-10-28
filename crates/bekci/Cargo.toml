@@ -1,0 +1,15 @@
+[package]
+name = "canmeter-bekci"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+license.workspace = true
+description = "Oyun (AION2) acilinca CanMeter'i baslatan penceresiz bekci; yalniz surec listesine bakar"
+
+[[bin]]
+name = "canmeter-bekci"
+path = "src/main.rs"
+
+[dependencies]
+# Toolhelp32 anlık görüntüsü: süreç adları. Hiçbir sürece tutamaç açılmaz.
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_System_Diagnostics_ToolHelp"] }

@@ -221,7 +221,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-app"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "canmeter-core",
  "canmeter-sema",
@@ -236,8 +236,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "canmeter-bekci"
+version = "0.8.4"
+dependencies = [
+ "windows-sys 0.61.2",
+]
+
+[[package]]
 name = "canmeter-core"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "canmeter-sema",
  "chrono",
@@ -250,7 +257,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-rapor"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "canmeter-sema",
  "chrono",
@@ -260,7 +267,7 @@ dependencies = [
 
 [[package]]
 name = "canmeter-sema"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "serde",
  "serde_json",
