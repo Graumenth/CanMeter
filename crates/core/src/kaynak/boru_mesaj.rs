@@ -4,6 +4,8 @@ use crate::protocol::mesaj::{Hp, Mesaj};
 use crate::stats::toplayici::Toplayici;
 
 /// Summon ve efekt hasarı sahibine yazılır; ölüm yalnız oyuncular için sayılır.
+/// Savaşı yalnız partiyi ilgilendiren hasar (aktör ya da hedef partide) açar ve uzatır (0.8.10). Yerel oyuncu
+/// henüz tanınmadıysa (33 36 gelmedi) süzgeç yok: eski davranış, her olay ilgili.
 pub(super) fn isle(tablo: &mut Tablo, toplayici: &mut Toplayici, zaman_ms: u64, mesaj: &Mesaj) {
     toplayici.ilerle(zaman_ms, tablo);
     tablo.isle(mesaj);
@@ -12,12 +14,14 @@ pub(super) fn isle(tablo: &mut Tablo, toplayici: &mut Toplayici, zaman_ms: u64, 
             let mut h = *h;
             h.actor = tablo.kok(h.actor);
             let dost = tablo.partide(h.actor) && tablo.partide(h.hedef);
-            toplayici.hasar(zaman_ms, &h, dost);
+            let ilgili = ilgili_mi(tablo, h.actor, h.hedef);
+            toplayici.hasar_suz(zaman_ms, &h, dost, ilgili);
         }
         Mesaj::Periyodik(p) => {
             let mut p = *p;
             p.actor = tablo.kok(p.actor);
-            toplayici.periyodik(zaman_ms, &p);
+            let ilgili = ilgili_mi(tablo, p.actor, p.hedef);
+            toplayici.periyodik_suz(zaman_ms, &p, ilgili);
         }
         Mesaj::Hp(h) => {
             // Ölü bilinen varlık HP > 0 ile dirildi: yaşam olayı (satır kökü).
@@ -47,3 +51,13 @@ pub(super) fn isle(tablo: &mut Tablo, toplayici: &mut Toplayici, zaman_ms: u64, 
         _ => {}
     }
 }
+
+/// Olay bizi ilgilendiriyor mu: aktör (kök çözümlü) ya da hedef partide. Yerel oyuncu bilinmiyorsa her olay ilgili
+/// (süzecek ölçüt yok; kimlik gelince süzgeç devreye girer).
+fn ilgili_mi(tablo: &Tablo, actor: u32, hedef: u32) -> bool {
+    tablo.yerel().is_none() || tablo.partide(actor) || tablo.partide(hedef)
+}
+
+#[cfg(test)]
+#[path = "boru_testler_yabanci.rs"]
+mod testler_yabanci;

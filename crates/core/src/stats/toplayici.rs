@@ -75,3 +75,6 @@ mod testler_pvp;
 #[cfg(test)]
 #[path = "toplayici_testler_sinir.rs"]
 mod testler_sinir;
+#[cfg(test)]
+#[path = "toplayici_testler_yabanci.rs"]
+mod testler_yabanci;

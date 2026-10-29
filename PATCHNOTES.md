@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.8.10 (2026-10-29)
+### Düzeltmeler
+- Savaş artık yalnız sizin ya da partinizin verdiği veya aldığı hasarla açılıyor ve sürüyor. Çevredeki yabancı
+  oyuncuların vuruşları savaşı başlatmıyor ve uzatmıyor; kalabalık bölgede savaş dakikalarca açık kalmıyor, kendini
+  yenileme de gecikmiyor. Savaş açıkken hedefinize vuran yabancılar yine satır alır.
+
 ## 0.8.9 (2026-10-29)
 ### Yeni
 - Beceri adları: raporda beceriler artık numara yerine adıyla görünüyor (9268 beceri, İngilizce; topluluk verisi).
