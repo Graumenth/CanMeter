@@ -79,6 +79,7 @@ fn kosu_birlesimi_kayitli_ve_turetilen_sureler() {
             },
         ],
         haritalar: Haritalar::yerlesik(),
+        beceriler: Default::default(),
         kosu_ozetleri: Default::default(),
     };
     let kosular = hesap::kosular(&g);

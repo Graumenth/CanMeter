@@ -54,7 +54,7 @@ pub fn yaz(g: &Gecmis, indeks: usize) -> String {
         r#"<div class="kutu"><small>En yüksek</small><b>{en}</b></div></div>"#
     ));
     cikti.push_str(&grafik::yaz(savas));
-    cikti.push_str(&oyuncu::yaz(savas));
+    cikti.push_str(&oyuncu::yaz(savas, &g.beceriler));
     cikti.push_str(&yasam(savas));
     cikti.push_str(r#"<p class="altbilgi">Vuruş = doğrudan hasar mesajı sayısı; kritik yüzdesi doğrudan vuruşlara göre. "?" alan bu kayıtta çözülmedi. Sınıf ikonları NC Corporation varlığıdır."#);
     for not in &b.kalite {

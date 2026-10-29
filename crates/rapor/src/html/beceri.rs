@@ -1,7 +1,7 @@
 use super::{kacis::kacis, ortak::hucre};
 use crate::{
     bicim, hesap,
-    sema::{Beceri, Encounter, Katilimci},
+    sema::{Beceri, Beceriler, Encounter, Katilimci},
 };
 
 fn nitelik(deger: Option<u32>, vurus: u32) -> String {
@@ -13,7 +13,7 @@ fn nitelik(deger: Option<u32>, vurus: u32) -> String {
     hucre(&metin, deger.map_or(0.0, f64::from), "")
 }
 
-fn satir(b: &Beceri, k: &Katilimci, azami: u64) -> String {
+fn satir(b: &Beceri, k: &Katilimci, azami: u64, tablo: &Beceriler) -> String {
     let iyilestirme = hesap::iyilestirme(b);
     let miktar = hesap::miktar(b);
     let toplam = if iyilestirme { k.iyilestirme } else { k.hasar };
@@ -28,9 +28,10 @@ fn satir(b: &Beceri, k: &Katilimci, azami: u64) -> String {
     } else {
         ""
     };
-    let (ad, yok) = match &b.ad {
-        Some(ad) if !ad.is_empty() => (kacis(ad), ""),
-        _ => (format!("#{}", b.kimlik), " yok"),
+    let kayitli = b.ad.as_deref().filter(|a| !a.is_empty());
+    let (ad, yok) = match kayitli.or_else(|| tablo.ad(b.kimlik)) {
+        Some(ad) => (kacis(ad), ""),
+        None => (format!("#{}", b.kimlik), " yok"),
     };
     let mut cikti = format!(
         r#"<tr class="beceri"><td class="sol{yok}">{ad}{ek}{periyodik}</td>
@@ -67,7 +68,7 @@ fn satir(b: &Beceri, k: &Katilimci, azami: u64) -> String {
     cikti
 }
 
-pub fn yaz(savas: &Encounter, oyuncu: &Katilimci, ilk: bool) -> String {
+pub fn yaz(savas: &Encounter, oyuncu: &Katilimci, ilk: bool, tablo: &Beceriler) -> String {
     let acik = if ilk { " acik" } else { "" };
     let beceriler = hesap::beceriler(savas, oyuncu.no);
     if beceriler.is_empty() {
@@ -79,7 +80,7 @@ pub fn yaz(savas: &Encounter, oyuncu: &Katilimci, ilk: bool) -> String {
 <thead><tr><th class="sol">Beceri</th><th class="sol">Hasar</th><th>Pay</th><th>Vuruş</th><th>Tick</th><th>Kritik</th><th>Perfect</th><th>Back</th><th>Multi</th><th>En büyük</th></tr></thead><tbody>"#
     );
     for b in beceriler {
-        cikti.push_str(&satir(b, oyuncu, azami));
+        cikti.push_str(&satir(b, oyuncu, azami, tablo));
     }
     cikti.push_str("</tbody></table></td></tr>");
     cikti

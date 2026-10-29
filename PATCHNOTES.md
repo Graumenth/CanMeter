@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.8.9 (2026-10-29)
+### Yeni
+- Beceri adları: raporda beceriler artık numara yerine adıyla görünüyor (9268 beceri, İngilizce; topluluk verisi).
+  Bilinmeyen beceri yine #numara. Kendi adlarınızı %APPDATA%\CanMeter\beceriler.toml dosyasına yazabilirsiniz.
+
 ## 0.8.8 (2026-10-29)
 ### Düzeltmeler
 - CanMeter artık ikinci kez açılmıyor: zaten çalışıyorsa yeni kopya sessizce kapanır. İki overlay ve çift sayım

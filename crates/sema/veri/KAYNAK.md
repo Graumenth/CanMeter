@@ -13,3 +13,19 @@ kullanılır, CanMeter'ın GPL-3.0 lisansı kapsamında değildir.
 Doğrulama: 600032 kayıtlarda (2026-10-16 ve 17) parti zindanı olarak görüldü; gamers4 "Draupnir". 800012 ve 152002
 açık dünya sunucusunda sunucu değişmeden yüklendi (yerel alt bölge). 1010, 100829, 500037, 500038 bulunamadı:
 uygulama ilk girişte sorar.
+
+# Beceri adları (`beceriler.toml`)
+
+Hasar ve iyileştirme mesajlarındaki ham beceri kimliğinin (u32) İngilizce görünen adı; 9268 kayıt. Topluluk verisi;
+sahip isteği 2026-10-29 ("IDleri internetten arayıp bulmayı deneyebilir misin"). Adlar NC Corporation'ın oyun
+metinleridir; bu tablo yalnız beceriyi tanıtmak için kullanılır, CanMeter'ın GPL-3.0 lisansı kapsamında değildir.
+
+| Kaynak | Alınan | Tarih |
+|---|---|---|
+| taengu/A2Tools-DPS-Meter (GPL-3.0; yalnız veri, kod alınmadı; commit 3bfb5eb, 2026-10-14): `src/data/i18n/skills/en.json` ("skill tables taken from the game data"); meter paket kimliğini bu tabloda dönüşümsüz arar | tüm kayıtlar, kimlik sırasıyla, `araclar` dışı tek seferlik betikle üretildi | 2026-10-29 |
+| Çapraz kontrol: metabot.gg AION 2 veritabanı (oyun istemcisi veri tablolarından, build 0.0.4387.0) ikon yollarında aynı kimlik şemasını kullanıyor (ör. 11020000 Keen Strike, 11010000 Rending Blow) | yalnız doğrulama | 2026-10-29 |
+
+Aranan ama ham kimlik vermeyen kaynaklar: metabot.gg, wikily.gg, aion2hub.com, gamewith.ai (adlar var, kimlik yok).
+Türkçe tablo yok (kaynakta de/en/es/fr/ja/ko/pt/ru/zh var); şimdilik İngilizce. Kullanıcı dosyası
+`%APPDATA%\CanMeter\beceriler.toml` yerleşiği ezer. Doğrulama: ilk gerçek savaş raporunda adların görünmesi
+(kimlik şeması paketle aynıysa `#kimlik` kalmaz).

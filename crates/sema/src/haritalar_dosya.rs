@@ -1,4 +1,4 @@
-//! Kullanıcı harita dosyası: yol çözümü ve satır ekleme. Tablo ayrıştırma `haritalar.rs` içindedir.
+//! Kullanıcı harita dosyası: yol çözümü ve satır ekleme. Tablo ayrıştırma `ad_tablosu.rs` içindedir.
 use std::fs::{File, OpenOptions};
 use std::io::{Read, Seek, SeekFrom, Write};
 use std::path::{Path, PathBuf};
@@ -7,23 +7,16 @@ use super::AD_TAVANI;
 
 const BASLIK: &str = "# CanMeter kullanıcı harita adları: kimlik = \"Ad\"\n";
 
-/// Ad: satır sonları boşluğa, `trim`, AD_TAVANI karakterde kırpılır.
-pub(super) fn temizle(ad: &str) -> String {
-    let duz = ad.replace(['\r', '\n'], " ");
-    duz.trim().chars().take(AD_TAVANI).collect()
-}
-
 /// `%APPDATA%\CanMeter\haritalar.toml`; APPDATA yoksa None.
 pub fn kullanici_yolu() -> Option<PathBuf> {
-    let kok = std::env::var_os("APPDATA")?;
-    Some(PathBuf::from(kok).join("CanMeter").join("haritalar.toml"))
+    crate::ad_tablosu::kullanici_yolu("haritalar.toml")
 }
 
 /// Kullanıcı dosyasına bir satır ekler (klasörü oluşturur; yeni dosyaya önce `#` başlık yorumu). Ad `trim`,
 /// satır sonları boşluğa, AD_TAVANI karakterde kırpılır; boşsa `Err`. Değer tırnaklı, `"` ve `\` kaçışlı yazılır.
 /// Son satır sonu eksik bir dosyaya önce satır sonu eklenir. Belleğe yazmaz; çağıran `ekle` ile tamamlar.
 pub fn kaydet(yol: &Path, harita: u32, ad: &str) -> Result<(), String> {
-    let ad = temizle(ad);
+    let ad = crate::ad_tablosu::temizle(ad, AD_TAVANI);
     if ad.is_empty() {
         return Err("ad boş".to_string());
     }

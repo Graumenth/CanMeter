@@ -1,4 +1,4 @@
-use crate::sema::{Encounter, Haritalar, Kayit, Kosu};
+use crate::sema::{Beceriler, Encounter, Haritalar, Kayit, Kosu};
 use crate::{kosu::KosuOzeti, oku_tara::tara};
 use chrono::DateTime;
 use std::{
@@ -13,6 +13,7 @@ pub struct Gecmis {
     pub savaslar: Vec<Encounter>,
     pub kosular: Vec<Kosu>,
     pub haritalar: Haritalar,
+    pub beceriler: Beceriler,
     pub kosu_ozetleri: OnceCell<Vec<KosuOzeti>>,
 }
 
@@ -21,6 +22,7 @@ pub fn gecmis(yol: &Path) -> Result<Gecmis, String> {
         savaslar: klasor(yol)?,
         kosular: kosular(yol)?,
         haritalar: Haritalar::yukle(),
+        beceriler: Beceriler::yukle(),
         kosu_ozetleri: OnceCell::new(),
     })
 }

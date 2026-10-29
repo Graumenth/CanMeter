@@ -66,6 +66,7 @@ pub fn calistir() -> Result<(), String> {
         );
         oku::Gecmis {
             haritalar: canmeter_sema::Haritalar::yukle(),
+            beceriler: canmeter_sema::Beceriler::yukle(),
             ..Default::default()
         }
     } else {

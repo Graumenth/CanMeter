@@ -6,6 +6,9 @@ use serde::{Deserialize, Serialize};
 
 mod satirlar;
 pub use satirlar::*;
+pub mod ad_tablosu;
+pub mod beceriler;
+pub use beceriler::Beceriler;
 pub mod haritalar;
 pub use haritalar::Haritalar;
 
