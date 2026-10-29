@@ -59,19 +59,24 @@ impl Yenileme {
     }
 
     /// Yeni süreci aynı argümanlarla açar ve pencereyi kapatır. Açılamazsa bu derleme bir daha denenmez.
-    pub fn baslat(&mut self, ctx: &egui::Context) {
+    /// Başlatıldıysa `true`.
+    pub fn baslat(&mut self, ctx: &egui::Context) -> bool {
         let Some(exe) = self.exe.clone() else {
-            return;
+            return false;
         };
         let sonuc = std::process::Command::new(&exe)
             .args(std::env::args().skip(1))
             .spawn();
         match sonuc {
-            Ok(_) => ctx.send_viewport_cmd(egui::ViewportCommand::Close),
+            Ok(_) => {
+                ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                true
+            }
             Err(hata) => {
                 eprintln!("Yeniden başlatılamadı ({}): {hata}", exe.display());
                 self.acilis = self.son_gorulen.take();
                 self.hazir = false;
+                false
             }
         }
     }

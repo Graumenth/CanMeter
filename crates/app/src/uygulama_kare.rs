@@ -47,7 +47,11 @@ impl Uygulama {
         if self.yenileme.kare(basilan.yenile, savas_aktif) {
             self.kayit_zamani = None;
             self.kaydet(self.ayarlar.dil);
-            self.yenileme.baslat(ctx);
+            // Kilit yeni exe'den önce bırakılır ki yeni süreç alabilsin; açılamazsa geri alınır.
+            let kilit = self.tek_ornek.take();
+            if !self.yenileme.baslat(ctx) {
+                self.tek_ornek = kilit;
+            }
         }
     }
 }

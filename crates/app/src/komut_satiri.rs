@@ -54,3 +54,10 @@ pub fn motor() -> canmeter_core::Motor {
         }
     }
 }
+
+/// Canlı kip mi: `--demo` ve `--kayit` yoksa. Tek örnek kilidi yalnız canlı kipte alınır (geliştirmede canlı
+/// meter'ın yanında replay açılabilsin).
+pub fn canli_mi() -> bool {
+    let a: Vec<String> = std::env::args().skip(1).collect();
+    !a.iter().any(|x| x == "--demo" || x == "--kayit")
+}

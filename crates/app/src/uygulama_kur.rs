@@ -7,6 +7,7 @@ impl Uygulama {
         cc: &eframe::CreationContext<'_>,
         ayarlar: crate::ayarlar::Ayarlar,
         kalici: crate::ayarlar::Ayarlar,
+        tek_ornek: Option<crate::tek_ornek::TekOrnek>,
     ) -> Self {
         cc.egui_ctx.set_visuals(egui::Visuals::dark());
         cc.egui_ctx.all_styles_mut(|stil| stil.animation_time = 0.0);
@@ -34,6 +35,7 @@ impl Uygulama {
             boyut: crate::boyut::Boyut::default(),
             konum: crate::konum::Konum,
             kayit_zamani: None,
+            tek_ornek,
         }
     }
 

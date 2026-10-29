@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.8.8 (2026-10-29)
+### Düzeltmeler
+- CanMeter artık ikinci kez açılmıyor: zaten çalışıyorsa yeni kopya sessizce kapanır. İki overlay ve çift sayım
+  olmuyor. Yeni sürüme kendini yenilerken eski kopya kilidi bırakır, yeni kopya onu bekler.
+
 ## 0.8.7 (2026-10-29)
 ### Yeni
 - Ayarlar panelinde "Hub'ı aç" düğmesi: CanMeter Hub kuruluysa (meter klasörünün yanındaki CanMeter Hub klasörü)

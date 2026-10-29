@@ -31,6 +31,8 @@ pub struct Uygulama {
     konum: Konum,
     /// Son ölçek/konum değişiminin zamanı; kayıt gecikmeli.
     kayit_zamani: Option<Instant>,
+    /// Canlı kip tek örnek kilidi; yenilemede yeni exe açılmadan önce bırakılır (`uygulama_kare.rs`).
+    tek_ornek: Option<crate::tek_ornek::TekOrnek>,
 }
 impl eframe::App for Uygulama {
     fn clear_color(&self, _: &egui::Visuals) -> [f32; 4] {

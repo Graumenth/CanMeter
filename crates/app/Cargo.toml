@@ -20,7 +20,7 @@ egui = "0.36"
 # Ayarlar %APPDATA%\CanMeter\ayarlar.toml
 serde = { version = "1", features = ["derive"] }
 toml = "1"
-windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Dwm", "Win32_Globalization", "Win32_UI_WindowsAndMessaging"] }
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Dwm", "Win32_Globalization", "Win32_System_Threading", "Win32_UI_WindowsAndMessaging"] }
 raw-window-handle = "0.6"
 # Kilitliyken pencere tıklama almaz (kilit düğmesi hariç); oyun odaktayken de çalışan global kısayol.
 global-hotkey = "0.8"
