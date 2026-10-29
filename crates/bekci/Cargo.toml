@@ -11,10 +11,13 @@ name = "canmeter-bekci"
 path = "src/main.rs"
 
 [dependencies]
-# Toolhelp32 anlık görüntüsü: süreç adları ve kimlikleri; pencere mesajı (WM_CLOSE) ile nazik kapatma.
+# Toolhelp32 anlık görüntüsü: süreç adları ve kimlikleri; pencere mesajı (WM_CLOSE) ile nazik kapatma;
+# adlı mutex ile tek bekçi.
 # Hiçbir sürece tutamaç açılmaz.
 windows-sys = { version = "0.61", features = [
     "Win32_Foundation",
     "Win32_System_Diagnostics_ToolHelp",
+    "Win32_Security",
+    "Win32_System_Threading",
     "Win32_UI_WindowsAndMessaging",
 ] }

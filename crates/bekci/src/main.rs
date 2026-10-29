@@ -8,6 +8,7 @@ mod kapanis;
 mod kapat;
 mod karar;
 mod surec;
+mod tek;
 
 use kapanis::Kapanis;
 use karar::Karar;
@@ -39,6 +40,11 @@ fn baslat(exe: &Path) -> std::io::Result<()> {
 
 fn main() {
     let ayar = ayar::oku();
+    // Tek bekçi: ikinci kopya (görev + elle açılan exe) hemen çıkar; kilit süreç bitene dek elde tutulur.
+    let Some(_kilit) = tek::al(tek::AD) else {
+        iz(&ayar.iz, "zaten calisiyor, cikiyorum");
+        return;
+    };
     let bilgi = format!(
         "basladi oyun={} meter={} exe={} aralik={} birak={}",
         ayar.oyun,

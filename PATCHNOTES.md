@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.8.12 (2026-10-29)
+### Düzeltmeler
+- Bekçi tek örnek: ikinci bir bekçi (görev çalışırken exe'yi elle açmak, kurulum betiğini iki kez çalıştırmak) hemen
+  çıkıyor; iki bekçi aynı anda başlatma ve kapatma denemiyor.
+
 ## 0.8.11 (2026-10-29)
 ### Yeni
 - Oyunla başlat bekçisi artık oyunu kapatınca meter'ı da kapatıyor: oyun 10 saniye görünmezse meter'a nazik bir
