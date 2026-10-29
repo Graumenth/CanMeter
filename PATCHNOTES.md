@@ -1,5 +1,10 @@
 # PATCHNOTES
 
+## 0.8.7 (2026-10-29)
+### Yeni
+- Ayarlar panelinde "Hub'ı aç" düğmesi: CanMeter Hub kuruluysa (meter klasörünün yanındaki CanMeter Hub klasörü)
+  tek tıkla açılır; kurulu değilse düğme kapalı durur ve nedenini söyler. Hub programı yakında.
+
 ## 0.8.6 (2026-10-29)
 ### Değişti
 - CanMeter artık kurulu bir program gibi sabit yerden çalışır: D:\CanMeter\Meter (meter, bekçi, rapor). Derleme

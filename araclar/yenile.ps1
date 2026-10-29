@@ -44,12 +44,16 @@ foreach ($ad in $adlar) {
     $hedef = Join-Path $MeterKlasor "$ad.exe"
     Temizle $MeterKlasor $ad
     if (Ayni $kaynak $hedef) { Write-Output ("ayni: " + $hedef); continue }
-    $bekci = ($ad -eq "canmeter-bekci") -and (Get-ScheduledTask -TaskName $gorev -ErrorAction SilentlyContinue)
+    # Bekçi görevi yalnız kurulu bekçiye kayıtlıysa yeniden başlatılır; eski yola kayıtlıysa uyarı (kurucu yönetici ister).
+    $gorevNesne = if ($ad -eq "canmeter-bekci") { Get-ScheduledTask -TaskName $gorev -ErrorAction SilentlyContinue } else { $null }
+    $bekci = $gorevNesne -and ($gorevNesne.Actions[0].Execute -eq $hedef)
     if ($bekci) { Stop-ScheduledTask -TaskName $gorev -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1 }
     KenaraAl $MeterKlasor $ad
     Copy-Item $kaynak $hedef
+    Temizle $MeterKlasor $ad
     Write-Output ("kurulu kopya guncellendi: " + $hedef)
     if ($bekci) { Start-ScheduledTask -TaskName $gorev -ErrorAction SilentlyContinue }
+    elseif ($gorevNesne) { Write-Warning ("gorev eski yola kayitli (" + $gorevNesne.Actions[0].Execute + "); yonetici PowerShell'de araclar\oyunla-baslat-kur.ps1 -Baslat") }
 }
 if ($Baslat -and -not (Get-Process "canmeter-app*" -ErrorAction SilentlyContinue)) {
     Start-Process (Join-Path $MeterKlasor "canmeter-app.exe") -WorkingDirectory $MeterKlasor

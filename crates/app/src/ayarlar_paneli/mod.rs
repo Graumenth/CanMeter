@@ -1,5 +1,6 @@
 //! Sağ üst ayar kartı; skin çizildikten sonra ön planda gösterilir.
 mod dil_secimi;
+mod hub_dugmesi;
 mod metin;
 mod skin_secimi;
 mod toplam_ayari;
@@ -42,6 +43,8 @@ pub fn ciz(ctx: &egui::Context, ayarlar: &mut Ayarlar, acik: &mut bool) -> bool 
                     degisti |= zemin_ayari::ciz(ui, ayarlar);
                     degisti |= toplam_ayari::ciz(ui, ayarlar);
                     let sozluk = metin::metin(ayarlar.dil);
+                    ui.separator();
+                    hub_dugmesi::ciz(ui, sozluk);
                     ui.separator();
                     ui.strong(sozluk.kisayollar);
                     ui.label(sozluk.gorunum_kisayol);

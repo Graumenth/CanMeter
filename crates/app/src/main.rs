@@ -8,6 +8,7 @@ mod ayarlar_paneli;
 mod bolge_sor;
 mod boyut;
 mod dil;
+mod hub;
 mod kilit;
 mod kilit_alani;
 mod kilit_fare;
