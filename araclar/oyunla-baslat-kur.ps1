@@ -4,7 +4,7 @@
 # Yönetici PowerShell'de çalıştırılır. Yeniden çalıştırmak günceller (çalışan bekçi durdurulur, yeni exe alınır).
 # -Baslat: kurduktan sonra görevi hemen başlatır. -Kaldir: görevi ve çalışan bekçiyi kaldırır.
 # -Exe: bekçi yolu (varsayılan kurulu kopya $MeterKlasor\canmeter-bekci.exe, bkz. kurulum.ps1; target\release
-# kullanılmaz, CC kuralı kural-kurulu-kopya.md). -Argumanlar: bekçiye geçer (örn. "--iz D:\bekci.log").
+# kullanılmaz, CC kuralı kural-kurulu-kopya.md). -Argumanlar: bekçiye geçer (örn. "--iz D:\bekci.log"; "--birak" oyun kapanınca meter'ı açık bırakır).
 param([switch]$Baslat, [switch]$Kaldir, [string]$Exe = "", [string]$Argumanlar = "")
 . (Join-Path $PSScriptRoot "kurulum.ps1")
 $ad = "CanMeter oyunla baslat"

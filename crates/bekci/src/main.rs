@@ -1,11 +1,15 @@
 #![windows_subsystem = "windows"]
 //! canmeter-bekci: oyun açılınca CanMeter'ı açan penceresiz bekçi. Zamanlanmış görev oturum açılışında
 //! yönetici yetkisiyle çalıştırır (araclar/oyunla-baslat-kur.ps1); `Command::spawn` ile açılan meter aynı
-//! yetkiyi alır. Oyuna dokunmaz; yalnız süreç listesine bakar. Oyun kapanınca meter'a dokunmaz.
+//! yetkiyi alır. Oyuna dokunmaz; yalnız süreç listesine bakar. Oyun kapanınca meter'ı nazikçe kapatır
+//! (pencereye WM_CLOSE; `--birak` verilirse dokunmaz); oyunsuz açılan meter'a hiç dokunmaz (`kapanis.rs`).
 mod ayar;
+mod kapanis;
+mod kapat;
 mod karar;
 mod surec;
 
+use kapanis::Kapanis;
 use karar::Karar;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -36,19 +40,21 @@ fn baslat(exe: &Path) -> std::io::Result<()> {
 fn main() {
     let ayar = ayar::oku();
     let bilgi = format!(
-        "basladi oyun={} meter={} exe={} aralik={}",
+        "basladi oyun={} meter={} exe={} aralik={} birak={}",
         ayar.oyun,
         ayar.meter_onek,
         ayar.exe.display(),
-        ayar.aralik_sn
+        ayar.aralik_sn,
+        ayar.birak
     );
     iz(&ayar.iz, &bilgi);
     // Başlatma sonrası 30 sn sessizlik: meter'ın görünmesine zaman tanır, ikinci kopya açılmaz.
     let mut karar = Karar::new((30 / ayar.aralik_sn).clamp(1, 255) as u8);
+    let mut kapanis = Kapanis::default();
     loop {
-        let adlar = surec::adlar();
-        let oyun_var = surec::oyun_var(&adlar, &ayar.oyun);
-        let meter_var = surec::meter_var(&adlar, &ayar.meter_onek);
+        let surecler = surec::surecler();
+        let oyun_var = surec::oyun_var(&surecler, &ayar.oyun);
+        let meter_var = surec::meter_var(&surecler, &ayar.meter_onek);
         if karar.adim(oyun_var, meter_var) {
             if ayar.kuru {
                 iz(&ayar.iz, "kuru: baslatirdim");
@@ -57,6 +63,19 @@ fn main() {
                     Ok(()) => iz(&ayar.iz, "baslatildi"),
                     Err(e) => iz(&ayar.iz, &format!("baslatilamadi: {e}")),
                 }
+            }
+        }
+        // Oyun kapandı, meter oyunla birlikte görülmüştü: görünür penceresine WM_CLOSE; meter savaşı yazıp çıkar.
+        if !ayar.birak && kapanis.adim(oyun_var, meter_var) {
+            let pidler = surec::meter_pidler(&surecler, &ayar.meter_onek);
+            if ayar.kuru {
+                iz(&ayar.iz, &format!("kuru: kapatirdim {pidler:?}"));
+            } else {
+                let n = kapat::pencereleri_kapat(&pidler);
+                iz(
+                    &ayar.iz,
+                    &format!("kapatma istegi: {n} pencere, pid {pidler:?}"),
+                );
             }
         }
         std::thread::sleep(Duration::from_secs(ayar.aralik_sn));

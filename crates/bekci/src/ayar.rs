@@ -14,6 +14,8 @@ pub struct Ayar {
     pub aralik_sn: u64,
     /// Başlatmaz, yalnız iz yazar (`--kuru`).
     pub kuru: bool,
+    /// Oyun kapanınca meter'ı kapatmaz, açık bırakır (`--birak`).
+    pub birak: bool,
     /// Karar izi dosyası (`--iz`).
     pub iz: Option<PathBuf>,
 }
@@ -35,6 +37,7 @@ pub fn ayristir(args: &[String]) -> Ayar {
         exe: varsayilan_exe,
         aralik_sn: 5,
         kuru: false,
+        birak: false,
         iz: None,
     };
     let mut it = args.iter();
@@ -51,6 +54,7 @@ pub fn ayristir(args: &[String]) -> Ayar {
                     .unwrap_or(5)
             }
             "--kuru" => ayar.kuru = true,
+            "--birak" => ayar.birak = true,
             "--iz" => ayar.iz = Some(PathBuf::from(sonraki(&mut it))),
             _ => {}
         }
@@ -71,8 +75,8 @@ mod test {
     fn varsayilanlar() {
         let a = ayristir(&[]);
         assert_eq!(
-            (a.oyun.as_str(), a.aralik_sn, a.kuru),
-            ("aion2.exe", 5, false)
+            (a.oyun.as_str(), a.aralik_sn, a.kuru, a.birak),
+            ("aion2.exe", 5, false, false)
         );
     }
     #[test]
@@ -88,7 +92,15 @@ mod test {
     }
     #[test]
     fn kuru_ve_iz_doldurulur() {
-        let a = ayristir(&["--kuru".into(), "--iz".into(), "C:\\x.txt".into()]);
-        assert_eq!((a.kuru, a.iz), (true, Some(PathBuf::from("C:\\x.txt"))));
+        let a = ayristir(&[
+            "--kuru".into(),
+            "--birak".into(),
+            "--iz".into(),
+            "C:\\x.txt".into(),
+        ]);
+        assert_eq!(
+            (a.kuru, a.birak, a.iz),
+            (true, true, Some(PathBuf::from("C:\\x.txt")))
+        );
     }
 }

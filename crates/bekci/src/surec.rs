@@ -1,13 +1,20 @@
-//! Süreç adları: Toolhelp32 anlık görüntüsüyle çalışan süreçlerin exe adlarını küçük harfle verir.
-//! Oyuna dokunmaz: hiçbir sürece tutamaç açılmaz, yalnız sistem listesi okunur. `unsafe` yalnız bu dosyada.
+//! Süreçler: Toolhelp32 anlık görüntüsüyle çalışan süreçlerin exe adlarını (küçük harf) ve kimliklerini verir.
+//! Oyuna dokunmaz: hiçbir sürece tutamaç açılmaz, yalnız sistem listesi okunur. Kimlikler yalnız meter'ın
+//! penceresini bulmak için (`kapat.rs`) kullanılır.
 
 use windows_sys::Win32::Foundation::{CloseHandle, INVALID_HANDLE_VALUE};
 use windows_sys::Win32::System::Diagnostics::ToolHelp::{
     CreateToolhelp32Snapshot, PROCESSENTRY32W, Process32FirstW, Process32NextW, TH32CS_SNAPPROCESS,
 };
 
-/// Çalışan tüm süreçlerin exe adları (küçük harf, örn. "aion2.exe"). Anlık görüntü alınamazsa boş liste.
-pub fn adlar() -> Vec<String> {
+/// Çalışan bir süreç: küçük harf exe adı ve kimliği.
+pub struct Surec {
+    pub ad: String,
+    pub pid: u32,
+}
+
+/// Çalışan tüm süreçler (ad küçük harf, örn. "aion2.exe"). Anlık görüntü alınamazsa boş liste.
+pub fn surecler() -> Vec<Surec> {
     // GÜVENLİK: parametreler sabit; dönen tutamaç aşağıda denetlenir ve tek kez kapatılır.
     let h = unsafe { CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0) };
     if h == INVALID_HANDLE_VALUE || h.is_null() {
@@ -22,7 +29,10 @@ pub fn adlar() -> Vec<String> {
     while var {
         let ad = &e.szExeFile;
         let son = ad.iter().position(|&c| c == 0).unwrap_or(ad.len());
-        liste.push(String::from_utf16_lossy(&ad[..son]).to_lowercase());
+        liste.push(Surec {
+            ad: String::from_utf16_lossy(&ad[..son]).to_lowercase(),
+            pid: e.th32ProcessID,
+        });
         // GÜVENLİK: h hâlâ açık, e aynı yerel yapı; çağrı yalnız e içine yazar.
         var = unsafe { Process32NextW(h, &mut e) } != 0;
     }
@@ -32,22 +42,36 @@ pub fn adlar() -> Vec<String> {
 }
 
 /// Oyun açık mı: tam ad eşleşmesi (`oyun` küçük harf, örn. "aion2.exe").
-pub fn oyun_var(adlar: &[String], oyun: &str) -> bool {
-    adlar.iter().any(|a| a == oyun)
+pub fn oyun_var(s: &[Surec], oyun: &str) -> bool {
+    s.iter().any(|x| x.ad == oyun)
 }
 
 /// Meter açık mı: önek eşleşmesi (`onek` küçük harf, örn. "canmeter-app"); yeni derlemede çalışan exe
 /// `canmeter-app-calisan-N.exe` adını aldığı için önek şart.
-pub fn meter_var(adlar: &[String], onek: &str) -> bool {
-    adlar.iter().any(|a| a.starts_with(onek))
+pub fn meter_var(s: &[Surec], onek: &str) -> bool {
+    s.iter().any(|x| x.ad.starts_with(onek))
+}
+
+/// Öneki tutan süreçlerin kimlikleri (kapatma için).
+pub fn meter_pidler(s: &[Surec], onek: &str) -> Vec<u32> {
+    s.iter()
+        .filter(|x| x.ad.starts_with(onek))
+        .map(|x| x.pid)
+        .collect()
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
 
-    fn liste(x: &[&str]) -> Vec<String> {
-        x.iter().map(|s| s.to_string()).collect()
+    fn liste(x: &[&str]) -> Vec<Surec> {
+        x.iter()
+            .enumerate()
+            .map(|(i, s)| Surec {
+                ad: s.to_string(),
+                pid: i as u32 + 1,
+            })
+            .collect()
     }
 
     #[test]
@@ -67,10 +91,23 @@ mod test {
     }
 
     #[test]
+    fn meter_pidleri_sirayla() {
+        let l = liste(&[
+            "canmeter-app.exe",
+            "aion2.exe",
+            "canmeter-rapor.exe",
+            "canmeter-app-calisan-2.exe",
+        ]);
+        assert_eq!(meter_pidler(&l, "canmeter-app"), vec![1, 4]);
+        assert!(meter_pidler(&l, "yok").is_empty());
+    }
+
+    #[test]
     fn gercek_liste() {
-        let l = adlar();
+        let l = surecler();
         assert!(!l.is_empty());
-        assert!(l.iter().all(|a| *a == a.to_lowercase()));
-        assert!(l.iter().any(|a| a.ends_with(".exe")));
+        assert!(l.iter().all(|x| x.ad == x.ad.to_lowercase()));
+        assert!(l.iter().any(|x| x.ad.ends_with(".exe")));
+        assert!(l.iter().any(|x| x.pid != 0));
     }
 }

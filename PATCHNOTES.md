@@ -1,5 +1,11 @@
 # PATCHNOTES
 
+## 0.8.11 (2026-10-29)
+### Yeni
+- Oyunla başlat bekçisi artık oyunu kapatınca meter'ı da kapatıyor: oyun 10 saniye görünmezse meter'a nazik bir
+  kapanış isteği gider, açık savaş dosyaya yazılır. Oyun açılmadan elle açtığınız meter'a (demo, kayıt) dokunmaz.
+  Meter'ın açık kalmasını isterseniz bekçiye `--birak` seçeneğini verin.
+
 ## 0.8.10 (2026-10-29)
 ### Düzeltmeler
 - Savaş artık yalnız sizin ya da partinizin verdiği veya aldığı hasarla açılıyor ve sürüyor. Çevredeki yabancı
